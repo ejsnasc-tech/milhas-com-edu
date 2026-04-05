@@ -8,7 +8,7 @@ interface AirportInputProps {
   label: string;
   placeholder: string;
   value: string;
-  onChange: (iata: string, airport: Airport | null) => void;
+  onChange: (iata: string) => void;
   icon?: string;
 }
 
@@ -60,7 +60,7 @@ export default function AirportInput({
     }
 
     if (val === "") {
-      onChange("", null);
+      onChange("");
     }
   };
 
@@ -69,7 +69,7 @@ export default function AirportInput({
     setQuery(`${airport.iata} - ${airport.city}`);
     setSuggestions([]);
     setIsOpen(false);
-    onChange(airport.iata, airport);
+    onChange(airport.iata);
   };
 
   const handleClear = () => {
@@ -77,7 +77,7 @@ export default function AirportInput({
     setSelectedAirport(null);
     setSuggestions([]);
     setIsOpen(false);
-    onChange("", null);
+    onChange("");
     inputRef.current?.focus();
   };
 
