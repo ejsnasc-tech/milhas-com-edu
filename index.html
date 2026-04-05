@@ -797,7 +797,12 @@ let searchFrom = '', searchTo = '', searchDate = '', searchPax = 1;
 })();
 
 // ── AUTOCOMPLETE ──
+const _acTimers = {};
 function autocomplete(input, listId) {
+  clearTimeout(_acTimers[listId]);
+  _acTimers[listId] = setTimeout(() => _doAutocomplete(input, listId), 120);
+}
+function _doAutocomplete(input, listId) {
   const val = input.value.trim().toUpperCase();
   const list = document.getElementById(listId);
   if (!val) { list.style.display = 'none'; return; }
@@ -956,13 +961,20 @@ function openAllTabs() {
     if (currentMode === 'miles' && !a.milesUrl) return false;
     return true;
   });
+  let blocked = 0;
   relevant.forEach(a => {
     const url = currentMode === 'miles'
       ? (a.milesUrl && a.milesUrl(searchFrom, searchTo, searchDate, searchPax))
       : (a.moneyUrl && a.moneyUrl(searchFrom, searchTo, searchDate, searchPax))
         || (a.milesUrl && a.milesUrl(searchFrom, searchTo, searchDate, searchPax));
-    if (url && url !== '#') window.open(url, '_blank', 'noopener');
+    if (url && url !== '#') {
+      const w = window.open(url, '_blank', 'noopener');
+      if (!w) blocked++;
+    }
   });
+  if (blocked > 0) {
+    alert(`⚠️ Seu navegador bloqueou ${blocked} janela(s).\nPermita pop-ups para este site e clique em "Buscar" novamente para abrir todas as companhias.\n\nVocê também pode clicar em cada card individualmente.`);
+  }
 }
 
 // ── OFFERS ──
