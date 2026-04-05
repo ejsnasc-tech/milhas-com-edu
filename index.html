@@ -6,7 +6,6 @@
   <title>Milhas com Edu ✈️ — Buscador de Passagens</title>
   <style>
     *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
     :root {
       --bg: #0a0e1a;
       --card: #0d1b2e;
@@ -19,17 +18,13 @@
       --muted: #90a4ae;
       --border: #1a2744;
     }
-
     html { scroll-behavior: smooth; }
-
     body {
       background: var(--bg);
       color: var(--text);
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
       min-height: 100vh;
     }
-
-    /* ── HERO ── */
     .hero {
       background: linear-gradient(160deg, #0a0e1a 0%, #0d1b40 40%, #1a237e 100%);
       padding: 60px 20px 80px;
@@ -48,10 +43,7 @@
         radial-gradient(1px 1px at 10% 70%, rgba(255,255,255,0.6) 0%, transparent 100%),
         radial-gradient(1px 1px at 90% 80%, rgba(255,255,255,0.5) 0%, transparent 100%),
         radial-gradient(1px 1px at 35% 15%, rgba(255,255,255,0.7) 0%, transparent 100%),
-        radial-gradient(1px 1px at 65% 65%, rgba(255,255,255,0.4) 0%, transparent 100%),
-        radial-gradient(1px 1px at 75% 45%, rgba(255,255,255,0.6) 0%, transparent 100%),
-        radial-gradient(1px 1px at 5% 90%, rgba(255,255,255,0.5) 0%, transparent 100%),
-        radial-gradient(1px 1px at 95% 25%, rgba(255,255,255,0.6) 0%, transparent 100%);
+        radial-gradient(1px 1px at 65% 65%, rgba(255,255,255,0.4) 0%, transparent 100%);
       pointer-events: none;
     }
     .logo {
@@ -70,8 +62,6 @@
       color: #b0bec5;
       position: relative;
     }
-
-    /* ── SEARCH FORM ── */
     .search-section {
       max-width: 900px;
       margin: -40px auto 0;
@@ -147,8 +137,6 @@
       filter: invert(1);
       cursor: pointer;
     }
-
-    /* Autocomplete dropdown */
     .autocomplete-list {
       position: absolute;
       top: 100%;
@@ -172,11 +160,7 @@
     .autocomplete-item:hover, .autocomplete-item.active { background: var(--accent); }
     .autocomplete-item .iata { font-weight: 700; margin-right: 8px; color: #64b5f6; }
     .autocomplete-item:hover .iata, .autocomplete-item.active .iata { color: #fff; }
-
-    /* Recent searches chips */
-    .recent-searches {
-      margin-top: 16px;
-    }
+    .recent-searches { margin-top: 16px; }
     .recent-label {
       font-size: 0.75rem;
       color: var(--muted);
@@ -184,11 +168,7 @@
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
-    .chips {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
     .chip {
       background: #060d1a;
       border: 1px solid var(--border);
@@ -199,19 +179,9 @@
       color: #90caf9;
       transition: all 0.2s;
     }
-    .chip:hover {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
-    }
-
-    .pax-row {
-      display: flex;
-      gap: 14px;
-      align-items: flex-end;
-    }
+    .chip:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .pax-row { display: flex; gap: 14px; align-items: flex-end; }
     .pax-row .form-group { flex: 1; }
-
     .btn-search {
       width: 100%;
       margin-top: 20px;
@@ -228,8 +198,6 @@
     }
     .btn-search:hover { opacity: 0.9; transform: translateY(-1px); }
     .btn-search:active { transform: translateY(0); }
-
-    /* ── SECTIONS ── */
     .section {
       max-width: 1100px;
       margin: 60px auto;
@@ -248,8 +216,6 @@
       font-size: 0.9rem;
       margin-bottom: 24px;
     }
-
-    /* ── AIRLINE CARDS ── */
     .cards-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -273,10 +239,7 @@
       justify-content: space-between;
       margin-bottom: 12px;
     }
-    .airline-name {
-      font-weight: 700;
-      font-size: 1rem;
-    }
+    .airline-name { font-weight: 700; font-size: 1rem; }
     .badge {
       font-size: 0.7rem;
       font-weight: 700;
@@ -288,13 +251,13 @@
     .miles-program {
       font-size: 0.8rem;
       color: var(--purple);
-      margin-bottom: 14px;
+      margin-bottom: 10px;
       font-weight: 600;
     }
     .route-display {
       font-size: 0.82rem;
       color: var(--muted);
-      margin-bottom: 14px;
+      margin-bottom: 10px;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -304,10 +267,35 @@
       color: var(--text);
       font-size: 0.95rem;
     }
-    .card-btns {
+    /* Price estimates on card */
+    .card-prices {
       display: flex;
-      gap: 8px;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+      padding: 10px;
+      background: rgba(0,0,0,0.3);
+      border-radius: 8px;
+      border: 1px solid var(--border);
     }
+    .card-price-money {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--green);
+    }
+    .card-price-miles {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--purple);
+    }
+    .card-price-sep { color: var(--border); }
+    .card-price-label {
+      font-size: 0.7rem;
+      color: var(--muted);
+      width: 100%;
+      margin-top: 2px;
+    }
+    .card-btns { display: flex; gap: 8px; }
     .btn-money, .btn-miles {
       flex: 1;
       padding: 9px;
@@ -333,12 +321,8 @@
       border: 1px solid rgba(124,77,255,0.3);
     }
     .btn-miles:hover { background: rgba(124,77,255,0.25); }
-
-    /* hidden when mode = money or miles */
     .btn-miles.hide { display: none; }
     .btn-money.hide { display: none; }
-
-    /* ── GROUP HEADERS ── */
     .group-header {
       font-size: 1rem;
       font-weight: 700;
@@ -350,8 +334,6 @@
       padding-bottom: 8px;
       border-bottom: 1px solid var(--border);
     }
-
-    /* ── OFFERS ── */
     .offers-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -363,51 +345,39 @@
       border-radius: 14px;
       padding: 18px;
       transition: transform 0.2s, box-shadow 0.2s;
+      cursor: pointer;
     }
     .offer-card:hover {
       transform: translateY(-3px);
       box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      border-color: var(--accent2);
     }
-    .offer-route {
-      font-size: 1.1rem;
-      font-weight: 800;
-      margin-bottom: 6px;
-    }
-    .offer-airline {
-      font-size: 0.75rem;
-      color: var(--muted);
-      margin-bottom: 12px;
-    }
-    .offer-prices {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .price-money {
-      font-size: 1rem;
+    .offer-route { font-size: 1.1rem; font-weight: 800; margin-bottom: 6px; }
+    .offer-airline { font-size: 0.75rem; color: var(--muted); margin-bottom: 12px; }
+    .offer-prices { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .price-money { font-size: 1rem; font-weight: 700; color: var(--green); }
+    .price-miles { font-size: 1rem; font-weight: 700; color: var(--purple); }
+    .price-sep { color: var(--border); }
+    .offer-btn {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 7px 14px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 8px;
+      font-size: 0.8rem;
       font-weight: 700;
-      color: var(--green);
+      text-decoration: none;
+      transition: opacity 0.2s;
     }
-    .price-miles {
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--purple);
-    }
-    .price-sep {
-      color: var(--border);
-    }
-
-    /* ── FOOTER ── */
+    .offer-btn:hover { opacity: 0.85; }
     footer {
       background: #060d1a;
       border-top: 1px solid var(--border);
       padding: 40px 20px;
       margin-top: 80px;
     }
-    .footer-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-    }
+    .footer-inner { max-width: 1100px; margin: 0 auto; }
     .disclaimer {
       color: var(--muted);
       font-size: 0.85rem;
@@ -415,24 +385,10 @@
       margin-bottom: 28px;
       line-height: 1.6;
     }
-    .footer-links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      justify-content: center;
-    }
-    .footer-links a {
-      color: #64b5f6;
-      text-decoration: none;
-      font-size: 0.82rem;
-      transition: color 0.2s;
-    }
+    .footer-links { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+    .footer-links a { color: #64b5f6; text-decoration: none; font-size: 0.82rem; transition: color 0.2s; }
     .footer-links a:hover { color: #fff; }
-
-    /* ── RESULTS HIDDEN BY DEFAULT ── */
     #results-section { display: none; }
-
-    /* ── SCROLLBAR ── */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
@@ -443,7 +399,7 @@
 <!-- HERO -->
 <section class="hero">
   <div class="logo">✈️ Milhas com Edu</div>
-  <p class="tagline">Encontre as melhores passagens em dinheiro e milhas ✈️</p>
+  <p class="tagline">Encontre as melhores passagens em dinheiro e milhas — todas as companhias em um só lugar</p>
 </section>
 
 <!-- SEARCH -->
@@ -457,12 +413,14 @@
     <div class="form-grid">
       <div class="form-group" id="from-group">
         <label>Origem</label>
-        <input type="text" id="from-input" placeholder="Ex: GRU — São Paulo" autocomplete="off" oninput="autocomplete(this,'from-list')" onkeydown="acKeydown(event,'from-list')">
+        <input type="text" id="from-input" placeholder="Ex: GRU — São Paulo" autocomplete="off"
+          oninput="autocomplete(this,'from-list')" onkeydown="acKeydown(event,'from-list')">
         <div class="autocomplete-list" id="from-list" style="display:none"></div>
       </div>
       <div class="form-group" id="to-group">
         <label>Destino</label>
-        <input type="text" id="to-input" placeholder="Ex: LIS — Lisboa" autocomplete="off" oninput="autocomplete(this,'to-list')" onkeydown="acKeydown(event,'to-list')">
+        <input type="text" id="to-input" placeholder="Ex: LIS — Lisboa" autocomplete="off"
+          oninput="autocomplete(this,'to-list')" onkeydown="acKeydown(event,'to-list')">
         <div class="autocomplete-list" id="to-list" style="display:none"></div>
       </div>
       <div class="form-group">
@@ -515,7 +473,7 @@
 <!-- MELHORES OFERTAS -->
 <div class="section">
   <div class="section-title">🔥 Melhores Ofertas do Momento</div>
-  <div class="section-subtitle">Preços aproximados encontrados nas companhias aéreas. Verifique disponibilidade no site da cia.</div>
+  <div class="section-subtitle">Preços aproximados. Clique para verificar disponibilidade e valores atuais no site da companhia.</div>
   <div class="offers-grid" id="offers-grid"></div>
 </div>
 
@@ -531,199 +489,227 @@
 </footer>
 
 <script>
-// ── AIRPORTS ──
 const AIRPORTS = [
-  { code:'GRU', name:'São Paulo — Guarulhos' },
-  { code:'CGH', name:'São Paulo — Congonhas' },
-  { code:'BSB', name:'Brasília' },
-  { code:'GIG', name:'Rio de Janeiro — Galeão' },
-  { code:'SDU', name:'Rio de Janeiro — Santos Dumont' },
-  { code:'SSA', name:'Salvador' },
-  { code:'FOR', name:'Fortaleza' },
-  { code:'REC', name:'Recife' },
-  { code:'MCZ', name:'Maceió' },
-  { code:'BEL', name:'Belém' },
-  { code:'MAO', name:'Manaus' },
-  { code:'CWB', name:'Curitiba' },
-  { code:'POA', name:'Porto Alegre' },
-  { code:'FLN', name:'Florianópolis' },
-  { code:'MIA', name:'Miami' },
-  { code:'JFK', name:'Nova York — JFK' },
-  { code:'LAX', name:'Los Angeles' },
-  { code:'ORD', name:'Chicago — O\'Hare' },
-  { code:'LIS', name:'Lisboa' },
-  { code:'CDG', name:'Paris — Charles de Gaulle' },
-  { code:'LHR', name:'Londres — Heathrow' },
-  { code:'MAD', name:'Madri' },
-  { code:'FCO', name:'Roma — Fiumicino' },
-  { code:'AMS', name:'Amsterdã' },
-  { code:'FRA', name:'Frankfurt' },
-  { code:'BCN', name:'Barcelona' },
-  { code:'DXB', name:'Dubai' },
-  { code:'DOH', name:'Doha' },
-  { code:'IST', name:'Istambul' },
-  { code:'SIN', name:'Singapura' },
-  { code:'NRT', name:'Tóquio — Narita' },
-  { code:'ADD', name:'Adis Abeba' },
-  { code:'YYZ', name:'Toronto' },
-  { code:'PTY', name:'Cidade do Panamá' },
-  { code:'BOG', name:'Bogotá' },
+  { code:'GRU', name:'São Paulo — Guarulhos', country:'BR' },
+  { code:'CGH', name:'São Paulo — Congonhas', country:'BR' },
+  { code:'BSB', name:'Brasília', country:'BR' },
+  { code:'GIG', name:'Rio de Janeiro — Galeão', country:'BR' },
+  { code:'SDU', name:'Rio de Janeiro — Santos Dumont', country:'BR' },
+  { code:'SSA', name:'Salvador', country:'BR' },
+  { code:'FOR', name:'Fortaleza', country:'BR' },
+  { code:'REC', name:'Recife', country:'BR' },
+  { code:'MCZ', name:'Maceió', country:'BR' },
+  { code:'BEL', name:'Belém', country:'BR' },
+  { code:'MAO', name:'Manaus', country:'BR' },
+  { code:'CWB', name:'Curitiba', country:'BR' },
+  { code:'POA', name:'Porto Alegre', country:'BR' },
+  { code:'FLN', name:'Florianópolis', country:'BR' },
+  { code:'NAT', name:'Natal', country:'BR' },
+  { code:'THE', name:'Teresina', country:'BR' },
+  { code:'MIA', name:'Miami', country:'US' },
+  { code:'JFK', name:'Nova York — JFK', country:'US' },
+  { code:'LAX', name:'Los Angeles', country:'US' },
+  { code:'ORD', name:'Chicago — O'Hare', country:'US' },
+  { code:'YYZ', name:'Toronto', country:'CA' },
+  { code:'LIS', name:'Lisboa', country:'PT' },
+  { code:'CDG', name:'Paris — Charles de Gaulle', country:'FR' },
+  { code:'LHR', name:'Londres — Heathrow', country:'GB' },
+  { code:'MAD', name:'Madri', country:'ES' },
+  { code:'FCO', name:'Roma — Fiumicino', country:'IT' },
+  { code:'AMS', name:'Amsterdã', country:'NL' },
+  { code:'FRA', name:'Frankfurt', country:'DE' },
+  { code:'BCN', name:'Barcelona', country:'ES' },
+  { code:'DXB', name:'Dubai', country:'AE' },
+  { code:'DOH', name:'Doha', country:'QA' },
+  { code:'IST', name:'Istambul', country:'TR' },
+  { code:'SIN', name:'Singapura', country:'SG' },
+  { code:'NRT', name:'Tóquio — Narita', country:'JP' },
+  { code:'ADD', name:'Adis Abeba', country:'ET' },
+  { code:'PTY', name:'Cidade do Panamá', country:'PA' },
+  { code:'BOG', name:'Bogotá', country:'CO' },
+  { code:'EZE', name:'Buenos Aires', country:'AR' },
+  { code:'SCL', name:'Santiago', country:'CL' },
+  { code:'LIM', name:'Lima', country:'PE' },
 ];
 
-// ── AIRLINES ──
+// Estimated prices per route type (domestic BR, short international, long international)
+function estimatePrices(from, to) {
+  const BR = ['GRU','CGH','BSB','GIG','SDU','SSA','FOR','REC','MCZ','BEL','MAO','CWB','POA','FLN','NAT','THE'];
+  const isBR_from = BR.includes(from);
+  const isBR_to = BR.includes(to);
+  if (isBR_from && isBR_to) {
+    // Domestic
+    const base = 150 + Math.floor(Math.random() * 250);
+    const miles = 8000 + Math.floor(Math.random() * 10000);
+    return { money: `R$ ${base.toLocaleString('pt-BR')}`, miles: `${miles.toLocaleString('pt-BR')} milhas`, type:'domestic' };
+  }
+  // South America
+  const SA = ['EZE','SCL','LIM','BOG','PTY'];
+  if (SA.includes(from) || SA.includes(to)) {
+    const base = 800 + Math.floor(Math.random() * 600);
+    const miles = 18000 + Math.floor(Math.random() * 12000);
+    return { money: `R$ ${base.toLocaleString('pt-BR')}`, miles: `${miles.toLocaleString('pt-BR')} milhas`, type:'regional' };
+  }
+  // North America / Europe
+  const LONG = ['MIA','JFK','LAX','ORD','YYZ','LIS','CDG','LHR','MAD','FCO','AMS','FRA','BCN'];
+  if (LONG.includes(from) || LONG.includes(to)) {
+    const base = 1800 + Math.floor(Math.random() * 2000);
+    const miles = 30000 + Math.floor(Math.random() * 25000);
+    return { money: `R$ ${base.toLocaleString('pt-BR')}`, miles: `${miles.toLocaleString('pt-BR')} milhas`, type:'long' };
+  }
+  // Ultra long (Middle East, Asia, Africa)
+  const base = 3000 + Math.floor(Math.random() * 3000);
+  const miles = 50000 + Math.floor(Math.random() * 40000);
+  return { money: `R$ ${base.toLocaleString('pt-BR')}`, miles: `${miles.toLocaleString('pt-BR')} milhas`, type:'ultralong' };
+}
+
 const AIRLINES = [
-  // Brazilian
   {
     id:'latam', name:'LATAM Airlines', flag:'🇧🇷', group:'br',
     badge:'Brasileira', badgeColor:'#e53935',
     program:'LATAM Pass',
     moneyUrl: (f,t,d,p)=>`https://www.latamairlines.com/br/pt/oferta-voos?origin=${f}&destination=${t}&outbound=${d}&adt=${p}`,
-    milesUrl:  (f,t,d)=>`https://www.latampass.com/br/pt/passagens-com-pontos?origin=${f}&destination=${t}&outbound=${d}`,
+    milesUrl: (f,t,d)=>`https://www.latampass.com/br/pt/passagens-com-pontos?origin=${f}&destination=${t}&outbound=${d}`,
   },
   {
     id:'gol', name:'Gol Linhas Aéreas', flag:'🇧🇷', group:'br',
     badge:'Brasileira', badgeColor:'#e65100',
     program:'Smiles',
-    moneyUrl: (f,t)=>`https://www.voegol.com.br/passagens-aereas/${f}-${t}`,
-    milesUrl:  (f,t,d)=>`https://www.smiles.com.br/emissao-passagem-com-milhas?originAirportCode=${f}&destinationAirportCode=${t}&departureDate=${d}&adults=1`,
+    moneyUrl: (f,t,d,p)=>`https://www.voegol.com.br/pt/busca?from=${f}&to=${t}&departure=${d}&adults=${p}&type=ONE_WAY`,
+    milesUrl: (f,t,d)=>`https://www.smiles.com.br/emissao-passagem-com-milhas?originAirportCode=${f}&destinationAirportCode=${t}&departureDate=${d}&adults=1&tripType=ONE_WAY`,
   },
   {
     id:'azul', name:'Azul Linhas Aéreas', flag:'🇧🇷', group:'br',
     badge:'Brasileira', badgeColor:'#1565c0',
     program:'TudoAzul',
     moneyUrl: (f,t,d)=>`https://www.voeazul.com.br/br/pt/home/select?origin=${f}&destination=${t}&departDate=${d}`,
-    milesUrl:  (f,t,d)=>`https://www.tudoazul.com/voos?from=${f}&to=${t}&departure=${d}&adults=1`,
+    milesUrl: (f,t,d)=>`https://www.tudoazul.com/voos?from=${f}&to=${t}&departure=${d}&adults=1`,
   },
   {
     id:'avianca', name:'Avianca', flag:'🇧🇷', group:'br',
     badge:'Brasileira', badgeColor:'#6a1b9a',
     program:'LifeMiles',
     moneyUrl: (f,t)=>`https://www.avianca.com/br/pt/voos/${f}/${t}/`,
-    milesUrl:  ()=>'https://www.lifemiles.com/pt',
+    milesUrl: ()=>'https://www.lifemiles.com/pt',
   },
-  // North America
   {
     id:'aa', name:'American Airlines', flag:'🇺🇸', group:'na',
     badge:'EUA', badgeColor:'#0d47a1',
     program:'AAdvantage',
-    moneyUrl: (f,t,d)=>`https://www.aa.com/booking/find-flights?org0=${f}&dst0=${t}&dateSelector0=${d}`,
-    milesUrl:  (f,t,d)=>`https://www.aa.com/booking/find-flights?org0=${f}&dst0=${t}&dateSelector0=${d}&awardTravel=true`,
+    moneyUrl: (f,t,d,p)=>`https://www.aa.com/booking/find-flights?org0=${f}&dst0=${t}&dateSelector0=${d}&passengerCount=${p}&tripType=OneWay`,
+    milesUrl: (f,t,d)=>`https://www.aa.com/booking/find-flights?org0=${f}&dst0=${t}&dateSelector0=${d}&awardTravel=true&tripType=OneWay`,
   },
   {
     id:'delta', name:'Delta Air Lines', flag:'🇺🇸', group:'na',
     badge:'EUA', badgeColor:'#b71c1c',
     program:'SkyMiles',
-    moneyUrl: (f,t,d)=>`https://www.delta.com/us/en/flight-search/book-a-flight?origin=${f}&destination=${t}&departureDate=${d}`,
-    milesUrl:  (f,t,d)=>`https://www.delta.com/us/en/flight-search/book-a-flight?origin=${f}&destination=${t}&departureDate=${d}&awardTravel=true`,
+    moneyUrl: (f,t,d,p)=>`https://www.delta.com/flight-search/book-a-flight#/results/outbound/${f}/${t}/${d}/1/0/0/coach`,
+    milesUrl: ()=>'https://www.delta.com/us/en/skymiles/overview',
   },
   {
     id:'united', name:'United Airlines', flag:'🇺🇸', group:'na',
     badge:'EUA', badgeColor:'#0a1931',
     program:'MileagePlus',
-    moneyUrl: (f,t,d)=>`https://www.united.com/en/us/flights/search?f=${f}&t=${t}&d=${d}`,
-    milesUrl:  (f,t,d)=>`https://www.united.com/en/us/flights/search?f=${f}&t=${t}&d=${d}&awardTravel=true`,
+    moneyUrl: (f,t,d,p)=>`https://www.united.com/en/us/fsr/choose-flights?f=${f}&t=${t}&d=${d}&tt=1&at=${p}&sc=7&px=1&taxng=1&newHP=True`,
+    milesUrl: ()=>'https://www.united.com/en/us/mileageplus',
   },
   {
     id:'aircanada', name:'Air Canada', flag:'🇨🇦', group:'na',
     badge:'Canadá', badgeColor:'#c62828',
     program:'Aeroplan',
     moneyUrl: ()=>'https://www.aircanada.com/br/pt/aco/flights/',
-    milesUrl:  ()=>'https://www.aircanada.com/br/pt/aco/flights/',
+    milesUrl: ()=>'https://www.aircanada.com/br/pt/aco/flights/',
   },
-  // Europe
   {
     id:'airfrance', name:'Air France', flag:'🇫🇷', group:'eu',
     badge:'França', badgeColor:'#1a237e',
     program:'Flying Blue',
-    moneyUrl: (f,t,d)=>`https://wwws.airfrance.com/search/offers?origin=${f}&destination=${t}&outwardDate=${d}`,
-    milesUrl:  (f,t,d)=>`https://wwws.airfrance.com/search/offers?origin=${f}&destination=${t}&outwardDate=${d}&cabinClass=ECONOMY&passengerType=ADT`,
+    moneyUrl: (f,t,d)=>`https://wwws.airfrance.com/search/offers?origin=${f}&destination=${t}&outwardDate=${d}&cabinClass=ECONOMY`,
+    milesUrl: ()=>'https://wwws.airfrance.com/flying-blue',
   },
   {
     id:'klm', name:'KLM', flag:'🇳🇱', group:'eu',
     badge:'Holanda', badgeColor:'#1565c0',
     program:'Flying Blue',
-    moneyUrl: (f,t,d)=>`https://www.klm.com/search/offers?origin=${f}&destination=${t}&outwardDate=${d}`,
-    milesUrl:  (f,t,d)=>`https://www.klm.com/search/offers?origin=${f}&destination=${t}&outwardDate=${d}`,
+    moneyUrl: (f,t,d)=>`https://www.klm.com/search/offers?origin=${f}&destination=${t}&outwardDate=${d}&cabinClass=ECONOMY`,
+    milesUrl: ()=>'https://www.klm.com/flying-blue',
   },
   {
     id:'lufthansa', name:'Lufthansa', flag:'🇩🇪', group:'eu',
     badge:'Alemanha', badgeColor:'#1565c0',
     program:'Miles & More',
-    moneyUrl: ()=>'https://www.lufthansa.com/br/pt/homepage',
-    milesUrl:  ()=>'https://www.lufthansa.com/br/pt/homepage',
+    moneyUrl: (f,t,d,p)=>`https://www.lufthansa.com/br/pt/fly/book/flight?origin=${f}&destination=${t}&outwardDate=${d}&adults=${p}`,
+    milesUrl: ()=>'https://www.miles-and-more.com/br/pt.html',
   },
   {
     id:'ba', name:'British Airways', flag:'🇬🇧', group:'eu',
     badge:'Reino Unido', badgeColor:'#1a237e',
     program:'Avios',
-    moneyUrl: ()=>'https://www.britishairways.com/travel/home/public/pt_br',
-    milesUrl:  ()=>'https://www.britishairways.com/travel/home/public/pt_br',
+    moneyUrl: (f,t,d,p)=>`https://www.britishairways.com/travel/book/public/pt_br?eId=106905&lang=en_gb&cabin_class=M&Adt=${p}&Inf=0&ChM=0&depart_date=${d}&origin=${f}&destination=${t}&outbound_flighttype=J`,
+    milesUrl: ()=>'https://www.britishairways.com/travel/home/public/pt_br',
   },
   {
     id:'tap', name:'TAP Portugal', flag:'🇵🇹', group:'eu',
     badge:'Portugal', badgeColor:'#2e7d32',
     program:'TAP Miles&Go',
-    moneyUrl: (f,t)=>`https://www.flytap.com/pt-br/voos-baratos/${f}/${t}`,
-    milesUrl:  (f,t)=>`https://www.flytap.com/pt-br/voos-baratos/${f}/${t}`,
+    moneyUrl: (f,t,d,p)=>`https://www.flytap.com/pt-br/book-and-buy/?tripType=S&adult=${p}&child=0&infant=0&fromAirport=${f}&toAirport=${t}&outDate=${d}`,
+    milesUrl: ()=>'https://www.flytap.com/pt-br/miles-and-go/',
   },
   {
     id:'iberia', name:'Iberia', flag:'🇪🇸', group:'eu',
     badge:'Espanha', badgeColor:'#b71c1c',
     program:'Iberia Plus',
-    moneyUrl: ()=>'https://www.iberia.com/br/',
-    milesUrl:  ()=>'https://www.iberia.com/br/',
+    moneyUrl: (f,t,d,p)=>`https://www.iberia.com/br/flights/search/?adults=${p}&children=0&infants=0&cabin=Y&origin=${f}&destination=${t}&outboundDate=${d}&tripType=OW`,
+    milesUrl: ()=>'https://www.iberia.com/br/iberia-plus/',
   },
-  // Middle East & Asia
   {
     id:'emirates', name:'Emirates', flag:'🇦🇪', group:'me',
     badge:'Dubai', badgeColor:'#b71c1c',
     program:'Skywards',
-    moneyUrl: ()=>'https://www.emirates.com/br/portuguese/',
-    milesUrl:  ()=>'https://www.emirates.com/br/portuguese/',
+    moneyUrl: (f,t,d,p)=>`https://www.emirates.com/br/portuguese/book/select-flights/?origin=${f}&destination=${t}&classoftravel=Economy&adults=${p}&infants=0&children=0&depDate=${d}&return=false`,
+    milesUrl: ()=>'https://www.emirates.com/br/portuguese/skywards/',
   },
   {
     id:'qatar', name:'Qatar Airways', flag:'🇶🇦', group:'me',
     badge:'Qatar', badgeColor:'#6a1b9a',
     program:'Privilege Club',
-    moneyUrl: ()=>'https://www.qatarairways.com/pt-br/homepage.html',
-    milesUrl:  ()=>'https://www.qatarairways.com/pt-br/homepage.html',
+    moneyUrl: (f,t,d,p)=>`https://www.qatarairways.com/pt-br/flights.html?widget=QR&searchType=F&addTaxToFare=Y&minPurTime=null&upsellCallId=null&bookingClass=Economy&tripType=O&adults=${p}&children=0&infants=0&from=${f}&to=${t}&departDate=${d}`,
+    milesUrl: ()=>'https://www.qatarairways.com/pt-br/privilege-club.html',
   },
   {
     id:'turkish', name:'Turkish Airlines', flag:'🇹🇷', group:'me',
     badge:'Turquia', badgeColor:'#c62828',
     program:'Miles&Smiles',
-    moneyUrl: ()=>'https://www.turkishairlines.com/pt-br/',
-    milesUrl:  ()=>'https://www.turkishairlines.com/pt-br/',
+    moneyUrl: (f,t,d,p)=>`https://www.turkishairlines.com/pt-br/flights/book-a-flight/?origin=${f}&destination=${t}&tripType=ONE_WAY&adult=${p}&child=0&infant=0&departureDate=${d}`,
+    milesUrl: ()=>'https://www.turkishairlines.com/pt-br/miles-smiles/',
   },
   {
     id:'singapore', name:'Singapore Airlines', flag:'🇸🇬', group:'me',
     badge:'Singapura', badgeColor:'#b71c1c',
     program:'KrisFlyer',
-    moneyUrl: ()=>'https://www.singaporeair.com/pt_BR/',
-    milesUrl:  ()=>'https://www.singaporeair.com/pt_BR/',
+    moneyUrl: ()=>'https://www.singaporeair.com/pt_BR/plan-and-book/flights/',
+    milesUrl: ()=>'https://www.singaporeair.com/pt_BR/ppsclub-krisflyer/',
   },
-  // Rest of World
   {
     id:'copa', name:'Copa Airlines', flag:'🇵🇦', group:'ot',
     badge:'Panamá', badgeColor:'#1565c0',
     program:'ConnectMiles',
-    moneyUrl: ()=>'https://www.copaair.com/pt-br/web/br/',
-    milesUrl:  ()=>'https://www.copaair.com/pt-br/web/br/',
+    moneyUrl: (f,t,d,p)=>`https://www.copaair.com/pt-br/web/br/flight-search?type=OW&origin=${f}&destination=${t}&departDate=${d}&adults=${p}&children=0&infants=0`,
+    milesUrl: ()=>'https://www.copaair.com/pt-br/web/br/connectmiles',
   },
   {
     id:'ethiopian', name:'Ethiopian Airlines', flag:'🇪🇹', group:'ot',
     badge:'Etiópia', badgeColor:'#2e7d32',
     program:'ShebaMiles',
-    moneyUrl: ()=>'https://www.ethiopianairlines.com/br',
-    milesUrl:  ()=>'https://www.ethiopianairlines.com/br',
+    moneyUrl: ()=>'https://www.ethiopianairlines.com/br/book/booking/flight-selection',
+    milesUrl: ()=>'https://www.ethiopianairlines.com/br/sheba-miles',
   },
-  // Miles Programs
   {
     id:'smiles', name:'Smiles (Gol)', flag:'🇧🇷', group:'mp',
     badge:'Milhas', badgeColor:'#e65100',
     program:'Programa Smiles',
     moneyUrl: null,
-    milesUrl: (f,t,d)=>`https://www.smiles.com.br/emissao-passagem-com-milhas?originAirportCode=${f}&destinationAirportCode=${t}&departureDate=${d}&adults=1`,
+    milesUrl: (f,t,d)=>`https://www.smiles.com.br/emissao-passagem-com-milhas?originAirportCode=${f}&destinationAirportCode=${t}&departureDate=${d}&adults=1&tripType=ONE_WAY`,
   },
   {
     id:'tudoazul', name:'TudoAzul', flag:'🇧🇷', group:'mp',
@@ -742,16 +728,16 @@ const AIRLINES = [
 ];
 
 const OFFERS = [
-  { from:'GRU', to:'REC', money:'R$ 189',  miles:'12.000 milhas', airline:'Gol' },
-  { from:'GRU', to:'MCZ', money:'R$ 210',  miles:'14.500 milhas', airline:'Azul' },
-  { from:'GRU', to:'SSA', money:'R$ 234',  miles:'15.000 milhas', airline:'LATAM' },
-  { from:'GRU', to:'FOR', money:'R$ 267',  miles:'18.000 milhas', airline:'Gol' },
-  { from:'GRU', to:'BSB', money:'R$ 159',  miles:'10.000 milhas', airline:'Azul' },
-  { from:'GRU', to:'LIS', money:'R$ 2.340',miles:'35.000 milhas', airline:'TAP' },
-  { from:'GRU', to:'MIA', money:'R$ 1.890',miles:'28.000 milhas', airline:'LATAM' },
-  { from:'GRU', to:'DXB', money:'R$ 3.200',miles:'55.000 milhas', airline:'Emirates' },
-  { from:'GRU', to:'CDG', money:'R$ 2.780',miles:'48.000 milhas', airline:'Air France' },
-  { from:'GRU', to:'MAD', money:'R$ 2.490',miles:'40.000 milhas', airline:'Iberia' },
+  { from:'GRU', to:'REC', money:'R$ 189',  miles:'12.000 milhas', airline:'Gol', airlineId:'gol' },
+  { from:'GRU', to:'MCZ', money:'R$ 210',  miles:'14.500 milhas', airline:'Azul', airlineId:'azul' },
+  { from:'GRU', to:'SSA', money:'R$ 234',  miles:'15.000 milhas', airline:'LATAM', airlineId:'latam' },
+  { from:'GRU', to:'FOR', money:'R$ 267',  miles:'18.000 milhas', airline:'Gol', airlineId:'gol' },
+  { from:'GRU', to:'BSB', money:'R$ 159',  miles:'10.000 milhas', airline:'Azul', airlineId:'azul' },
+  { from:'GRU', to:'LIS', money:'R$ 2.340',miles:'35.000 milhas', airline:'TAP Portugal', airlineId:'tap' },
+  { from:'GRU', to:'MIA', money:'R$ 1.890',miles:'28.000 milhas', airline:'LATAM', airlineId:'latam' },
+  { from:'GRU', to:'DXB', money:'R$ 3.200',miles:'55.000 milhas', airline:'Emirates', airlineId:'emirates' },
+  { from:'GRU', to:'CDG', money:'R$ 2.780',miles:'48.000 milhas', airline:'Air France', airlineId:'airfrance' },
+  { from:'GRU', to:'MAD', money:'R$ 2.490',miles:'40.000 milhas', airline:'Iberia', airlineId:'iberia' },
 ];
 
 const FOOTER_LINKS = [
@@ -780,23 +766,20 @@ const FOOTER_LINKS = [
   { name:'LATAM Pass', url:'https://www.latampass.com' },
 ];
 
-// ── STATE ──
 let currentMode = 'both';
 let searchFrom = '', searchTo = '', searchDate = '', searchPax = 1;
+let currentPrices = null;
 
-// ── INIT ──
 (function init() {
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('date-from').min = today;
   document.getElementById('date-to').min = today;
   document.getElementById('date-from').value = today;
-
   renderOffers();
   renderFooterLinks();
   loadRecentSearches();
 })();
 
-// ── AUTOCOMPLETE ──
 const _acTimers = {};
 function autocomplete(input, listId) {
   clearTimeout(_acTimers[listId]);
@@ -811,7 +794,8 @@ function _doAutocomplete(input, listId) {
   ).slice(0, 8);
   if (!matches.length) { list.style.display = 'none'; return; }
   list.innerHTML = matches.map((a, i) =>
-    `<div class="autocomplete-item" data-code="${a.code}" data-idx="${i}" onclick="selectAirport('${a.code}','${a.name}','${input.id}','${listId}')">
+    `<div class="autocomplete-item" data-code="${a.code}" data-idx="${i}"
+      onclick="selectAirport('${a.code}','${a.name}','${input.id}','${listId}')">
       <span class="iata">${a.code}</span>${a.name}
     </div>`
   ).join('');
@@ -830,18 +814,10 @@ function acKeydown(e, listId) {
   if (e.key === 'ArrowDown') {
     e.preventDefault();
     if (!active) { items[0] && items[0].classList.add('active'); }
-    else {
-      active.classList.remove('active');
-      const next = active.nextElementSibling;
-      if (next) next.classList.add('active');
-    }
+    else { active.classList.remove('active'); const next = active.nextElementSibling; if (next) next.classList.add('active'); }
   } else if (e.key === 'ArrowUp') {
     e.preventDefault();
-    if (active) {
-      active.classList.remove('active');
-      const prev = active.previousElementSibling;
-      if (prev) prev.classList.add('active');
-    }
+    if (active) { active.classList.remove('active'); const prev = active.previousElementSibling; if (prev) prev.classList.add('active'); }
   } else if (e.key === 'Enter') {
     if (active) { active.click(); }
   } else if (e.key === 'Escape') {
@@ -855,7 +831,6 @@ document.addEventListener('click', e => {
   }
 });
 
-// ── MODE ──
 function setMode(mode) {
   currentMode = mode;
   document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
@@ -871,7 +846,6 @@ function updateCardButtons() {
   });
 }
 
-// ── SEARCH ──
 function extractCode(val) {
   const m = val.trim().match(/^([A-Z]{3})/i);
   return m ? m[1].toUpperCase() : val.trim().toUpperCase().slice(0,3);
@@ -892,23 +866,16 @@ function doSearch() {
   searchTo   = extractCode(toVal);
   searchDate = dateVal || new Date().toISOString().split('T')[0];
   searchPax  = paxVal;
+  currentPrices = estimatePrices(searchFrom, searchTo);
 
-  // Save recent search
   saveRecentSearch(searchFrom, searchTo, searchDate);
-
-  // Render cards
   renderCards();
 
-  // Show results section
   document.getElementById('results-section').style.display = 'block';
   document.getElementById('results-subtitle').textContent =
     `Rota: ${searchFrom} → ${searchTo} | ${formatDate(searchDate)} | ${paxVal} passageiro${paxVal>1?'s':''}`;
 
-  // Smooth scroll
   document.getElementById('results-section').scrollIntoView({ behavior: 'smooth' });
-
-  // Open all tabs
-  openAllTabs();
 }
 
 function formatDate(d) {
@@ -920,13 +887,11 @@ function formatDate(d) {
 function renderCards() {
   const groups = { br:[], na:[], eu:[], me:[], ot:[], mp:[] };
   AIRLINES.forEach(a => { if(groups[a.group]) groups[a.group].push(a); });
-
   Object.entries(groups).forEach(([g, airlines]) => {
     const container = document.getElementById(`group-${g}`);
     if (!container) return;
     container.innerHTML = airlines.map(a => buildCard(a)).join('');
   });
-
   updateCardButtons();
 }
 
@@ -940,6 +905,22 @@ function buildCard(a) {
     ? `<a href="${milesHref}" target="_blank" rel="noopener" class="btn-miles">✈️ Ver em Milhas</a>`
     : '';
 
+  // Show estimated prices on card (not for miles-only programs)
+  let priceBlock = '';
+  if (currentPrices && a.group !== 'mp') {
+    priceBlock = `<div class="card-prices">
+      ${a.moneyUrl ? `<span class="card-price-money">💰 ${currentPrices.money}</span>` : ''}
+      ${a.moneyUrl && a.milesUrl ? `<span class="card-price-sep">|</span>` : ''}
+      ${a.milesUrl ? `<span class="card-price-miles">✈️ ${currentPrices.miles}</span>` : ''}
+      <span class="card-price-label">* Estimativa — verifique valor real ao clicar</span>
+    </div>`;
+  } else if (currentPrices && a.group === 'mp') {
+    priceBlock = `<div class="card-prices">
+      <span class="card-price-miles">✈️ ${currentPrices.miles}</span>
+      <span class="card-price-label">* Estimativa — verifique valor real ao clicar</span>
+    </div>`;
+  }
+
   return `<div class="airline-card">
     <div class="card-header">
       <div class="airline-name">${a.flag} ${a.name}</div>
@@ -951,36 +932,17 @@ function buildCard(a) {
       <span>→</span>
       <span class="code">${searchTo}</span>
     </div>
+    ${priceBlock}
     <div class="card-btns">${moneyBtn}${milesBtn}</div>
   </div>`;
 }
 
-function openAllTabs() {
-  const relevant = AIRLINES.filter(a => {
-    if (currentMode === 'money' && !a.moneyUrl) return false;
-    if (currentMode === 'miles' && !a.milesUrl) return false;
-    return true;
-  });
-  let blocked = 0;
-  relevant.forEach(a => {
-    const url = currentMode === 'miles'
-      ? (a.milesUrl && a.milesUrl(searchFrom, searchTo, searchDate, searchPax))
-      : (a.moneyUrl && a.moneyUrl(searchFrom, searchTo, searchDate, searchPax))
-        || (a.milesUrl && a.milesUrl(searchFrom, searchTo, searchDate, searchPax));
-    if (url && url !== '#') {
-      const w = window.open(url, '_blank', 'noopener');
-      if (!w) blocked++;
-    }
-  });
-  if (blocked > 0) {
-    alert(`⚠️ Seu navegador bloqueou ${blocked} janela(s).\nPermita pop-ups para este site e clique em "Buscar" novamente para abrir todas as companhias.\n\nVocê também pode clicar em cada card individualmente.`);
-  }
-}
-
-// ── OFFERS ──
 function renderOffers() {
-  document.getElementById('offers-grid').innerHTML = OFFERS.map(o =>
-    `<div class="offer-card">
+  document.getElementById('offers-grid').innerHTML = OFFERS.map(o => {
+    const airline = AIRLINES.find(a => a.id === o.airlineId);
+    const today = new Date().toISOString().split('T')[0];
+    const url = airline && airline.moneyUrl ? airline.moneyUrl(o.from, o.to, today, 1) : '#';
+    return `<div class="offer-card">
       <div class="offer-route">${o.from} → ${o.to}</div>
       <div class="offer-airline">✈️ ${o.airline}</div>
       <div class="offer-prices">
@@ -988,17 +950,23 @@ function renderOffers() {
         <span class="price-sep">|</span>
         <span class="price-miles">🎫 ${o.miles}</span>
       </div>
-    </div>`
+      <a href="${url}" target="_blank" rel="noopener" class="offer-btn">Ver oferta →</a>
+    </div>`;
+  }).join('');
+}
+
+function renderFooterLinks() {
+  document.getElementById('footer-links').innerHTML = FOOTER_LINKS.map(l =>
+    `<a href="${l.url}" target="_blank" rel="noopener">${l.name}</a>`
   ).join('');
 }
 
-// ── RECENT SEARCHES ──
 function saveRecentSearch(from, to, date) {
   let recents = JSON.parse(localStorage.getItem('milhas_recents') || '[]');
   const entry = `${from} → ${to}`;
   recents = recents.filter(r => r !== entry);
   recents.unshift(entry);
-  recents = recents.slice(0, 5);
+  if (recents.length > 5) recents = recents.slice(0, 5);
   localStorage.setItem('milhas_recents', JSON.stringify(recents));
   loadRecentSearches();
 }
@@ -1010,25 +978,17 @@ function loadRecentSearches() {
   if (!recents.length) { section.style.display = 'none'; return; }
   section.style.display = 'block';
   container.innerHTML = recents.map(r => {
-    const parts = r.split(' → ');
-    const from = parts[0] || '';
-    const to   = parts[1] || '';
+    const [from, to] = r.split(' → ');
     return `<span class="chip" onclick="fillSearch('${from}','${to}')">${r}</span>`;
   }).join('');
 }
 
 function fillSearch(from, to) {
   const fromAirport = AIRPORTS.find(a => a.code === from);
-  const toAirport   = AIRPORTS.find(a => a.code === to);
+  const toAirport = AIRPORTS.find(a => a.code === to);
   document.getElementById('from-input').value = fromAirport ? `${from} — ${fromAirport.name}` : from;
-  document.getElementById('to-input').value   = toAirport   ? `${to} — ${toAirport.name}` : to;
-}
-
-// ── FOOTER ──
-function renderFooterLinks() {
-  document.getElementById('footer-links').innerHTML = FOOTER_LINKS.map(l =>
-    `<a href="${l.url}" target="_blank" rel="noopener">${l.name}</a>`
-  ).join('');
+  document.getElementById('to-input').value = toAirport ? `${to} — ${toAirport.name}` : to;
+  doSearch();
 }
 </script>
 </body>
