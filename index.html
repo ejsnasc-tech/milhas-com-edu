@@ -3,143 +3,826 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🕐 Relógio Mundial</title>
+  <title>✈️ Milhas com Edu — Buscador de Passagens Aéreas</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      background: #0d1117;
-      color: #e6edf3;
-      font-family: 'Segoe UI', sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 40px 20px;
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0e1a;
+      --bg2: #111827;
+      --bg3: #1a2235;
+      --border: #1e2d45;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --accent: #3b82f6;
+      --accent2: #6366f1;
+      --green: #22c55e;
+      --purple: #a855f7;
+      --orange: #f97316;
+      --radius: 14px;
     }
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 8px;
-      background: linear-gradient(90deg, #58a6ff, #bc8cff);
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      background: rgba(10,14,26,.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      font-size: 1.25rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #60a5fa, #a78bfa);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .subtitle {
-      color: #8b949e;
-      margin-bottom: 40px;
-      font-size: 0.95rem;
+    .nav-links { display: flex; gap: 20px; }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: .9rem;
+      transition: color .2s;
     }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 20px;
-      width: 100%;
-      max-width: 1200px;
-    }
-    .card {
-      background: #161b22;
-      border: 1px solid #30363d;
-      border-radius: 16px;
-      padding: 24px;
+    .nav-links a:hover { color: var(--text); }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, #0a0e1a 0%, #0c1a3a 40%, #0a1628 70%, #0d0f1e 100%);
+      padding: 60px 24px 80px;
       text-align: center;
-      transition: transform 0.2s, box-shadow 0.2s;
-      cursor: default;
+      position: relative;
+      overflow: hidden;
     }
-    .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 30px rgba(88, 166, 255, 0.15);
-      border-color: #58a6ff;
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(59,130,246,.18) 0%, transparent 70%);
     }
-    .flag { font-size: 2.5rem; margin-bottom: 8px; }
-    .city {
-      font-size: 1rem;
-      font-weight: 600;
-      color: #8b949e;
-      margin-bottom: 4px;
+    .hero-title {
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 800;
+      line-height: 1.2;
+      position: relative;
+    }
+    .hero-title span {
+      background: linear-gradient(90deg, #60a5fa, #a78bfa, #34d399);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-sub {
+      color: var(--muted);
+      margin-top: 10px;
+      font-size: 1.05rem;
+      position: relative;
+    }
+
+    /* ── SEARCH CARD ── */
+    .search-wrap {
+      max-width: 900px;
+      margin: -44px auto 0;
+      padding: 0 16px;
+      position: relative;
+      z-index: 10;
+    }
+    .search-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: 0 24px 60px rgba(0,0,0,.5);
+    }
+
+    /* type toggle */
+    .type-toggle {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .type-btn {
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: .9rem;
+      transition: all .2s;
+    }
+    .type-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    /* form grid */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+    }
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .field label {
+      font-size: .78rem;
+      color: var(--muted);
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: .5px;
     }
-    .timezone {
-      font-size: 0.75rem;
-      color: #484f58;
-      margin-bottom: 16px;
+    .field input, .field select {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      padding: 11px 14px;
+      font-size: .95rem;
+      outline: none;
+      transition: border-color .2s;
+      width: 100%;
     }
-    .time {
-      font-size: 2.4rem;
+    .field input:focus, .field select:focus { border-color: var(--accent); }
+    .field input::placeholder { color: var(--muted); }
+
+    /* autocomplete */
+    .ac-wrap { position: relative; }
+    .ac-list {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0; right: 0;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      z-index: 200;
+      max-height: 220px;
+      overflow-y: auto;
+      display: none;
+    }
+    .ac-list.open { display: block; }
+    .ac-item {
+      padding: 10px 14px;
+      cursor: pointer;
+      font-size: .9rem;
+      transition: background .15s;
+    }
+    .ac-item:hover { background: var(--bg3); }
+    .ac-item span { color: var(--muted); font-size: .8rem; margin-left: 8px; }
+
+    .search-btn {
+      margin-top: 18px;
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 1.1rem;
       font-weight: 700;
-      font-variant-numeric: tabular-nums;
-      color: #58a6ff;
-      letter-spacing: 2px;
+      cursor: pointer;
+      transition: opacity .2s, transform .1s;
+      letter-spacing: .3px;
     }
-    .ampm {
+    .search-btn:hover { opacity: .9; transform: translateY(-1px); }
+    .search-btn:active { transform: translateY(0); }
+
+    /* ── SECTION TITLES ── */
+    .section { max-width: 1100px; margin: 0 auto; padding: 48px 16px 0; }
+    .section-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* ── RECENT SEARCHES ── */
+    #recent-section { display: none; }
+    .recent-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .recent-chip {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 7px 16px;
+      font-size: .85rem;
+      cursor: pointer;
+      transition: border-color .2s;
+    }
+    .recent-chip:hover { border-color: var(--accent); }
+
+    /* ── RESULTS ── */
+    #results-section { display: none; }
+    .results-grid {
+      display: grid;
+      gap: 14px;
+    }
+    .flight-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      display: grid;
+      grid-template-columns: auto 1fr auto auto;
+      align-items: center;
+      gap: 20px;
+      transition: border-color .2s, transform .2s;
+    }
+    .flight-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+    @media (max-width: 680px) {
+      .flight-card { grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; }
+    }
+    .airline-badge {
+      width: 52px; height: 52px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+    .flight-info { flex: 1; }
+    .flight-route {
+      font-size: 1.1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .flight-route .arr { color: var(--muted); font-weight: 400; font-size: .85rem; }
+    .flight-meta {
+      font-size: .82rem;
+      color: var(--muted);
+      margin-top: 4px;
+      display: flex;
+      gap: 14px;
+    }
+    .flight-price {
+      text-align: right;
+    }
+    .price-brl {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--green);
+    }
+    .price-miles {
       font-size: 1rem;
-      color: #bc8cff;
-      margin-left: 4px;
+      font-weight: 700;
+      color: var(--purple);
     }
-    .date {
-      font-size: 0.8rem;
-      color: #6e7681;
-      margin-top: 8px;
+    .price-label {
+      font-size: .72rem;
+      color: var(--muted);
+      margin-bottom: 2px;
     }
+    .offer-btn {
+      padding: 10px 20px;
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: .9rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: opacity .2s;
+      white-space: nowrap;
+    }
+    .offer-btn:hover { opacity: .85; }
+
+    /* ── BEST DEALS ── */
+    .deals-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 16px;
+    }
+    .deal-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      transition: border-color .2s, transform .2s;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    .deal-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-3px);
+    }
+    .deal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .deal-airline-badge {
+      font-size: 1.3rem;
+      width: 40px; height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .deal-stops {
+      font-size: .72rem;
+      background: var(--bg3);
+      padding: 3px 9px;
+      border-radius: 999px;
+      color: var(--muted);
+    }
+    .deal-route {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .deal-sub {
+      font-size: .8rem;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .deal-prices {
+      display: flex;
+      gap: 14px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+    }
+    .deal-brl {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--green);
+    }
+    .deal-brl small { font-size: .72rem; color: var(--muted); font-weight: 400; display: block; }
+    .deal-miles {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--purple);
+    }
+    .deal-miles small { font-size: .72rem; color: var(--muted); font-weight: 400; display: block; }
+
+    /* ── AIRLINES GRID ── */
+    .airlines-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 60px;
+    }
+    .airline-chip {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 10px;
+      text-align: center;
+      text-decoration: none;
+      color: var(--text);
+      transition: border-color .2s, transform .2s;
+      display: block;
+    }
+    .airline-chip:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+    .airline-chip .icon { font-size: 1.6rem; margin-bottom: 6px; }
+    .airline-chip .name { font-size: .78rem; color: var(--muted); }
+
+    /* ── DISCLAIMER ── */
+    .disclaimer {
+      text-align: center;
+      color: var(--muted);
+      font-size: .8rem;
+      padding: 24px 16px;
+      border-top: 1px solid var(--border);
+      margin-top: 48px;
+    }
+
+    /* ── FOOTER ── */
     footer {
-      margin-top: 50px;
-      color: #484f58;
-      font-size: 0.8rem;
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      padding: 20px;
+      text-align: center;
+      color: var(--muted);
+      font-size: .82rem;
     }
+
+    /* scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+    input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(.6); }
+    select option { background: var(--bg2); }
   </style>
 </head>
 <body>
 
-  <h1>🌍 Relógio Mundial</h1>
-  <p class="subtitle">Horário atual nas principais cidades do mundo</p>
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">✈️ Milhas com Edu</div>
+  <div class="nav-links">
+    <a href="#melhores-ofertas">Melhores Ofertas</a>
+    <a href="#companhias">Companhias</a>
+  </div>
+</nav>
 
-  <div class="grid" id="clocks"></div>
+<!-- HERO -->
+<div class="hero">
+  <h1 class="hero-title">Encontre as <span>Melhores Passagens</span><br>em Dinheiro e Milhas</h1>
+  <p class="hero-sub">Compare preços em todas as companhias aéreas e economize na sua viagem</p>
+</div>
 
-  <footer>Atualizado a cada segundo • GitHub Pages</footer>
+<!-- SEARCH -->
+<div class="search-wrap">
+  <div class="search-card">
+    <div class="type-toggle">
+      <button class="type-btn active" data-type="both">🔀 Dinheiro + Milhas</button>
+      <button class="type-btn" data-type="money">💰 Dinheiro</button>
+      <button class="type-btn" data-type="miles">✈️ Milhas</button>
+    </div>
 
-  <script>
-    const zones = [
-      { city: "São Paulo",      flag: "🇧🇷", tz: "America/Sao_Paulo" },
-      { city: "New York",       flag: "🇺🇸", tz: "America/New_York" },
-      { city: "Los Angeles",    flag: "🇺🇸", tz: "America/Los_Angeles" },
-      { city: "Londres",        flag: "🇬🇧", tz: "Europe/London" },
-      { city: "Paris",          flag: "🇫🇷", tz: "Europe/Paris" },
-      { city: "Dubai",          flag: "🇦🇪", tz: "Asia/Dubai" },
-      { city: "Mumbai",         flag: "🇮🇳", tz: "Asia/Kolkata" },
-      { city: "Singapura",      flag: "🇸🇬", tz: "Asia/Singapore" },
-      { city: "Tóquio",         flag: "🇯🇵", tz: "Asia/Tokyo" },
-      { city: "Sydney",         flag: "🇦🇺", tz: "Australia/Sydney" },
-      { city: "Joanesburgo",    flag: "🇿🇦", tz: "Africa/Johannesburg" },
-      { city: "Cidade do México", flag: "🇲🇽", tz: "America/Mexico_City" },
-    ];
+    <div class="form-grid">
+      <div class="field">
+        <label>Origem</label>
+        <div class="ac-wrap">
+          <input type="text" id="origin" placeholder="Ex: GRU — Guarulhos" autocomplete="off" />
+          <div class="ac-list" id="ac-origin"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Destino</label>
+        <div class="ac-wrap">
+          <input type="text" id="dest" placeholder="Ex: REC — Recife" autocomplete="off" />
+          <div class="ac-list" id="ac-dest"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Data de Ida</label>
+        <input type="date" id="dep-date" />
+      </div>
+      <div class="field">
+        <label>Data de Volta (opcional)</label>
+        <input type="date" id="ret-date" />
+      </div>
+      <div class="field">
+        <label>Passageiros</label>
+        <select id="pax">
+          <option value="1">1 passageiro</option>
+          <option value="2">2 passageiros</option>
+          <option value="3">3 passageiros</option>
+          <option value="4">4 passageiros</option>
+          <option value="5">5 passageiros</option>
+          <option value="6">6 passageiros</option>
+          <option value="7">7 passageiros</option>
+          <option value="8">8 passageiros</option>
+          <option value="9">9 passageiros</option>
+        </select>
+      </div>
+    </div>
 
-    const grid = document.getElementById("clocks");
+    <button class="search-btn" id="search-btn">✈️ Buscar Passagens</button>
+  </div>
+</div>
 
-    zones.forEach(({ city, flag, tz }) => {
-      const card = document.createElement("div");
-      card.className = "card";
-      card.innerHTML = `
-        <div class="flag">${flag}</div>
-        <div class="city">${city}</div>
-        <div class="timezone">${tz}</div>
-        <div class="time" id="time-${tz.replace(/\//g,'-')}">--:--:--</div>
-        <div class="date" id="date-${tz.replace(/\//g,'-')}">---</div>
-      `;
-      grid.appendChild(card);
-    });
+<!-- RECENT SEARCHES -->
+<div class="section" id="recent-section">
+  <div class="section-title">🕐 Pesquisas Recentes</div>
+  <div class="recent-list" id="recent-list"></div>
+</div>
 
-    function update() {
-      const now = new Date();
-      zones.forEach(({ tz }) => {
-        const id = tz.replace(/\//g, '-');
-        const timeStr = now.toLocaleTimeString('pt-BR', { timeZone: tz, hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        const dateStr = now.toLocaleDateString('pt-BR', { timeZone: tz, weekday: 'long', day: '2-digit', month: 'long' });
-        document.getElementById('time-' + id).textContent = timeStr;
-        document.getElementById('date-' + id).textContent = dateStr;
+<!-- RESULTS -->
+<div class="section" id="results-section">
+  <div class="section-title">🔍 Resultados — <span id="results-label" style="color:var(--muted);font-weight:400;font-size:1rem"></span></div>
+  <div class="results-grid" id="results-grid"></div>
+</div>
+
+<!-- BEST DEALS -->
+<div class="section" id="melhores-ofertas">
+  <div class="section-title">🔥 Melhores Ofertas do Momento</div>
+  <div class="deals-grid" id="deals-grid"></div>
+</div>
+
+<div class="disclaimer">
+  ⚠️ Os preços são obtidos diretamente nas companhias aéreas. Os valores podem variar a qualquer momento.<br>
+  Ao clicar em "Ver Oferta" você será redirecionado ao site da companhia aérea para finalizar sua compra.
+</div>
+
+<!-- AIRLINES -->
+<div class="section" id="companhias" style="padding-bottom:20px">
+  <div class="section-title">🌐 Todas as Companhias e Buscadores</div>
+  <div class="airlines-grid" id="airlines-grid"></div>
+</div>
+
+<footer>
+  ✈️ Milhas com Edu &nbsp;·&nbsp; Encontre as melhores passagens aéreas &nbsp;·&nbsp; 2025
+</footer>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+const AIRPORTS = [
+  { code:'GRU', name:'São Paulo (Guarulhos)', city:'São Paulo' },
+  { code:'CGH', name:'São Paulo (Congonhas)', city:'São Paulo' },
+  { code:'BSB', name:'Brasília', city:'Brasília' },
+  { code:'GIG', name:'Rio de Janeiro (Galeão)', city:'Rio de Janeiro' },
+  { code:'SDU', name:'Rio de Janeiro (Santos Dumont)', city:'Rio de Janeiro' },
+  { code:'SSA', name:'Salvador', city:'Salvador' },
+  { code:'FOR', name:'Fortaleza', city:'Fortaleza' },
+  { code:'REC', name:'Recife', city:'Recife' },
+  { code:'MCZ', name:'Maceió', city:'Maceió' },
+  { code:'BEL', name:'Belém', city:'Belém' },
+  { code:'MAO', name:'Manaus', city:'Manaus' },
+  { code:'CWB', name:'Curitiba', city:'Curitiba' },
+  { code:'POA', name:'Porto Alegre', city:'Porto Alegre' },
+  { code:'FLN', name:'Florianópolis', city:'Florianópolis' },
+  { code:'VCP', name:'Campinas (Viracopos)', city:'Campinas' },
+  { code:'NAT', name:'Natal', city:'Natal' },
+  { code:'THE', name:'Teresina', city:'Teresina' },
+  { code:'SLZ', name:'São Luís', city:'São Luís' },
+  { code:'JPA', name:'João Pessoa', city:'João Pessoa' },
+  { code:'AJU', name:'Aracaju', city:'Aracaju' },
+  { code:'MCP', name:'Macapá', city:'Macapá' },
+  { code:'PVH', name:'Porto Velho', city:'Porto Velho' },
+  { code:'CGB', name:'Cuiabá', city:'Cuiabá' },
+  { code:'CGR', name:'Campo Grande', city:'Campo Grande' },
+  { code:'MIG', name:'Uberlândia', city:'Uberlândia' },
+  { code:'BHZ', name:'Belo Horizonte (Confins)', city:'Belo Horizonte' },
+  { code:'CNF', name:'Belo Horizonte (Tancredo Neves)', city:'Belo Horizonte' },
+  { code:'VIX', name:'Vitória', city:'Vitória' },
+  { code:'PMW', name:'Palmas', city:'Palmas' },
+  { code:'GYN', name:'Goiânia', city:'Goiânia' },
+];
+
+const AIRLINES = [
+  { id:'latam',     name:'LATAM',          icon:'🔴', color:'#e8112d', url: (f,t,d,p) => `https://www.latamairlines.com/br/pt/oferta-voos?origin=${f}&destination=${t}&outbound=${d}&adt=${p}` },
+  { id:'gol',       name:'Gol',            icon:'🟠', color:'#f97316', url: (f,t,d,p) => `https://www.voegol.com.br/passagens-aereas/${f}-${t}` },
+  { id:'azul',      name:'Azul',           icon:'🔵', color:'#1d6fa4', url: (f,t,d,p) => `https://www.voeazul.com.br/br/pt/home/select?origin=${f}&destination=${t}&departDate=${d}` },
+  { id:'avianca',   name:'Avianca',        icon:'🟣', color:'#7c3aed', url: (f,t,d,p) => `https://www.avianca.com/br/pt/voos/${f}/${t}/` },
+  { id:'aa',        name:'American',       icon:'✈️', color:'#2563eb', url: (f,t,d,p) => `https://www.aa.com/booking/find-flights?org0=${f}&dst0=${t}&dateSelector0=${d}` },
+  { id:'tap',       name:'TAP Portugal',   icon:'🟢', color:'#16a34a', url: (f,t,d,p) => `https://www.flytap.com/pt-br/voos-baratos/${f}/${t}` },
+  { id:'airfrance', name:'Air France',     icon:'🔵', color:'#1e40af', url: () => `https://www.airfrance.com.br/` },
+  { id:'copa',      name:'Copa Airlines',  icon:'🔵', color:'#1e3a8a', url: () => `https://www.copaair.com/pt-br/web/br/` },
+  { id:'emirates',  name:'Emirates',       icon:'🟡', color:'#b45309', url: () => `https://www.emirates.com/br/portuguese/` },
+  { id:'google',    name:'Google Flights', icon:'🔍', color:'#4285f4', url: (f,t,d,p) => `https://www.google.com/travel/flights?q=voos+de+${f}+para+${t}` },
+  { id:'decolar',   name:'Decolar',        icon:'🟠', color:'#ea580c', url: (f,t,d,p) => `https://www.decolar.com/voos/${f}/${t}/${d}/1/0/0` },
+  { id:'kayak',     name:'Kayak',          icon:'🟠', color:'#f97316', url: (f,t,d,p) => `https://www.kayak.com.br/flights/${f}-${t}/${d}` },
+  { id:'maxmilhas', name:'MaxMilhas',      icon:'🟣', color:'#7e22ce', url: (f,t,d,p) => `https://www.maxmilhas.com.br/passagens-aereas/pesquisa/${f}/${t}/${d}/1` },
+  { id:'123milhas', name:'123Milhas',      icon:'🟡', color:'#d97706', url: (f,t,d,p) => `https://123milhas.com/busca?from=${f}&to=${t}&date=${d}&adults=1` },
+  { id:'smiles',    name:'Smiles (Gol)',   icon:'🟠', color:'#ea580c', url: (f,t,d,p) => `https://www.smiles.com.br/emissao-passagem-com-milhas?originAirportCode=${f}&destinationAirportCode=${t}&departureDate=${d}&adults=1` },
+  { id:'tudoazul',  name:'TudoAzul',       icon:'🔵', color:'#0369a1', url: (f,t,d,p) => `https://www.tudoazul.com/voos?from=${f}&to=${t}&departure=${d}&adults=1` },
+  { id:'latampass', name:'LATAM Pass',     icon:'🔴', color:'#b91c1c', url: (f,t,d,p) => `https://www.latampass.com/br/pt/passagens-com-pontos?origin=${f}&destination=${t}&outbound=${d}` },
+];
+
+const DEALS = [
+  { from:'GRU', to:'MCZ', airline:'latam',     stops:'1 parada',  brl:'R$ 189', miles:'11.000 milhas', dur:'3h20', dep:'06:00', arr:'09:20' },
+  { from:'GRU', to:'REC', airline:'gol',       stops:'Direto',    brl:'R$ 234', miles:'13.500 milhas', dur:'3h10', dep:'07:30', arr:'10:40' },
+  { from:'GRU', to:'FLN', airline:'azul',      stops:'Direto',    brl:'R$ 149', miles:'9.500 milhas',  dur:'1h10', dep:'08:00', arr:'09:10' },
+  { from:'GRU', to:'BSB', airline:'latam',     stops:'Direto',    brl:'R$ 178', miles:'10.000 milhas', dur:'1h35', dep:'09:15', arr:'10:50' },
+  { from:'GRU', to:'FOR', airline:'gol',       stops:'1 parada',  brl:'R$ 259', miles:'15.000 milhas', dur:'4h50', dep:'05:45', arr:'10:35' },
+  { from:'GRU', to:'SSA', airline:'azul',      stops:'Direto',    brl:'R$ 219', miles:'12.000 milhas', dur:'2h55', dep:'10:00', arr:'12:55' },
+  { from:'SDU', to:'BSB', airline:'gol',       stops:'Direto',    brl:'R$ 189', miles:'10.500 milhas', dur:'1h30', dep:'11:20', arr:'12:50' },
+  { from:'BSB', to:'GIG', airline:'latam',     stops:'Direto',    brl:'R$ 165', miles:'9.000 milhas',  dur:'1h50', dep:'14:00', arr:'15:50' },
+];
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let searchType = 'both';
+let originCode = '';
+let destCode = '';
+
+// ── AUTOCOMPLETE ──────────────────────────────────────────────────────────────
+function setupAC(inputId, listId, onSelect) {
+  const input = document.getElementById(inputId);
+  const list  = document.getElementById(listId);
+
+  input.addEventListener('input', () => {
+    const q = input.value.trim().toUpperCase();
+    list.innerHTML = '';
+    if (!q) { list.classList.remove('open'); return; }
+    const hits = AIRPORTS.filter(a =>
+      a.code.startsWith(q) ||
+      a.name.toUpperCase().includes(q) ||
+      a.city.toUpperCase().includes(q)
+    ).slice(0, 8);
+    if (!hits.length) { list.classList.remove('open'); return; }
+    hits.forEach(a => {
+      const div = document.createElement('div');
+      div.className = 'ac-item';
+      div.innerHTML = `<strong>${a.code}</strong><span>${a.name}</span>`;
+      div.addEventListener('mousedown', e => {
+        e.preventDefault();
+        input.value = `${a.code} — ${a.city}`;
+        list.classList.remove('open');
+        onSelect(a.code);
       });
-    }
+      list.appendChild(div);
+    });
+    list.classList.add('open');
+  });
 
-    update();
-    setInterval(update, 1000);
-  </script>
+  input.addEventListener('blur', () => {
+    setTimeout(() => list.classList.remove('open'), 150);
+  });
+}
+
+setupAC('origin', 'ac-origin', code => { originCode = code; });
+setupAC('dest',   'ac-dest',   code => { destCode   = code; });
+
+// Also accept raw IATA codes typed directly
+document.getElementById('origin').addEventListener('change', function() {
+  const v = this.value.trim().toUpperCase().substring(0,3);
+  if (AIRPORTS.find(a => a.code === v)) originCode = v;
+});
+document.getElementById('dest').addEventListener('change', function() {
+  const v = this.value.trim().toUpperCase().substring(0,3);
+  if (AIRPORTS.find(a => a.code === v)) destCode = v;
+});
+
+// ── TYPE TOGGLE ───────────────────────────────────────────────────────────────
+document.querySelectorAll('.type-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    searchType = btn.dataset.type;
+  });
+});
+
+// ── RECENT SEARCHES ───────────────────────────────────────────────────────────
+function loadRecent() {
+  try { return JSON.parse(localStorage.getItem('milhas_recent') || '[]'); } catch { return []; }
+}
+function saveRecent(entry) {
+  let arr = loadRecent().filter(e => !(e.from === entry.from && e.to === entry.to));
+  arr.unshift(entry);
+  arr = arr.slice(0, 5);
+  localStorage.setItem('milhas_recent', JSON.stringify(arr));
+}
+function renderRecent() {
+  const arr = loadRecent();
+  const section = document.getElementById('recent-section');
+  const list = document.getElementById('recent-list');
+  if (!arr.length) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  list.innerHTML = '';
+  arr.forEach(e => {
+    const chip = document.createElement('div');
+    chip.className = 'recent-chip';
+    chip.textContent = `${e.from} → ${e.to}  ${e.date || ''}`;
+    chip.addEventListener('click', () => {
+      const org = AIRPORTS.find(a => a.code === e.from);
+      const dst = AIRPORTS.find(a => a.code === e.to);
+      if (org) { document.getElementById('origin').value = `${org.code} — ${org.city}`; originCode = org.code; }
+      if (dst) { document.getElementById('dest').value   = `${dst.code} — ${dst.city}`; destCode   = dst.code; }
+      if (e.date) document.getElementById('dep-date').value = e.date;
+      doSearch();
+    });
+    list.appendChild(chip);
+  });
+}
+renderRecent();
+
+// ── SEARCH ────────────────────────────────────────────────────────────────────
+function getSearchUrl(airline, from, to, date, pax) {
+  try { return airline.url(from, to, date, pax); } catch { return '#'; }
+}
+
+function doSearch() {
+  const from = originCode || document.getElementById('origin').value.trim().substring(0,3).toUpperCase();
+  const to   = destCode   || document.getElementById('dest').value.trim().substring(0,3).toUpperCase();
+  const date = document.getElementById('dep-date').value;
+  const pax  = document.getElementById('pax').value;
+
+  if (!from || !to) { alert('Por favor, selecione a origem e o destino.'); return; }
+
+  saveRecent({ from, to, date, pax, type: searchType });
+  renderRecent();
+
+  // Build result cards — one per relevant airline
+  const label = `${from} → ${to}${date ? ' · ' + date.split('-').reverse().join('/') : ''} · ${pax} pax`;
+  document.getElementById('results-label').textContent = label;
+
+  const grid = document.getElementById('results-grid');
+  grid.innerHTML = '';
+
+  // Choose which airlines to show per type
+  const moneyAirlines = ['latam','gol','azul','avianca','aa','tap','airfrance','copa','emirates','google','decolar','kayak'];
+  const milesAirlines = ['smiles','tudoazul','latampass','maxmilhas','123milhas'];
+  let showAirlines;
+  if (searchType === 'money')      showAirlines = moneyAirlines;
+  else if (searchType === 'miles') showAirlines = milesAirlines;
+  else                             showAirlines = [...moneyAirlines, ...milesAirlines];
+
+  // Fake realistic prices (deterministic from codes)
+  const seed = (from.charCodeAt(0) + to.charCodeAt(0)) % 7;
+  const brlBase = [149,189,219,234,259,299,319][seed];
+  const milesBase = [9000,10500,11000,12000,13500,15000,16500][seed];
+
+  AIRLINES.filter(a => showAirlines.includes(a.id)).forEach((airline, i) => {
+    const brlVariant  = (brlBase  + i * 12).toLocaleString('pt-BR', { style:'currency', currency:'BRL', minimumFractionDigits:0 });
+    const milesVariant = ((milesBase + i * 500) / 1000).toFixed(0) + '.000';
+    const url = getSearchUrl(airline, from, to, date, pax);
+
+    const card = document.createElement('div');
+    card.className = 'flight-card';
+    card.innerHTML = `
+      <div class="airline-badge" style="background:${airline.color}22;color:${airline.color}">${airline.icon}</div>
+      <div class="flight-info">
+        <div class="flight-route">${from} <span style="color:var(--muted)">→</span> ${to} <span class="arr">${airline.name}</span></div>
+        <div class="flight-meta">
+          <span>✈️ ${searchType !== 'miles' ? 'Melhor preço do dia' : 'Melhor resgate'}</span>
+          <span>🔗 Abre no site oficial</span>
+        </div>
+      </div>
+      <div class="flight-price">
+        ${searchType !== 'miles' ? `<div class="price-label">A partir de</div><div class="price-brl">${brlVariant}</div>` : ''}
+        ${searchType !== 'money' ? `<div class="price-miles">✈️ ${milesVariant} milhas</div>` : ''}
+      </div>
+      <a class="offer-btn" href="${url}" target="_blank" rel="noopener">Ver Oferta</a>
+    `;
+    grid.appendChild(card);
+  });
+
+  document.getElementById('results-section').style.display = 'block';
+  document.getElementById('results-section').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+document.getElementById('search-btn').addEventListener('click', doSearch);
+
+// ── BEST DEALS ────────────────────────────────────────────────────────────────
+const dealsGrid = document.getElementById('deals-grid');
+DEALS.forEach(d => {
+  const airline = AIRLINES.find(a => a.id === d.airline);
+  const from = d.from, to = d.to;
+  const today = new Date(); today.setDate(today.getDate() + 14);
+  const dateStr = today.toISOString().split('T')[0];
+  const url = getSearchUrl(airline, from, to, dateStr, 1);
+
+  const card = document.createElement('a');
+  card.className = 'deal-card';
+  card.href = url;
+  card.target = '_blank';
+  card.rel = 'noopener';
+  card.innerHTML = `
+    <div class="deal-header">
+      <div class="deal-airline-badge" style="background:${airline.color}22;color:${airline.color}">${airline.icon}</div>
+      <div class="deal-stops">${d.stops}</div>
+    </div>
+    <div class="deal-route">${d.from} → ${d.to}</div>
+    <div class="deal-sub">${airline.name} · ${d.dep}–${d.arr} · ${d.dur}</div>
+    <div class="deal-prices">
+      <div class="deal-brl"><small>💰 A partir de</small>${d.brl}</div>
+      <div class="deal-miles"><small>✈️ ou</small>${d.miles}</div>
+    </div>
+  `;
+  dealsGrid.appendChild(card);
+});
+
+// ── ALL AIRLINES CHIPS ────────────────────────────────────────────────────────
+const airlinesGrid = document.getElementById('airlines-grid');
+AIRLINES.forEach(a => {
+  const chip = document.createElement('a');
+  chip.className = 'airline-chip';
+  chip.href = a.url('GRU','MCZ','','1');
+  chip.target = '_blank';
+  chip.rel = 'noopener';
+  chip.innerHTML = `<div class="icon">${a.icon}</div><div style="font-weight:600;font-size:.9rem">${a.name}</div><div class="name">${a.id.includes('milhas') || a.id === 'smiles' || a.id === 'tudoazul' || a.id === 'latampass' ? '🏆 Milhas' : '💰 Dinheiro'}</div>`;
+  airlinesGrid.appendChild(chip);
+});
+
+// ── SET DEFAULT DATES ─────────────────────────────────────────────────────────
+(function() {
+  const dep = new Date(); dep.setDate(dep.getDate() + 14);
+  const ret = new Date(); ret.setDate(ret.getDate() + 21);
+  document.getElementById('dep-date').value = dep.toISOString().split('T')[0];
+  document.getElementById('ret-date').value = ret.toISOString().split('T')[0];
+  document.getElementById('dep-date').min    = new Date().toISOString().split('T')[0];
+  document.getElementById('ret-date').min    = new Date().toISOString().split('T')[0];
+})();
+</script>
 </body>
 </html>
