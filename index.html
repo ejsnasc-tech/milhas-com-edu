@@ -580,23 +580,23 @@ const AIRPORTS = [
 ];
 
 const AIRLINES = [
-  { id:'latam',     name:'LATAM',          icon:'🔴', color:'#e8112d', url: (f,t,d,p) => `https://www.latamairlines.com/br/pt/oferta-voos?origin=${f}&destination=${t}&outbound=${d}&adt=${p}` },
-  { id:'gol',       name:'Gol',            icon:'🟠', color:'#f97316', url: (f,t,d,p) => `https://www.voegol.com.br/passagens-aereas/${f}-${t}` },
-  { id:'azul',      name:'Azul',           icon:'🔵', color:'#1d6fa4', url: (f,t,d,p) => `https://www.voeazul.com.br/br/pt/home/select?origin=${f}&destination=${t}&departDate=${d}` },
-  { id:'avianca',   name:'Avianca',        icon:'🟣', color:'#7c3aed', url: (f,t,d,p) => `https://www.avianca.com/br/pt/voos/${f}/${t}/` },
-  { id:'aa',        name:'American',       icon:'✈️', color:'#2563eb', url: (f,t,d,p) => `https://www.aa.com/booking/find-flights?org0=${f}&dst0=${t}&dateSelector0=${d}` },
-  { id:'tap',       name:'TAP Portugal',   icon:'🟢', color:'#16a34a', url: (f,t,d,p) => `https://www.flytap.com/pt-br/voos-baratos/${f}/${t}` },
-  { id:'airfrance', name:'Air France',     icon:'🔵', color:'#1e40af', url: () => `https://www.airfrance.com.br/` },
-  { id:'copa',      name:'Copa Airlines',  icon:'🔵', color:'#1e3a8a', url: () => `https://www.copaair.com/pt-br/web/br/` },
-  { id:'emirates',  name:'Emirates',       icon:'🟡', color:'#b45309', url: () => `https://www.emirates.com/br/portuguese/` },
-  { id:'google',    name:'Google Flights', icon:'🔍', color:'#4285f4', url: (f,t,d,p) => `https://www.google.com/travel/flights?q=voos+de+${f}+para+${t}` },
-  { id:'decolar',   name:'Decolar',        icon:'🟠', color:'#ea580c', url: (f,t,d,p) => `https://www.decolar.com/voos/${f}/${t}/${d}/1/0/0` },
-  { id:'kayak',     name:'Kayak',          icon:'🟠', color:'#f97316', url: (f,t,d,p) => `https://www.kayak.com.br/flights/${f}-${t}/${d}` },
-  { id:'maxmilhas', name:'MaxMilhas',      icon:'🟣', color:'#7e22ce', url: (f,t,d,p) => `https://www.maxmilhas.com.br/passagens-aereas/pesquisa/${f}/${t}/${d}/1` },
-  { id:'123milhas', name:'123Milhas',      icon:'🟡', color:'#d97706', url: (f,t,d,p) => `https://123milhas.com/busca?from=${f}&to=${t}&date=${d}&adults=1` },
-  { id:'smiles',    name:'Smiles (Gol)',   icon:'🟠', color:'#ea580c', url: (f,t,d,p) => `https://www.smiles.com.br/emissao-passagem-com-milhas?originAirportCode=${f}&destinationAirportCode=${t}&departureDate=${d}&adults=1` },
-  { id:'tudoazul',  name:'TudoAzul',       icon:'🔵', color:'#0369a1', url: (f,t,d,p) => `https://www.tudoazul.com/voos?from=${f}&to=${t}&departure=${d}&adults=1` },
-  { id:'latampass', name:'LATAM Pass',     icon:'🔴', color:'#b91c1c', url: (f,t,d,p) => `https://www.latampass.com/br/pt/passagens-com-pontos?origin=${f}&destination=${t}&outbound=${d}` },
+  { id:'latam',     name:'LATAM',          icon:'🔴', color:'#e8112d', category:'money', url: (f,t,d,p) => `https://www.latamairlines.com/br/pt/oferta-voos?origin=${f}&destination=${t}&outbound=${d}&adt=${p}` },
+  { id:'gol',       name:'Gol',            icon:'🟠', color:'#f97316', category:'money', url: (f,t,d,p) => `https://www.voegol.com.br/passagens-aereas/${f}-${t}` },
+  { id:'azul',      name:'Azul',           icon:'🔵', color:'#1d6fa4', category:'money', url: (f,t,d,p) => `https://www.voeazul.com.br/br/pt/home/select?origin=${f}&destination=${t}&departDate=${d}` },
+  { id:'avianca',   name:'Avianca',        icon:'🟣', color:'#7c3aed', category:'money', url: (f,t,d,p) => `https://www.avianca.com/br/pt/voos/${f}/${t}/` },
+  { id:'aa',        name:'American',       icon:'✈️', color:'#2563eb', category:'money', url: (f,t,d,p) => `https://www.aa.com/booking/find-flights?org0=${f}&dst0=${t}&dateSelector0=${d}` },
+  { id:'tap',       name:'TAP Portugal',   icon:'🟢', color:'#16a34a', category:'money', url: (f,t,d,p) => `https://www.flytap.com/pt-br/voos-baratos/${f}/${t}` },
+  { id:'airfrance', name:'Air France',     icon:'🔵', color:'#1e40af', category:'money', url: () => `https://www.airfrance.com.br/` },
+  { id:'copa',      name:'Copa Airlines',  icon:'🔵', color:'#1e3a8a', category:'money', url: () => `https://www.copaair.com/pt-br/web/br/` },
+  { id:'emirates',  name:'Emirates',       icon:'🟡', color:'#b45309', category:'money', url: () => `https://www.emirates.com/br/portuguese/` },
+  { id:'google',    name:'Google Flights', icon:'🔍', color:'#4285f4', category:'money', url: (f,t,d,p) => `https://www.google.com/travel/flights?q=voos+de+${f}+para+${t}` },
+  { id:'decolar',   name:'Decolar',        icon:'🟠', color:'#ea580c', category:'money', url: (f,t,d,p) => `https://www.decolar.com/voos/${f}/${t}/${d}/1/0/0` },
+  { id:'kayak',     name:'Kayak',          icon:'🟠', color:'#f97316', category:'money', url: (f,t,d,p) => `https://www.kayak.com.br/flights/${f}-${t}/${d}` },
+  { id:'maxmilhas', name:'MaxMilhas',      icon:'🟣', color:'#7e22ce', category:'miles', url: (f,t,d,p) => `https://www.maxmilhas.com.br/passagens-aereas/pesquisa/${f}/${t}/${d}/1` },
+  { id:'123milhas', name:'123Milhas',      icon:'🟡', color:'#d97706', category:'miles', url: (f,t,d,p) => `https://123milhas.com/busca?from=${f}&to=${t}&date=${d}&adults=1` },
+  { id:'smiles',    name:'Smiles (Gol)',   icon:'🟠', color:'#ea580c', category:'miles', url: (f,t,d,p) => `https://www.smiles.com.br/emissao-passagem-com-milhas?originAirportCode=${f}&destinationAirportCode=${t}&departureDate=${d}&adults=1` },
+  { id:'tudoazul',  name:'TudoAzul',       icon:'🔵', color:'#0369a1', category:'miles', url: (f,t,d,p) => `https://www.tudoazul.com/voos?from=${f}&to=${t}&departure=${d}&adults=1` },
+  { id:'latampass', name:'LATAM Pass',     icon:'🔴', color:'#b91c1c', category:'miles', url: (f,t,d,p) => `https://www.latampass.com/br/pt/passagens-com-pontos?origin=${f}&destination=${t}&outbound=${d}` },
 ];
 
 const DEALS = [
@@ -778,8 +778,8 @@ const dealsGrid = document.getElementById('deals-grid');
 DEALS.forEach(d => {
   const airline = AIRLINES.find(a => a.id === d.airline);
   const from = d.from, to = d.to;
-  const today = new Date(); today.setDate(today.getDate() + 14);
-  const dateStr = today.toISOString().split('T')[0];
+  const dealDate = new Date(); dealDate.setDate(dealDate.getDate() + 14);
+  const dateStr = dealDate.toISOString().split('T')[0];
   const url = getSearchUrl(airline, from, to, dateStr, 1);
 
   const card = document.createElement('a');
@@ -810,16 +810,16 @@ AIRLINES.forEach(a => {
   chip.href = a.url('GRU','MCZ','','1');
   chip.target = '_blank';
   chip.rel = 'noopener';
-  chip.innerHTML = `<div class="icon">${a.icon}</div><div style="font-weight:600;font-size:.9rem">${a.name}</div><div class="name">${a.id.includes('milhas') || a.id === 'smiles' || a.id === 'tudoazul' || a.id === 'latampass' ? '🏆 Milhas' : '💰 Dinheiro'}</div>`;
+  chip.innerHTML = `<div class="icon">${a.icon}</div><div style="font-weight:600;font-size:.9rem">${a.name}</div><div class="name">${a.category === 'miles' ? '🏆 Milhas' : '💰 Dinheiro'}</div>`;
   airlinesGrid.appendChild(chip);
 });
 
 // ── SET DEFAULT DATES ─────────────────────────────────────────────────────────
 (function() {
-  const dep = new Date(); dep.setDate(dep.getDate() + 14);
-  const ret = new Date(); ret.setDate(ret.getDate() + 21);
-  document.getElementById('dep-date').value = dep.toISOString().split('T')[0];
-  document.getElementById('ret-date').value = ret.toISOString().split('T')[0];
+  const defaultDeparture = new Date(); defaultDeparture.setDate(defaultDeparture.getDate() + 14);
+  const defaultReturn    = new Date(); defaultReturn.setDate(defaultReturn.getDate() + 21);
+  document.getElementById('dep-date').value = defaultDeparture.toISOString().split('T')[0];
+  document.getElementById('ret-date').value = defaultReturn.toISOString().split('T')[0];
   document.getElementById('dep-date').min    = new Date().toISOString().split('T')[0];
   document.getElementById('ret-date').min    = new Date().toISOString().split('T')[0];
 })();
