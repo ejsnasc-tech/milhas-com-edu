@@ -3,143 +3,1021 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>🕐 Relógio Mundial</title>
+  <title>Milhas com Edu ✈️ — Buscador de Passagens</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      background: #0d1117;
-      color: #e6edf3;
-      font-family: 'Segoe UI', sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 40px 20px;
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0a0e1a;
+      --card: #0d1b2e;
+      --card2: #0f2040;
+      --accent: #1565c0;
+      --accent2: #1976d2;
+      --green: #00c853;
+      --purple: #7c4dff;
+      --text: #e8eaf6;
+      --muted: #90a4ae;
+      --border: #1a2744;
     }
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 8px;
-      background: linear-gradient(90deg, #58a6ff, #bc8cff);
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(160deg, #0a0e1a 0%, #0d1b40 40%, #1a237e 100%);
+      padding: 60px 20px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 80% 10%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 50% 50%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 10% 70%, rgba(255,255,255,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90% 80%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 35% 15%, rgba(255,255,255,0.7) 0%, transparent 100%),
+        radial-gradient(1px 1px at 65% 65%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 75% 45%, rgba(255,255,255,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 5% 90%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 95% 25%, rgba(255,255,255,0.6) 0%, transparent 100%);
+      pointer-events: none;
+    }
+    .logo {
+      font-size: 2.8rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      background: linear-gradient(90deg, #64b5f6, #ce93d8);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
     }
-    .subtitle {
-      color: #8b949e;
-      margin-bottom: 40px;
+    .tagline {
+      margin-top: 12px;
+      font-size: 1.15rem;
+      color: #b0bec5;
+      position: relative;
+    }
+
+    /* ── SEARCH FORM ── */
+    .search-section {
+      max-width: 900px;
+      margin: -40px auto 0;
+      padding: 0 20px;
+      position: relative;
+      z-index: 10;
+    }
+    .search-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .mode-toggle {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      background: #060d1a;
+      border-radius: 12px;
+      padding: 6px;
+    }
+    .mode-btn {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .mode-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 600px) {
+      .form-grid { grid-template-columns: 1fr; }
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+    }
+    .form-group label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+    }
+    .form-group input {
+      background: #060d1a;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: var(--text);
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+    .form-group input:focus { border-color: var(--accent2); }
+    .form-group input[type="date"]::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+      cursor: pointer;
+    }
+
+    /* Autocomplete dropdown */
+    .autocomplete-list {
+      position: absolute;
+      top: 100%;
+      left: 0; right: 0;
+      background: #0d1b2e;
+      border: 1px solid var(--accent);
+      border-radius: 10px;
+      z-index: 100;
+      max-height: 220px;
+      overflow-y: auto;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+    }
+    .autocomplete-item {
+      padding: 10px 14px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+    .autocomplete-item:last-child { border-bottom: none; }
+    .autocomplete-item:hover, .autocomplete-item.active { background: var(--accent); }
+    .autocomplete-item .iata { font-weight: 700; margin-right: 8px; color: #64b5f6; }
+    .autocomplete-item:hover .iata, .autocomplete-item.active .iata { color: #fff; }
+
+    /* Recent searches chips */
+    .recent-searches {
+      margin-top: 16px;
+    }
+    .recent-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .chip {
+      background: #060d1a;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      color: #90caf9;
+      transition: all 0.2s;
+    }
+    .chip:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .pax-row {
+      display: flex;
+      gap: 14px;
+      align-items: flex-end;
+    }
+    .pax-row .form-group { flex: 1; }
+
+    .btn-search {
+      width: 100%;
+      margin-top: 20px;
+      padding: 16px;
+      background: linear-gradient(90deg, #1565c0, #7c4dff);
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.03em;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+    .btn-search:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-search:active { transform: translateY(0); }
+
+    /* ── SECTIONS ── */
+    .section {
+      max-width: 1100px;
+      margin: 60px auto;
+      padding: 0 20px;
+    }
+    .section-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-subtitle {
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-bottom: 24px;
+    }
+
+    /* ── AIRLINE CARDS ── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .airline-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    }
+    .airline-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(21,101,192,0.25);
+      border-color: var(--accent2);
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .airline-name {
+      font-weight: 700;
+      font-size: 1rem;
+    }
+    .badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .miles-program {
+      font-size: 0.8rem;
+      color: var(--purple);
+      margin-bottom: 14px;
+      font-weight: 600;
+    }
+    .route-display {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .route-display .code {
+      font-weight: 700;
+      color: var(--text);
       font-size: 0.95rem;
     }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 20px;
-      width: 100%;
-      max-width: 1200px;
+    .card-btns {
+      display: flex;
+      gap: 8px;
     }
-    .card {
-      background: #161b22;
-      border: 1px solid #30363d;
-      border-radius: 16px;
-      padding: 24px;
-      text-align: center;
-      transition: transform 0.2s, box-shadow 0.2s;
-      cursor: default;
-    }
-    .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 8px 30px rgba(88, 166, 255, 0.15);
-      border-color: #58a6ff;
-    }
-    .flag { font-size: 2.5rem; margin-bottom: 8px; }
-    .city {
-      font-size: 1rem;
-      font-weight: 600;
-      color: #8b949e;
-      margin-bottom: 4px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    .timezone {
-      font-size: 0.75rem;
-      color: #484f58;
-      margin-bottom: 16px;
-    }
-    .time {
-      font-size: 2.4rem;
+    .btn-money, .btn-miles {
+      flex: 1;
+      padding: 9px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.8rem;
       font-weight: 700;
-      font-variant-numeric: tabular-nums;
-      color: #58a6ff;
-      letter-spacing: 2px;
+      cursor: pointer;
+      text-decoration: none;
+      text-align: center;
+      transition: opacity 0.2s;
+      display: block;
     }
-    .ampm {
+    .btn-money {
+      background: rgba(0,200,83,0.15);
+      color: var(--green);
+      border: 1px solid rgba(0,200,83,0.3);
+    }
+    .btn-money:hover { background: rgba(0,200,83,0.25); }
+    .btn-miles {
+      background: rgba(124,77,255,0.15);
+      color: var(--purple);
+      border: 1px solid rgba(124,77,255,0.3);
+    }
+    .btn-miles:hover { background: rgba(124,77,255,0.25); }
+
+    /* hidden when mode = money or miles */
+    .btn-miles.hide { display: none; }
+    .btn-money.hide { display: none; }
+
+    /* ── GROUP HEADERS ── */
+    .group-header {
       font-size: 1rem;
-      color: #bc8cff;
-      margin-left: 4px;
+      font-weight: 700;
+      color: #64b5f6;
+      margin: 32px 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
     }
-    .date {
-      font-size: 0.8rem;
-      color: #6e7681;
-      margin-top: 8px;
+
+    /* ── OFFERS ── */
+    .offers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 14px;
     }
+    .offer-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .offer-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    .offer-route {
+      font-size: 1.1rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .offer-airline {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .offer-prices {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .price-money {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--green);
+    }
+    .price-miles {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--purple);
+    }
+    .price-sep {
+      color: var(--border);
+    }
+
+    /* ── FOOTER ── */
     footer {
-      margin-top: 50px;
-      color: #484f58;
-      font-size: 0.8rem;
+      background: #060d1a;
+      border-top: 1px solid var(--border);
+      padding: 40px 20px;
+      margin-top: 80px;
     }
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .disclaimer {
+      color: var(--muted);
+      font-size: 0.85rem;
+      text-align: center;
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+    }
+    .footer-links a {
+      color: #64b5f6;
+      text-decoration: none;
+      font-size: 0.82rem;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: #fff; }
+
+    /* ── RESULTS HIDDEN BY DEFAULT ── */
+    #results-section { display: none; }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
   </style>
 </head>
 <body>
 
-  <h1>🌍 Relógio Mundial</h1>
-  <p class="subtitle">Horário atual nas principais cidades do mundo</p>
+<!-- HERO -->
+<section class="hero">
+  <div class="logo">✈️ Milhas com Edu</div>
+  <p class="tagline">Encontre as melhores passagens em dinheiro e milhas ✈️</p>
+</section>
 
-  <div class="grid" id="clocks"></div>
+<!-- SEARCH -->
+<div class="search-section">
+  <div class="search-card">
+    <div class="mode-toggle">
+      <button class="mode-btn active" data-mode="both" onclick="setMode('both')">🔀 Ambos</button>
+      <button class="mode-btn" data-mode="money" onclick="setMode('money')">💰 Dinheiro</button>
+      <button class="mode-btn" data-mode="miles" onclick="setMode('miles')">✈️ Milhas</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group" id="from-group">
+        <label>Origem</label>
+        <input type="text" id="from-input" placeholder="Ex: GRU — São Paulo" autocomplete="off" oninput="autocomplete(this,'from-list')" onkeydown="acKeydown(event,'from-list')">
+        <div class="autocomplete-list" id="from-list" style="display:none"></div>
+      </div>
+      <div class="form-group" id="to-group">
+        <label>Destino</label>
+        <input type="text" id="to-input" placeholder="Ex: LIS — Lisboa" autocomplete="off" oninput="autocomplete(this,'to-list')" onkeydown="acKeydown(event,'to-list')">
+        <div class="autocomplete-list" id="to-list" style="display:none"></div>
+      </div>
+      <div class="form-group">
+        <label>Ida</label>
+        <input type="date" id="date-from" />
+      </div>
+      <div class="form-group">
+        <label>Volta (opcional)</label>
+        <input type="date" id="date-to" />
+      </div>
+    </div>
+    <div class="pax-row" style="margin-top:14px">
+      <div class="form-group">
+        <label>Passageiros</label>
+        <input type="number" id="pax" value="1" min="1" max="9" />
+      </div>
+    </div>
+    <button class="btn-search" onclick="doSearch()">🔍 Buscar Passagens em Todas as Companhias</button>
+    <div class="recent-searches" id="recent-section" style="display:none">
+      <div class="recent-label">🕓 Pesquisas recentes</div>
+      <div class="chips" id="chips-container"></div>
+    </div>
+  </div>
+</div>
 
-  <footer>Atualizado a cada segundo • GitHub Pages</footer>
+<!-- RESULTS -->
+<div class="section" id="results-section">
+  <div class="section-title">🛫 Companhias Aéreas</div>
+  <div class="section-subtitle" id="results-subtitle">Clique em "Ver em Dinheiro" ou "Ver em Milhas" para abrir o site da companhia.</div>
 
-  <script>
-    const zones = [
-      { city: "São Paulo",      flag: "🇧🇷", tz: "America/Sao_Paulo" },
-      { city: "New York",       flag: "🇺🇸", tz: "America/New_York" },
-      { city: "Los Angeles",    flag: "🇺🇸", tz: "America/Los_Angeles" },
-      { city: "Londres",        flag: "🇬🇧", tz: "Europe/London" },
-      { city: "Paris",          flag: "🇫🇷", tz: "Europe/Paris" },
-      { city: "Dubai",          flag: "🇦🇪", tz: "Asia/Dubai" },
-      { city: "Mumbai",         flag: "🇮🇳", tz: "Asia/Kolkata" },
-      { city: "Singapura",      flag: "🇸🇬", tz: "Asia/Singapore" },
-      { city: "Tóquio",         flag: "🇯🇵", tz: "Asia/Tokyo" },
-      { city: "Sydney",         flag: "🇦🇺", tz: "Australia/Sydney" },
-      { city: "Joanesburgo",    flag: "🇿🇦", tz: "Africa/Johannesburg" },
-      { city: "Cidade do México", flag: "🇲🇽", tz: "America/Mexico_City" },
-    ];
+  <div class="group-header">🇧🇷 Cias Brasileiras</div>
+  <div class="cards-grid" id="group-br"></div>
 
-    const grid = document.getElementById("clocks");
+  <div class="group-header">🌎 América do Norte</div>
+  <div class="cards-grid" id="group-na"></div>
 
-    zones.forEach(({ city, flag, tz }) => {
-      const card = document.createElement("div");
-      card.className = "card";
-      card.innerHTML = `
-        <div class="flag">${flag}</div>
-        <div class="city">${city}</div>
-        <div class="timezone">${tz}</div>
-        <div class="time" id="time-${tz.replace(/\//g,'-')}">--:--:--</div>
-        <div class="date" id="date-${tz.replace(/\//g,'-')}">---</div>
-      `;
-      grid.appendChild(card);
-    });
+  <div class="group-header">🌍 Europa</div>
+  <div class="cards-grid" id="group-eu"></div>
 
-    function update() {
-      const now = new Date();
-      zones.forEach(({ tz }) => {
-        const id = tz.replace(/\//g, '-');
-        const timeStr = now.toLocaleTimeString('pt-BR', { timeZone: tz, hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        const dateStr = now.toLocaleDateString('pt-BR', { timeZone: tz, weekday: 'long', day: '2-digit', month: 'long' });
-        document.getElementById('time-' + id).textContent = timeStr;
-        document.getElementById('date-' + id).textContent = dateStr;
-      });
+  <div class="group-header">🌏 Oriente Médio &amp; Ásia</div>
+  <div class="cards-grid" id="group-me"></div>
+
+  <div class="group-header">🌐 Resto do Mundo</div>
+  <div class="cards-grid" id="group-ot"></div>
+
+  <div class="group-header">🎫 Programas de Milhas</div>
+  <div class="cards-grid" id="group-mp"></div>
+</div>
+
+<!-- MELHORES OFERTAS -->
+<div class="section">
+  <div class="section-title">🔥 Melhores Ofertas do Momento</div>
+  <div class="section-subtitle">Preços aproximados encontrados nas companhias aéreas. Verifique disponibilidade no site da cia.</div>
+  <div class="offers-grid" id="offers-grid"></div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <p class="disclaimer">
+      Os preços e disponibilidade são obtidos diretamente nas companhias aéreas.<br>
+      <strong>Milhas com Edu não vende passagens.</strong> Este site abre os resultados diretamente nos sites oficiais das companhias aéreas.
+    </p>
+    <div class="footer-links" id="footer-links"></div>
+  </div>
+</footer>
+
+<script>
+// ── AIRPORTS ──
+const AIRPORTS = [
+  { code:'GRU', name:'São Paulo — Guarulhos' },
+  { code:'CGH', name:'São Paulo — Congonhas' },
+  { code:'BSB', name:'Brasília' },
+  { code:'GIG', name:'Rio de Janeiro — Galeão' },
+  { code:'SDU', name:'Rio de Janeiro — Santos Dumont' },
+  { code:'SSA', name:'Salvador' },
+  { code:'FOR', name:'Fortaleza' },
+  { code:'REC', name:'Recife' },
+  { code:'MCZ', name:'Maceió' },
+  { code:'BEL', name:'Belém' },
+  { code:'MAO', name:'Manaus' },
+  { code:'CWB', name:'Curitiba' },
+  { code:'POA', name:'Porto Alegre' },
+  { code:'FLN', name:'Florianópolis' },
+  { code:'MIA', name:'Miami' },
+  { code:'JFK', name:'Nova York — JFK' },
+  { code:'LAX', name:'Los Angeles' },
+  { code:'ORD', name:'Chicago — O\'Hare' },
+  { code:'LIS', name:'Lisboa' },
+  { code:'CDG', name:'Paris — Charles de Gaulle' },
+  { code:'LHR', name:'Londres — Heathrow' },
+  { code:'MAD', name:'Madri' },
+  { code:'FCO', name:'Roma — Fiumicino' },
+  { code:'AMS', name:'Amsterdã' },
+  { code:'FRA', name:'Frankfurt' },
+  { code:'BCN', name:'Barcelona' },
+  { code:'DXB', name:'Dubai' },
+  { code:'DOH', name:'Doha' },
+  { code:'IST', name:'Istambul' },
+  { code:'SIN', name:'Singapura' },
+  { code:'NRT', name:'Tóquio — Narita' },
+  { code:'ADD', name:'Adis Abeba' },
+  { code:'YYZ', name:'Toronto' },
+  { code:'PTY', name:'Cidade do Panamá' },
+  { code:'BOG', name:'Bogotá' },
+];
+
+// ── AIRLINES ──
+const AIRLINES = [
+  // Brazilian
+  {
+    id:'latam', name:'LATAM Airlines', flag:'🇧🇷', group:'br',
+    badge:'Brasileira', badgeColor:'#e53935',
+    program:'LATAM Pass',
+    moneyUrl: (f,t,d,p)=>`https://www.latamairlines.com/br/pt/oferta-voos?origin=${f}&destination=${t}&outbound=${d}&adt=${p}`,
+    milesUrl:  (f,t,d)=>`https://www.latampass.com/br/pt/passagens-com-pontos?origin=${f}&destination=${t}&outbound=${d}`,
+  },
+  {
+    id:'gol', name:'Gol Linhas Aéreas', flag:'🇧🇷', group:'br',
+    badge:'Brasileira', badgeColor:'#e65100',
+    program:'Smiles',
+    moneyUrl: (f,t)=>`https://www.voegol.com.br/passagens-aereas/${f}-${t}`,
+    milesUrl:  (f,t,d)=>`https://www.smiles.com.br/emissao-passagem-com-milhas?originAirportCode=${f}&destinationAirportCode=${t}&departureDate=${d}&adults=1`,
+  },
+  {
+    id:'azul', name:'Azul Linhas Aéreas', flag:'🇧🇷', group:'br',
+    badge:'Brasileira', badgeColor:'#1565c0',
+    program:'TudoAzul',
+    moneyUrl: (f,t,d)=>`https://www.voeazul.com.br/br/pt/home/select?origin=${f}&destination=${t}&departDate=${d}`,
+    milesUrl:  (f,t,d)=>`https://www.tudoazul.com/voos?from=${f}&to=${t}&departure=${d}&adults=1`,
+  },
+  {
+    id:'avianca', name:'Avianca', flag:'🇧🇷', group:'br',
+    badge:'Brasileira', badgeColor:'#6a1b9a',
+    program:'LifeMiles',
+    moneyUrl: (f,t)=>`https://www.avianca.com/br/pt/voos/${f}/${t}/`,
+    milesUrl:  ()=>'https://www.lifemiles.com/pt',
+  },
+  // North America
+  {
+    id:'aa', name:'American Airlines', flag:'🇺🇸', group:'na',
+    badge:'EUA', badgeColor:'#0d47a1',
+    program:'AAdvantage',
+    moneyUrl: (f,t,d)=>`https://www.aa.com/booking/find-flights?org0=${f}&dst0=${t}&dateSelector0=${d}`,
+    milesUrl:  (f,t,d)=>`https://www.aa.com/booking/find-flights?org0=${f}&dst0=${t}&dateSelector0=${d}&awardTravel=true`,
+  },
+  {
+    id:'delta', name:'Delta Air Lines', flag:'🇺🇸', group:'na',
+    badge:'EUA', badgeColor:'#b71c1c',
+    program:'SkyMiles',
+    moneyUrl: (f,t,d)=>`https://www.delta.com/us/en/flight-search/book-a-flight?origin=${f}&destination=${t}&departureDate=${d}`,
+    milesUrl:  (f,t,d)=>`https://www.delta.com/us/en/flight-search/book-a-flight?origin=${f}&destination=${t}&departureDate=${d}&awardTravel=true`,
+  },
+  {
+    id:'united', name:'United Airlines', flag:'🇺🇸', group:'na',
+    badge:'EUA', badgeColor:'#0a1931',
+    program:'MileagePlus',
+    moneyUrl: (f,t,d)=>`https://www.united.com/en/us/flights/search?f=${f}&t=${t}&d=${d}`,
+    milesUrl:  (f,t,d)=>`https://www.united.com/en/us/flights/search?f=${f}&t=${t}&d=${d}&awardTravel=true`,
+  },
+  {
+    id:'aircanada', name:'Air Canada', flag:'🇨🇦', group:'na',
+    badge:'Canadá', badgeColor:'#c62828',
+    program:'Aeroplan',
+    moneyUrl: ()=>'https://www.aircanada.com/br/pt/aco/flights/',
+    milesUrl:  ()=>'https://www.aircanada.com/br/pt/aco/flights/',
+  },
+  // Europe
+  {
+    id:'airfrance', name:'Air France', flag:'🇫🇷', group:'eu',
+    badge:'França', badgeColor:'#1a237e',
+    program:'Flying Blue',
+    moneyUrl: (f,t,d)=>`https://wwws.airfrance.com/search/offers?origin=${f}&destination=${t}&outwardDate=${d}`,
+    milesUrl:  (f,t,d)=>`https://wwws.airfrance.com/search/offers?origin=${f}&destination=${t}&outwardDate=${d}&cabinClass=ECONOMY&passengerType=ADT`,
+  },
+  {
+    id:'klm', name:'KLM', flag:'🇳🇱', group:'eu',
+    badge:'Holanda', badgeColor:'#1565c0',
+    program:'Flying Blue',
+    moneyUrl: (f,t,d)=>`https://www.klm.com/search/offers?origin=${f}&destination=${t}&outwardDate=${d}`,
+    milesUrl:  (f,t,d)=>`https://www.klm.com/search/offers?origin=${f}&destination=${t}&outwardDate=${d}`,
+  },
+  {
+    id:'lufthansa', name:'Lufthansa', flag:'🇩🇪', group:'eu',
+    badge:'Alemanha', badgeColor:'#1565c0',
+    program:'Miles & More',
+    moneyUrl: ()=>'https://www.lufthansa.com/br/pt/homepage',
+    milesUrl:  ()=>'https://www.lufthansa.com/br/pt/homepage',
+  },
+  {
+    id:'ba', name:'British Airways', flag:'🇬🇧', group:'eu',
+    badge:'Reino Unido', badgeColor:'#1a237e',
+    program:'Avios',
+    moneyUrl: ()=>'https://www.britishairways.com/travel/home/public/pt_br',
+    milesUrl:  ()=>'https://www.britishairways.com/travel/home/public/pt_br',
+  },
+  {
+    id:'tap', name:'TAP Portugal', flag:'🇵🇹', group:'eu',
+    badge:'Portugal', badgeColor:'#2e7d32',
+    program:'TAP Miles&Go',
+    moneyUrl: (f,t)=>`https://www.flytap.com/pt-br/voos-baratos/${f}/${t}`,
+    milesUrl:  (f,t)=>`https://www.flytap.com/pt-br/voos-baratos/${f}/${t}`,
+  },
+  {
+    id:'iberia', name:'Iberia', flag:'🇪🇸', group:'eu',
+    badge:'Espanha', badgeColor:'#b71c1c',
+    program:'Iberia Plus',
+    moneyUrl: ()=>'https://www.iberia.com/br/',
+    milesUrl:  ()=>'https://www.iberia.com/br/',
+  },
+  // Middle East & Asia
+  {
+    id:'emirates', name:'Emirates', flag:'🇦🇪', group:'me',
+    badge:'Dubai', badgeColor:'#b71c1c',
+    program:'Skywards',
+    moneyUrl: ()=>'https://www.emirates.com/br/portuguese/',
+    milesUrl:  ()=>'https://www.emirates.com/br/portuguese/',
+  },
+  {
+    id:'qatar', name:'Qatar Airways', flag:'🇶🇦', group:'me',
+    badge:'Qatar', badgeColor:'#6a1b9a',
+    program:'Privilege Club',
+    moneyUrl: ()=>'https://www.qatarairways.com/pt-br/homepage.html',
+    milesUrl:  ()=>'https://www.qatarairways.com/pt-br/homepage.html',
+  },
+  {
+    id:'turkish', name:'Turkish Airlines', flag:'🇹🇷', group:'me',
+    badge:'Turquia', badgeColor:'#c62828',
+    program:'Miles&Smiles',
+    moneyUrl: ()=>'https://www.turkishairlines.com/pt-br/',
+    milesUrl:  ()=>'https://www.turkishairlines.com/pt-br/',
+  },
+  {
+    id:'singapore', name:'Singapore Airlines', flag:'🇸🇬', group:'me',
+    badge:'Singapura', badgeColor:'#b71c1c',
+    program:'KrisFlyer',
+    moneyUrl: ()=>'https://www.singaporeair.com/pt_BR/',
+    milesUrl:  ()=>'https://www.singaporeair.com/pt_BR/',
+  },
+  // Rest of World
+  {
+    id:'copa', name:'Copa Airlines', flag:'🇵🇦', group:'ot',
+    badge:'Panamá', badgeColor:'#1565c0',
+    program:'ConnectMiles',
+    moneyUrl: ()=>'https://www.copaair.com/pt-br/web/br/',
+    milesUrl:  ()=>'https://www.copaair.com/pt-br/web/br/',
+  },
+  {
+    id:'ethiopian', name:'Ethiopian Airlines', flag:'🇪🇹', group:'ot',
+    badge:'Etiópia', badgeColor:'#2e7d32',
+    program:'ShebaMiles',
+    moneyUrl: ()=>'https://www.ethiopianairlines.com/br',
+    milesUrl:  ()=>'https://www.ethiopianairlines.com/br',
+  },
+  // Miles Programs
+  {
+    id:'smiles', name:'Smiles (Gol)', flag:'🇧🇷', group:'mp',
+    badge:'Milhas', badgeColor:'#e65100',
+    program:'Programa Smiles',
+    moneyUrl: null,
+    milesUrl: (f,t,d)=>`https://www.smiles.com.br/emissao-passagem-com-milhas?originAirportCode=${f}&destinationAirportCode=${t}&departureDate=${d}&adults=1`,
+  },
+  {
+    id:'tudoazul', name:'TudoAzul', flag:'🇧🇷', group:'mp',
+    badge:'Milhas', badgeColor:'#1565c0',
+    program:'Programa TudoAzul',
+    moneyUrl: null,
+    milesUrl: (f,t,d)=>`https://www.tudoazul.com/voos?from=${f}&to=${t}&departure=${d}&adults=1`,
+  },
+  {
+    id:'latampass', name:'LATAM Pass', flag:'🇧🇷', group:'mp',
+    badge:'Milhas', badgeColor:'#e53935',
+    program:'Programa LATAM Pass',
+    moneyUrl: null,
+    milesUrl: (f,t,d)=>`https://www.latampass.com/br/pt/passagens-com-pontos?origin=${f}&destination=${t}&outbound=${d}`,
+  },
+];
+
+const OFFERS = [
+  { from:'GRU', to:'REC', money:'R$ 189',  miles:'12.000 milhas', airline:'Gol' },
+  { from:'GRU', to:'MCZ', money:'R$ 210',  miles:'14.500 milhas', airline:'Azul' },
+  { from:'GRU', to:'SSA', money:'R$ 234',  miles:'15.000 milhas', airline:'LATAM' },
+  { from:'GRU', to:'FOR', money:'R$ 267',  miles:'18.000 milhas', airline:'Gol' },
+  { from:'GRU', to:'BSB', money:'R$ 159',  miles:'10.000 milhas', airline:'Azul' },
+  { from:'GRU', to:'LIS', money:'R$ 2.340',miles:'35.000 milhas', airline:'TAP' },
+  { from:'GRU', to:'MIA', money:'R$ 1.890',miles:'28.000 milhas', airline:'LATAM' },
+  { from:'GRU', to:'DXB', money:'R$ 3.200',miles:'55.000 milhas', airline:'Emirates' },
+  { from:'GRU', to:'CDG', money:'R$ 2.780',miles:'48.000 milhas', airline:'Air France' },
+  { from:'GRU', to:'MAD', money:'R$ 2.490',miles:'40.000 milhas', airline:'Iberia' },
+];
+
+const FOOTER_LINKS = [
+  { name:'LATAM', url:'https://www.latamairlines.com/br/pt' },
+  { name:'Gol', url:'https://www.voegol.com.br' },
+  { name:'Azul', url:'https://www.voeazul.com.br' },
+  { name:'Avianca', url:'https://www.avianca.com/br/pt' },
+  { name:'American Airlines', url:'https://www.aa.com' },
+  { name:'Delta', url:'https://www.delta.com' },
+  { name:'United', url:'https://www.united.com' },
+  { name:'Air Canada', url:'https://www.aircanada.com' },
+  { name:'Air France', url:'https://wwws.airfrance.com' },
+  { name:'KLM', url:'https://www.klm.com' },
+  { name:'Lufthansa', url:'https://www.lufthansa.com' },
+  { name:'British Airways', url:'https://www.britishairways.com' },
+  { name:'TAP Portugal', url:'https://www.flytap.com' },
+  { name:'Iberia', url:'https://www.iberia.com' },
+  { name:'Emirates', url:'https://www.emirates.com' },
+  { name:'Qatar Airways', url:'https://www.qatarairways.com' },
+  { name:'Turkish Airlines', url:'https://www.turkishairlines.com' },
+  { name:'Singapore Airlines', url:'https://www.singaporeair.com' },
+  { name:'Copa Airlines', url:'https://www.copaair.com' },
+  { name:'Ethiopian Airlines', url:'https://www.ethiopianairlines.com' },
+  { name:'Smiles', url:'https://www.smiles.com.br' },
+  { name:'TudoAzul', url:'https://www.tudoazul.com' },
+  { name:'LATAM Pass', url:'https://www.latampass.com' },
+];
+
+// ── STATE ──
+let currentMode = 'both';
+let searchFrom = '', searchTo = '', searchDate = '', searchPax = 1;
+
+// ── INIT ──
+(function init() {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('date-from').min = today;
+  document.getElementById('date-to').min = today;
+  document.getElementById('date-from').value = today;
+
+  renderOffers();
+  renderFooterLinks();
+  loadRecentSearches();
+})();
+
+// ── AUTOCOMPLETE ──
+function autocomplete(input, listId) {
+  const val = input.value.trim().toUpperCase();
+  const list = document.getElementById(listId);
+  if (!val) { list.style.display = 'none'; return; }
+  const matches = AIRPORTS.filter(a =>
+    a.code.startsWith(val) || a.name.toUpperCase().includes(val)
+  ).slice(0, 8);
+  if (!matches.length) { list.style.display = 'none'; return; }
+  list.innerHTML = matches.map((a, i) =>
+    `<div class="autocomplete-item" data-code="${a.code}" data-idx="${i}" onclick="selectAirport('${a.code}','${a.name}','${input.id}','${listId}')">
+      <span class="iata">${a.code}</span>${a.name}
+    </div>`
+  ).join('');
+  list.style.display = 'block';
+}
+
+function selectAirport(code, name, inputId, listId) {
+  document.getElementById(inputId).value = `${code} — ${name}`;
+  document.getElementById(listId).style.display = 'none';
+}
+
+function acKeydown(e, listId) {
+  const list = document.getElementById(listId);
+  const items = list.querySelectorAll('.autocomplete-item');
+  let active = list.querySelector('.autocomplete-item.active');
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (!active) { items[0] && items[0].classList.add('active'); }
+    else {
+      active.classList.remove('active');
+      const next = active.nextElementSibling;
+      if (next) next.classList.add('active');
     }
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (active) {
+      active.classList.remove('active');
+      const prev = active.previousElementSibling;
+      if (prev) prev.classList.add('active');
+    }
+  } else if (e.key === 'Enter') {
+    if (active) { active.click(); }
+  } else if (e.key === 'Escape') {
+    list.style.display = 'none';
+  }
+}
 
-    update();
-    setInterval(update, 1000);
-  </script>
+document.addEventListener('click', e => {
+  if (!e.target.closest('.form-group')) {
+    document.querySelectorAll('.autocomplete-list').forEach(l => l.style.display = 'none');
+  }
+});
+
+// ── MODE ──
+function setMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+  updateCardButtons();
+}
+
+function updateCardButtons() {
+  document.querySelectorAll('.btn-money').forEach(b => {
+    b.classList.toggle('hide', currentMode === 'miles');
+  });
+  document.querySelectorAll('.btn-miles').forEach(b => {
+    b.classList.toggle('hide', currentMode === 'money');
+  });
+}
+
+// ── SEARCH ──
+function extractCode(val) {
+  const m = val.trim().match(/^([A-Z]{3})/i);
+  return m ? m[1].toUpperCase() : val.trim().toUpperCase().slice(0,3);
+}
+
+function doSearch() {
+  const fromVal = document.getElementById('from-input').value;
+  const toVal   = document.getElementById('to-input').value;
+  const dateVal = document.getElementById('date-from').value;
+  const paxVal  = parseInt(document.getElementById('pax').value) || 1;
+
+  if (!fromVal || !toVal) {
+    alert('Por favor, preencha origem e destino.');
+    return;
+  }
+
+  searchFrom = extractCode(fromVal);
+  searchTo   = extractCode(toVal);
+  searchDate = dateVal || new Date().toISOString().split('T')[0];
+  searchPax  = paxVal;
+
+  // Save recent search
+  saveRecentSearch(searchFrom, searchTo, searchDate);
+
+  // Render cards
+  renderCards();
+
+  // Show results section
+  document.getElementById('results-section').style.display = 'block';
+  document.getElementById('results-subtitle').textContent =
+    `Rota: ${searchFrom} → ${searchTo} | ${formatDate(searchDate)} | ${paxVal} passageiro${paxVal>1?'s':''}`;
+
+  // Smooth scroll
+  document.getElementById('results-section').scrollIntoView({ behavior: 'smooth' });
+
+  // Open all tabs
+  openAllTabs();
+}
+
+function formatDate(d) {
+  if (!d) return '';
+  const [y,m,day] = d.split('-');
+  return `${day}/${m}/${y}`;
+}
+
+function renderCards() {
+  const groups = { br:[], na:[], eu:[], me:[], ot:[], mp:[] };
+  AIRLINES.forEach(a => { if(groups[a.group]) groups[a.group].push(a); });
+
+  Object.entries(groups).forEach(([g, airlines]) => {
+    const container = document.getElementById(`group-${g}`);
+    if (!container) return;
+    container.innerHTML = airlines.map(a => buildCard(a)).join('');
+  });
+
+  updateCardButtons();
+}
+
+function buildCard(a) {
+  const moneyHref = a.moneyUrl ? a.moneyUrl(searchFrom, searchTo, searchDate, searchPax) : '#';
+  const milesHref = a.milesUrl ? a.milesUrl(searchFrom, searchTo, searchDate, searchPax) : '#';
+  const moneyBtn = a.moneyUrl
+    ? `<a href="${moneyHref}" target="_blank" rel="noopener" class="btn-money">💰 Ver em Dinheiro</a>`
+    : '';
+  const milesBtn = a.milesUrl
+    ? `<a href="${milesHref}" target="_blank" rel="noopener" class="btn-miles">✈️ Ver em Milhas</a>`
+    : '';
+
+  return `<div class="airline-card">
+    <div class="card-header">
+      <div class="airline-name">${a.flag} ${a.name}</div>
+      <span class="badge" style="background:${a.badgeColor}22;color:${a.badgeColor};border:1px solid ${a.badgeColor}44">${a.badge}</span>
+    </div>
+    <div class="miles-program">🎫 ${a.program}</div>
+    <div class="route-display">
+      <span class="code">${searchFrom}</span>
+      <span>→</span>
+      <span class="code">${searchTo}</span>
+    </div>
+    <div class="card-btns">${moneyBtn}${milesBtn}</div>
+  </div>`;
+}
+
+function openAllTabs() {
+  const relevant = AIRLINES.filter(a => {
+    if (currentMode === 'money' && !a.moneyUrl) return false;
+    if (currentMode === 'miles' && !a.milesUrl) return false;
+    return true;
+  });
+  relevant.forEach(a => {
+    const url = currentMode === 'miles'
+      ? (a.milesUrl && a.milesUrl(searchFrom, searchTo, searchDate, searchPax))
+      : (a.moneyUrl && a.moneyUrl(searchFrom, searchTo, searchDate, searchPax))
+        || (a.milesUrl && a.milesUrl(searchFrom, searchTo, searchDate, searchPax));
+    if (url && url !== '#') window.open(url, '_blank', 'noopener');
+  });
+}
+
+// ── OFFERS ──
+function renderOffers() {
+  document.getElementById('offers-grid').innerHTML = OFFERS.map(o =>
+    `<div class="offer-card">
+      <div class="offer-route">${o.from} → ${o.to}</div>
+      <div class="offer-airline">✈️ ${o.airline}</div>
+      <div class="offer-prices">
+        <span class="price-money">💰 ${o.money}</span>
+        <span class="price-sep">|</span>
+        <span class="price-miles">🎫 ${o.miles}</span>
+      </div>
+    </div>`
+  ).join('');
+}
+
+// ── RECENT SEARCHES ──
+function saveRecentSearch(from, to, date) {
+  let recents = JSON.parse(localStorage.getItem('milhas_recents') || '[]');
+  const entry = `${from} → ${to}`;
+  recents = recents.filter(r => r !== entry);
+  recents.unshift(entry);
+  recents = recents.slice(0, 5);
+  localStorage.setItem('milhas_recents', JSON.stringify(recents));
+  loadRecentSearches();
+}
+
+function loadRecentSearches() {
+  const recents = JSON.parse(localStorage.getItem('milhas_recents') || '[]');
+  const section = document.getElementById('recent-section');
+  const container = document.getElementById('chips-container');
+  if (!recents.length) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  container.innerHTML = recents.map(r => {
+    const parts = r.split(' → ');
+    const from = parts[0] || '';
+    const to   = parts[1] || '';
+    return `<span class="chip" onclick="fillSearch('${from}','${to}')">${r}</span>`;
+  }).join('');
+}
+
+function fillSearch(from, to) {
+  const fromAirport = AIRPORTS.find(a => a.code === from);
+  const toAirport   = AIRPORTS.find(a => a.code === to);
+  document.getElementById('from-input').value = fromAirport ? `${from} — ${fromAirport.name}` : from;
+  document.getElementById('to-input').value   = toAirport   ? `${to} — ${toAirport.name}` : to;
+}
+
+// ── FOOTER ──
+function renderFooterLinks() {
+  document.getElementById('footer-links').innerHTML = FOOTER_LINKS.map(l =>
+    `<a href="${l.url}" target="_blank" rel="noopener">${l.name}</a>`
+  ).join('');
+}
+</script>
 </body>
 </html>
