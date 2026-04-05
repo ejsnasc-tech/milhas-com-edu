@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🕐 Relógio Mundial</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0d1117;
+      color: #e6edf3;
+      font-family: 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 8px;
+      background: linear-gradient(90deg, #58a6ff, #bc8cff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .subtitle {
+      color: #8b949e;
+      margin-bottom: 40px;
+      font-size: 0.95rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+      width: 100%;
+      max-width: 1200px;
+    }
+    .card {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 16px;
+      padding: 24px;
+      text-align: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+      cursor: default;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 30px rgba(88, 166, 255, 0.15);
+      border-color: #58a6ff;
+    }
+    .flag { font-size: 2.5rem; margin-bottom: 8px; }
+    .city {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #8b949e;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .timezone {
+      font-size: 0.75rem;
+      color: #484f58;
+      margin-bottom: 16px;
+    }
+    .time {
+      font-size: 2.4rem;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color: #58a6ff;
+      letter-spacing: 2px;
+    }
+    .ampm {
+      font-size: 1rem;
+      color: #bc8cff;
+      margin-left: 4px;
+    }
+    .date {
+      font-size: 0.8rem;
+      color: #6e7681;
+      margin-top: 8px;
+    }
+    footer {
+      margin-top: 50px;
+      color: #484f58;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🌍 Relógio Mundial</h1>
+  <p class="subtitle">Horário atual nas principais cidades do mundo</p>
+
+  <div class="grid" id="clocks"></div>
+
+  <footer>Atualizado a cada segundo • GitHub Pages</footer>
+
+  <script>
+    const zones = [
+      { city: "São Paulo",      flag: "🇧🇷", tz: "America/Sao_Paulo" },
+      { city: "New York",       flag: "🇺🇸", tz: "America/New_York" },
+      { city: "Los Angeles",    flag: "🇺🇸", tz: "America/Los_Angeles" },
+      { city: "Londres",        flag: "🇬🇧", tz: "Europe/London" },
+      { city: "Paris",          flag: "🇫🇷", tz: "Europe/Paris" },
+      { city: "Dubai",          flag: "🇦🇪", tz: "Asia/Dubai" },
+      { city: "Mumbai",         flag: "🇮🇳", tz: "Asia/Kolkata" },
+      { city: "Singapura",      flag: "🇸🇬", tz: "Asia/Singapore" },
+      { city: "Tóquio",         flag: "🇯🇵", tz: "Asia/Tokyo" },
+      { city: "Sydney",         flag: "🇦🇺", tz: "Australia/Sydney" },
+      { city: "Joanesburgo",    flag: "🇿🇦", tz: "Africa/Johannesburg" },
+      { city: "Cidade do México", flag: "🇲🇽", tz: "America/Mexico_City" },
+    ];
+
+    const grid = document.getElementById("clocks");
+
+    zones.forEach(({ city, flag, tz }) => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <div class="flag">${flag}</div>
+        <div class="city">${city}</div>
+        <div class="timezone">${tz}</div>
+        <div class="time" id="time-${tz.replace(/\//g,'-')}">--:--:--</div>
+        <div class="date" id="date-${tz.replace(/\//g,'-')}">---</div>
+      `;
+      grid.appendChild(card);
+    });
+
+    function update() {
+      const now = new Date();
+      zones.forEach(({ tz }) => {
+        const id = tz.replace(/\//g, '-');
+        const timeStr = now.toLocaleTimeString('pt-BR', { timeZone: tz, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const dateStr = now.toLocaleDateString('pt-BR', { timeZone: tz, weekday: 'long', day: '2-digit', month: 'long' });
+        document.getElementById('time-' + id).textContent = timeStr;
+        document.getElementById('date-' + id).textContent = dateStr;
+      });
+    }
+
+    update();
+    setInterval(update, 1000);
+  </script>
+</body>
+</html>
