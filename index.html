@@ -304,7 +304,7 @@ var AIRLINES = [
    moneyUrl:function(f,t,d,p){return 'https://www.voegol.com.br/pt/busca?from='+f+'&to='+t+'&departure='+d+'&adults='+p+'&type=ONE_WAY';},
    milesUrl:function(f,t,d)  {return 'https://www.smiles.com.br/emissao-passagem-com-milhas?originAirportCode='+f+'&destinationAirportCode='+t+'&departureDate='+d+'&adults=1&tripType=ONE_WAY';}},
   {id:'azul',    name:'Azul Linhas Aéreas',      flag:'🇧🇷', group:'br', short:'AZUL', badge:'Brasileira', badgeColor:'#1565c0', program:'TudoAzul',          color:'#1976d2',
-   moneyUrl:function(f,t,d)  {return 'https://www.voeazul.com.br/br/pt/home/select?origin='+f+'&destination='+t+'&departDate='+d;},
+   moneyUrl:function(f,t,d,p){return 'https://www.voeazul.com.br/br/pt/home/select?origin='+f+'&destination='+t+'&departDate='+d+'&adults='+p;},
    milesUrl:function(f,t,d)  {return 'https://www.tudoazul.com/voos?from='+f+'&to='+t+'&departure='+d+'&adults=1';}},
   {id:'avianca', name:'Avianca',                 flag:'🇧🇷', group:'br', short:'AVN',  badge:'Brasileira', badgeColor:'#6a1b9a', program:'LifeMiles',         color:'#6a1b9a',
    moneyUrl:function(f,t)    {return 'https://www.avianca.com/br/pt/voos/'+f+'/'+t+'/';},
@@ -449,7 +449,7 @@ function _doAc(input, listId) {
   }).slice(0, 8);
   if (!matches.length) { list.style.display = 'none'; return; }
   list.innerHTML = matches.map(function(a, i){
-    return '<div class="autocomplete-item" data-code="' + a.code + '" data-idx="' + i + '" onclick="selectAirport(\' + a.code + '\',\' + a.name.replace(/'/g,"\\'") + '\',\'' + input.id + '\',\'' + listId + '\')">' +
+    return '<div class="autocomplete-item" data-code="' + a.code + '" data-idx="' + i + '" onclick="selectAirport(\'' + a.code + '\',\'' + a.name.replace(/'/g, "\\'") + '\',\'' + input.id + '\',\'' + listId + '\')">' +
       '<span class="iata">' + a.code + '</span>' + a.name + '</div>';
   }).join('');
   list.style.display = 'block';
@@ -622,7 +622,7 @@ function renderCalendar() {
     if (priceType === 'money' || priceType === 'both') priceHtml += '<div class="cal-day-price-money">' + fmtMoney(bestMoney) + '</div>';
     if (priceType === 'miles' || priceType === 'both') priceHtml += '<div class="cal-day-price-miles">' + fmtMiles(bestMiles) + '</div>';
     var safeUrl = url.replace(/'/g, "\\'");
-    html += '<div class="' + cls + '" style="' + opac + '" onclick="calDayClick(\' + dateStr + '\',\'' + safeUrl + '\')">' +
+    html += '<div class="' + cls + '" style="' + opac + '" onclick="calDayClick(\'' + dateStr + '\',\'' + safeUrl + '\')">' +
       '<div class="cal-day-num">' + day + '</div>' +
       (bestAirline ? '<div class="cal-airline-badge" style="background:' + bestAirline.color + '">' + bestAirline.short + '</div>' : '') +
       priceHtml + '</div>';
