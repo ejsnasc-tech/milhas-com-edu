@@ -12,10 +12,20 @@
     }
     html { scroll-behavior: smooth; }
     body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
+    /* ── NAVBAR ── */
+    .navbar { position:sticky; top:0; z-index:200; background:rgba(10,14,26,.92); backdrop-filter:blur(16px); border-bottom:1px solid var(--border); padding:0 28px; height:64px; display:flex; align-items:center; justify-content:space-between; }
+    .navbar-logo { display:flex; align-items:center; gap:0; cursor:pointer; text-decoration:none; }
+    .navbar-logo img { height:42px; width:auto; }
+    .navbar-links { display:flex; gap:24px; }
+    .navbar-links a { color:var(--muted); text-decoration:none; font-size:.88rem; font-weight:600; transition:color .2s; }
+    .navbar-links a:hover { color:#64b5f6; }
+    @media(max-width:600px){ .navbar-links { display:none; } }
+    /* ── HERO ── */
     .hero { background: linear-gradient(160deg,#0a0e1a 0%,#0d1b40 40%,#1a237e 100%); padding: 60px 20px 80px; text-align: center; position: relative; overflow: hidden; }
     .hero::before { content:''; position:absolute; inset:0; pointer-events:none;
       background-image: radial-gradient(1px 1px at 20% 30%,rgba(255,255,255,.6) 0%,transparent 100%), radial-gradient(1px 1px at 80% 10%,rgba(255,255,255,.5) 0%,transparent 100%), radial-gradient(1px 1px at 50% 50%,rgba(255,255,255,.4) 0%,transparent 100%), radial-gradient(1px 1px at 10% 70%,rgba(255,255,255,.6) 0%,transparent 100%), radial-gradient(1px 1px at 90% 80%,rgba(255,255,255,.5) 0%,transparent 100%), radial-gradient(1px 1px at 35% 15%,rgba(255,255,255,.7) 0%,transparent 100%), radial-gradient(1px 1px at 65% 65%,rgba(255,255,255,.4) 0%,transparent 100%); }
-    .logo { font-size:2.8rem; font-weight:800; letter-spacing:-1px; background:linear-gradient(90deg,#64b5f6,#ce93d8); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; position:relative; }
+    .hero-logo { position:relative; display:inline-block; margin-bottom:8px; }
+    .hero-logo img { height:90px; width:auto; filter:drop-shadow(0 4px 24px rgba(100,181,246,.35)); }
     .tagline { margin-top:12px; font-size:1.15rem; color:#b0bec5; position:relative; }
     .search-section { max-width:900px; margin:-40px auto 0; padding:0 20px; position:relative; z-index:10; }
     .search-card { background:var(--card); border:1px solid var(--border); border-radius:20px; padding:28px; box-shadow:0 20px 60px rgba(0,0,0,.5); }
@@ -100,8 +110,20 @@
 </head>
 <body>
 
+<nav class="navbar">
+  <a class="navbar-logo" href="#" onclick="window.scrollTo({top:0,behavior:'smooth'});return false;">
+    <img src="/logo.svg" alt="Milhas com Edu" />
+  </a>
+  <div class="navbar-links">
+    <a href="#results-section">🔍 Buscar</a>
+    <a href="#destinos-section">🌍 Destinos</a>
+  </div>
+</nav>
+
 <section class="hero">
-  <div class="logo">✈️ Milhas com Edu</div>
+  <div class="hero-logo">
+    <img src="/logo.svg" alt="Milhas com Edu" />
+  </div>
   <p class="tagline">Encontre as melhores passagens em dinheiro e milhas — todas as companhias em um só lugar</p>
 </section>
 
@@ -149,7 +171,7 @@
   <div class="cards-grid" id="real-results-grid"></div>
 </div>
 
-<div class="destinos-section">
+<div class="destinos-section" id="destinos-section">
   <div class="section-title">🌍 Destinos Populares</div>
   <div class="section-subtitle">Selecione sua cidade de origem e veja os melhores preços reais para os destinos mais buscados.</div>
   <div class="destinos-controls">
