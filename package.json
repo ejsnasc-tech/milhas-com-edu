@@ -1,0 +1,13 @@
+{
+  "name": "milhas-com-edu",
+  "version": "1.0.0",
+  "description": "Buscador de Passagens Aéreas — Milhas com Edu",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "gflights": "^0.4.0"
+  }
+}

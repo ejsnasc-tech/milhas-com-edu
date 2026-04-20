@@ -70,43 +70,17 @@
     .btn-miles:hover { background:rgba(124,77,255,.25); }
     .btn-miles.hide,.btn-money.hide { display:none; }
     .group-header { font-size:1rem; font-weight:700; color:#64b5f6; margin:32px 0 14px; display:flex; align-items:center; gap:8px; padding-bottom:8px; border-bottom:1px solid var(--border); }
-    .offers-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:14px; }
-    .offer-card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px; transition:transform .2s,box-shadow .2s; }
-    .offer-card:hover { transform:translateY(-3px); box-shadow:0 10px 30px rgba(0,0,0,.4); border-color:var(--accent2); }
-    .offer-route { font-size:1.1rem; font-weight:800; margin-bottom:6px; }
-    .offer-airline { font-size:.75rem; color:var(--muted); margin-bottom:12px; }
-    .offer-prices { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-    .price-money { font-size:1rem; font-weight:700; color:var(--green); }
-    .price-miles { font-size:1rem; font-weight:700; color:var(--purple); }
-    .price-sep { color:var(--border); }
-    .offer-btn { display:inline-block; margin-top:12px; padding:7px 14px; background:var(--accent); color:#fff; border-radius:8px; font-size:.8rem; font-weight:700; text-decoration:none; transition:opacity .2s; }
-    .offer-btn:hover { opacity:.85; }
+
     /* CALENDAR */
-    .cal-section { max-width:1100px; margin:60px auto; padding:0 20px; }
-    .cal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:12px; }
-    .cal-nav { display:flex; align-items:center; gap:12px; }
-    .cal-nav-btn { background:var(--card); border:1px solid var(--border); border-radius:8px; color:var(--text); padding:8px 16px; cursor:pointer; font-size:1rem; transition:background .2s; }
-    .cal-nav-btn:hover { background:var(--accent); }
-    .cal-month-title { font-size:1.1rem; font-weight:700; min-width:160px; text-align:center; }
-    .cal-filter { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
-    .cal-filter label { font-size:.8rem; color:var(--muted); font-weight:600; }
-    .cal-filter select { background:#060d1a; border:1px solid var(--border); border-radius:8px; color:var(--text); padding:7px 12px; font-size:.85rem; cursor:pointer; outline:none; }
-    .cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
-    .cal-day-header { text-align:center; font-size:.72rem; font-weight:700; color:var(--muted); padding:8px 0; text-transform:uppercase; }
-    .cal-day { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:8px 6px; min-height:80px; display:flex; flex-direction:column; align-items:center; gap:4px; transition:all .2s; cursor:pointer; }
-    .cal-day:hover { border-color:var(--accent2); box-shadow:0 4px 16px rgba(21,101,192,.25); transform:translateY(-2px); }
-    .cal-day.empty { background:transparent; border:1px solid transparent; cursor:default; pointer-events:none; }
-    .cal-day.today { border-color:var(--accent2); }
-    .cal-day.selected { border-color:#7c4dff; box-shadow:0 0 0 2px #7c4dff44; }
-    .cal-day-num { font-size:.85rem; font-weight:700; color:var(--text); }
-    .cal-day.today .cal-day-num { color:#64b5f6; }
-    .cal-airline-badge { font-size:.65rem; font-weight:700; padding:2px 6px; border-radius:10px; background:var(--accent); color:#fff; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-align:center; }
-    .cal-day-price-money { font-size:.75rem; font-weight:700; color:var(--green); }
-    .cal-day-price-miles { font-size:.7rem; color:var(--purple); font-weight:600; }
-    .cal-legend { display:flex; gap:16px; flex-wrap:wrap; margin-top:16px; justify-content:flex-end; }
-    .cal-legend-item { display:flex; align-items:center; gap:6px; font-size:.78rem; color:var(--muted); }
-    .cal-legend-dot { width:10px; height:10px; border-radius:50%; }
-    @media(max-width:700px){ .cal-day { min-height:60px; padding:5px 3px; } .cal-day-num { font-size:.75rem; } .cal-airline-badge { font-size:.6rem; } .cal-day-price-money,.cal-day-price-miles { font-size:.65rem; } }
+    .destinos-section { max-width:1100px; margin:60px auto; padding:0 20px; }
+    .destinos-controls { display:flex; align-items:flex-end; gap:16px; margin-bottom:28px; flex-wrap:wrap; }
+    .destinos-controls .form-group { flex:1; min-width:200px; max-width:340px; }
+    .btn-destinos { background:var(--accent2); color:#fff; border:none; border-radius:12px; padding:12px 28px; font-size:.95rem; font-weight:700; cursor:pointer; transition:all .2s; white-space:nowrap; }
+    .btn-destinos:hover { background:#1976d2; box-shadow:0 4px 16px rgba(21,101,192,.4); transform:translateY(-1px); }
+    .btn-destinos:active { transform:translateY(0); }
+    .destino-city { font-size:.95rem; font-weight:700; color:var(--text); }
+    .destino-route { font-size:.78rem; color:var(--muted); margin:4px 0; }
+    .destino-airline-name { font-size:.78rem; color:var(--muted); }
     footer { background:#060d1a; border-top:1px solid var(--border); padding:40px 20px; margin-top:80px; }
     .footer-inner { max-width:1100px; margin:0 auto; }
     .disclaimer { color:var(--muted); font-size:.85rem; text-align:center; margin-bottom:28px; line-height:1.6; }
@@ -114,6 +88,11 @@
     .footer-links a { color:#64b5f6; text-decoration:none; font-size:.82rem; transition:color .2s; }
     .footer-links a:hover { color:#fff; }
     #results-section { display:none; }
+    .real-result .card-prices { border-left:3px solid #4caf50; padding-left:10px; }
+    .search-loading { text-align:center; padding:40px; color:var(--muted); font-size:1rem; }
+    .search-loading .spinner { display:inline-block; width:24px; height:24px; border:3px solid var(--border); border-top-color:var(--accent2); border-radius:50%; animation:spin .8s linear infinite; margin-right:10px; vertical-align:middle; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+
     ::-webkit-scrollbar { width:6px; height:6px; }
     ::-webkit-scrollbar-track { background:var(--bg); }
     ::-webkit-scrollbar-thumb { background:var(--accent); border-radius:3px; }
@@ -128,11 +107,6 @@
 
 <div class="search-section">
   <div class="search-card">
-    <div class="mode-toggle">
-      <button class="mode-btn active" data-mode="both" onclick="setMode('both')">🔀 Ambos</button>
-      <button class="mode-btn" data-mode="money" onclick="setMode('money')">💰 Dinheiro</button>
-      <button class="mode-btn" data-mode="miles" onclick="setMode('miles')">✈️ Milhas</button>
-    </div>
     <div class="form-grid">
       <div class="form-group" id="from-group">
         <label>Origem</label>
@@ -151,7 +125,7 @@
         <input type="date" id="date-from" />
       </div>
       <div class="form-group">
-        <label>Volta (opcional)</label>
+        <label>Volta</label>
         <input type="date" id="date-to" />
       </div>
     </div>
@@ -170,58 +144,36 @@
 </div>
 
 <div class="section" id="results-section">
-  <div class="section-title">🛫 Companhias Aéreas — Resultados</div>
+  <div class="section-title">🛫 Resultados da Busca</div>
   <div class="section-subtitle" id="results-subtitle"></div>
-  <div class="group-header">🇧🇷 Cias Brasileiras</div>
-  <div class="cards-grid" id="group-br"></div>
-  <div class="group-header">🌎 América do Norte</div>
-  <div class="cards-grid" id="group-na"></div>
-  <div class="group-header">🌍 Europa</div>
-  <div class="cards-grid" id="group-eu"></div>
-  <div class="group-header">🌏 Oriente Médio &amp; Ásia</div>
-  <div class="cards-grid" id="group-me"></div>
-  <div class="group-header">🌐 Resto do Mundo</div>
-  <div class="cards-grid" id="group-ot"></div>
-  <div class="group-header">🎫 Programas de Milhas</div>
-  <div class="cards-grid" id="group-mp"></div>
+  <div class="cards-grid" id="real-results-grid"></div>
 </div>
 
-<div class="cal-section">
-  <div class="section-title">📅 Calendário de Preços por Companhia</div>
-  <div class="section-subtitle">Veja qual companhia tem o menor preço em cada dia do mês e clique para ir direto ao site.</div>
-  <div class="cal-header">
-    <div class="cal-nav">
-      <button class="cal-nav-btn" onclick="calPrev()">&#8592;</button>
-      <div class="cal-month-title" id="cal-month-title">—</div>
-      <button class="cal-nav-btn" onclick="calNext()">&#8594;</button>
+<div class="destinos-section">
+  <div class="section-title">🌍 Destinos Populares</div>
+  <div class="section-subtitle">Selecione sua cidade de origem e veja os melhores preços reais para os destinos mais buscados.</div>
+  <div class="destinos-controls">
+    <div class="form-group" style="position:relative;min-width:260px;max-width:360px">
+      <label>Sua cidade de origem</label>
+      <input type="text" id="destinos-origin-input" placeholder="Ex: AJU — Aracaju" autocomplete="off"
+        oninput="acSearch(this,'destinos-origin-list')" onkeydown="acKeydown(event,'destinos-origin-list')">
+      <div class="autocomplete-list" id="destinos-origin-list" style="display:none"></div>
     </div>
-    <div class="cal-filter">
-      <label>Companhia:</label>
-      <select id="cal-airline-filter" onchange="renderCalendar()">
-        <option value="all">Todas</option>
-      </select>
-      <label>Preço:</label>
-      <select id="cal-price-type" onchange="renderCalendar()">
-        <option value="money">💰 Dinheiro</option>
-        <option value="miles">✈️ Milhas</option>
-        <option value="both">Ambos</option>
-      </select>
+    <div class="form-group" style="min-width:160px;max-width:200px">
+      <label>Data de ida</label>
+      <input type="date" id="destinos-date">
     </div>
+    <button class="btn-destinos" onclick="loadDestinos()">🔄 Atualizar Preços</button>
   </div>
-  <div class="cal-grid" id="cal-grid"></div>
-  <div class="cal-legend" id="cal-legend"></div>
+  <div class="cards-grid" id="destinos-grid"></div>
 </div>
 
-<div class="section">
-  <div class="section-title">🔥 Melhores Ofertas do Momento</div>
-  <div class="section-subtitle">Preços aproximados. Clique para verificar disponibilidade no site da companhia.</div>
-  <div class="offers-grid" id="offers-grid"></div>
-</div>
+
 
 <footer>
   <div class="footer-inner">
     <p class="disclaimer">
-      Os preços exibidos são <strong>estimativas</strong> para referência. Verifique o valor real ao clicar no site de cada companhia.<br>
+      Os preços exibidos são <strong>por trecho</strong>, obtidos em <strong>tempo real</strong> via Google Flights em R$.<br>
       <strong>Milhas com Edu não vende passagens.</strong> Este site redireciona para os sites oficiais das companhias aéreas.
     </p>
     <div class="footer-links" id="footer-links"></div>
@@ -230,11 +182,14 @@
 
 <script>
 var AIRPORTS = [
+  // Brasil
   {code:'GRU',name:'São Paulo — Guarulhos',country:'BR'},
   {code:'CGH',name:'São Paulo — Congonhas',country:'BR'},
+  {code:'VCP',name:'Campinas — Viracopos',country:'BR'},
   {code:'BSB',name:'Brasília',country:'BR'},
   {code:'GIG',name:'Rio de Janeiro — Galeão',country:'BR'},
   {code:'SDU',name:'Rio de Janeiro — Santos Dumont',country:'BR'},
+  {code:'CNF',name:'Belo Horizonte — Confins',country:'BR'},
   {code:'SSA',name:'Salvador',country:'BR'},
   {code:'FOR',name:'Fortaleza',country:'BR'},
   {code:'REC',name:'Recife',country:'BR'},
@@ -247,139 +202,233 @@ var AIRPORTS = [
   {code:'NAT',name:'Natal',country:'BR'},
   {code:'THE',name:'Teresina',country:'BR'},
   {code:'AJU',name:'Aracaju',country:'BR'},
+  {code:'SLZ',name:'São Luís',country:'BR'},
+  {code:'GYN',name:'Goiânia',country:'BR'},
+  {code:'CGB',name:'Cuiabá',country:'BR'},
+  {code:'CGR',name:'Campo Grande',country:'BR'},
+  {code:'VIX',name:'Vitória',country:'BR'},
+  {code:'JPA',name:'João Pessoa',country:'BR'},
+  {code:'PMW',name:'Palmas',country:'BR'},
+  {code:'PVH',name:'Porto Velho',country:'BR'},
+  {code:'MCP',name:'Macapá',country:'BR'},
+  {code:'BVB',name:'Boa Vista',country:'BR'},
+  {code:'RBR',name:'Rio Branco',country:'BR'},
+  {code:'IGU',name:'Foz do Iguaçu',country:'BR'},
+  {code:'NVT',name:'Navegantes',country:'BR'},
+  {code:'UDI',name:'Uberlândia',country:'BR'},
+  {code:'JOI',name:'Joinville',country:'BR'},
+  {code:'LDB',name:'Londrina',country:'BR'},
+  {code:'MGF',name:'Maringá',country:'BR'},
+  {code:'PNZ',name:'Petrolina',country:'BR'},
+  {code:'IOS',name:'Ilhéus',country:'BR'},
+  {code:'BPS',name:'Porto Seguro',country:'BR'},
+  // EUA
   {code:'MIA',name:'Miami',country:'US'},
+  {code:'MCO',name:'Orlando',country:'US'},
+  {code:'FLL',name:'Fort Lauderdale',country:'US'},
+  {code:'TPA',name:'Tampa',country:'US'},
   {code:'JFK',name:'Nova York — JFK',country:'US'},
+  {code:'EWR',name:'Nova York — Newark',country:'US'},
+  {code:'LGA',name:'Nova York — LaGuardia',country:'US'},
   {code:'LAX',name:'Los Angeles',country:'US'},
-  {code:'ORD',name:'Chicago',country:'US'},
+  {code:'SFO',name:'São Francisco',country:'US'},
+  {code:'ORD',name:'Chicago — O\'Hare',country:'US'},
+  {code:'ATL',name:'Atlanta',country:'US'},
+  {code:'DFW',name:'Dallas',country:'US'},
+  {code:'IAH',name:'Houston — Intercontinental',country:'US'},
+  {code:'DEN',name:'Denver',country:'US'},
+  {code:'SEA',name:'Seattle',country:'US'},
+  {code:'BOS',name:'Boston',country:'US'},
+  {code:'IAD',name:'Washington — Dulles',country:'US'},
+  {code:'PHL',name:'Filadélfia',country:'US'},
+  {code:'LAS',name:'Las Vegas',country:'US'},
+  {code:'SAN',name:'San Diego',country:'US'},
+  {code:'MSP',name:'Minneapolis',country:'US'},
+  {code:'DTW',name:'Detroit',country:'US'},
+  {code:'HNL',name:'Honolulu — Havaí',country:'US'},
+  // Canadá
   {code:'YYZ',name:'Toronto',country:'CA'},
+  {code:'YUL',name:'Montreal',country:'CA'},
+  {code:'YVR',name:'Vancouver',country:'CA'},
+  // México e Caribe
+  {code:'MEX',name:'Cidade do México',country:'MX'},
+  {code:'CUN',name:'Cancún',country:'MX'},
+  {code:'GDL',name:'Guadalajara',country:'MX'},
+  {code:'SJO',name:'San José — Costa Rica',country:'CR'},
+  {code:'HAV',name:'Havana',country:'CU'},
+  {code:'PUJ',name:'Punta Cana',country:'DO'},
+  {code:'SDQ',name:'Santo Domingo',country:'DO'},
+  {code:'MBJ',name:'Montego Bay',country:'JM'},
+  {code:'SXM',name:'St. Maarten',country:'SX'},
+  {code:'AUA',name:'Aruba',country:'AW'},
+  {code:'CUR',name:'Curaçao',country:'CW'},
+  // América do Sul
+  {code:'EZE',name:'Buenos Aires — Ezeiza',country:'AR'},
+  {code:'AEP',name:'Buenos Aires — Aeroparque',country:'AR'},
+  {code:'SCL',name:'Santiago',country:'CL'},
+  {code:'LIM',name:'Lima',country:'PE'},
+  {code:'BOG',name:'Bogotá',country:'CO'},
+  {code:'CTG',name:'Cartagena',country:'CO'},
+  {code:'MDE',name:'Medellín',country:'CO'},
+  {code:'UIO',name:'Quito',country:'EC'},
+  {code:'GYE',name:'Guayaquil',country:'EC'},
+  {code:'PTY',name:'Cidade do Panamá',country:'PA'},
+  {code:'MVD',name:'Montevidéu',country:'UY'},
+  {code:'ASU',name:'Assunção',country:'PY'},
+  {code:'VVI',name:'Santa Cruz de la Sierra',country:'BO'},
+  {code:'LPB',name:'La Paz',country:'BO'},
+  {code:'CCS',name:'Caracas',country:'VE'},
+  // Europa
   {code:'LIS',name:'Lisboa',country:'PT'},
-  {code:'CDG',name:'Paris',country:'FR'},
-  {code:'LHR',name:'Londres',country:'GB'},
+  {code:'OPO',name:'Porto',country:'PT'},
+  {code:'CDG',name:'Paris — Charles de Gaulle',country:'FR'},
+  {code:'ORY',name:'Paris — Orly',country:'FR'},
+  {code:'LHR',name:'Londres — Heathrow',country:'GB'},
+  {code:'LGW',name:'Londres — Gatwick',country:'GB'},
+  {code:'STN',name:'Londres — Stansted',country:'GB'},
   {code:'MAD',name:'Madri',country:'ES'},
-  {code:'FCO',name:'Roma',country:'IT'},
+  {code:'BCN',name:'Barcelona',country:'ES'},
+  {code:'FCO',name:'Roma — Fiumicino',country:'IT'},
+  {code:'MXP',name:'Milão — Malpensa',country:'IT'},
+  {code:'VCE',name:'Veneza',country:'IT'},
   {code:'AMS',name:'Amsterdã',country:'NL'},
   {code:'FRA',name:'Frankfurt',country:'DE'},
-  {code:'BCN',name:'Barcelona',country:'ES'},
+  {code:'MUC',name:'Munique',country:'DE'},
+  {code:'BER',name:'Berlim',country:'DE'},
+  {code:'ZRH',name:'Zurique',country:'CH'},
+  {code:'GVA',name:'Genebra',country:'CH'},
+  {code:'VIE',name:'Viena',country:'AT'},
+  {code:'BRU',name:'Bruxelas',country:'BE'},
+  {code:'DUB',name:'Dublin',country:'IE'},
+  {code:'CPH',name:'Copenhague',country:'DK'},
+  {code:'OSL',name:'Oslo',country:'NO'},
+  {code:'ARN',name:'Estocolmo',country:'SE'},
+  {code:'HEL',name:'Helsinque',country:'FI'},
+  {code:'WAW',name:'Varsóvia',country:'PL'},
+  {code:'PRG',name:'Praga',country:'CZ'},
+  {code:'BUD',name:'Budapeste',country:'HU'},
+  {code:'ATH',name:'Atenas',country:'GR'},
+  {code:'EDI',name:'Edimburgo',country:'GB'},
+  {code:'AGP',name:'Málaga',country:'ES'},
+  {code:'PMI',name:'Palma de Mallorca',country:'ES'},
+  // Oriente Médio
   {code:'DXB',name:'Dubai',country:'AE'},
+  {code:'AUH',name:'Abu Dhabi',country:'AE'},
   {code:'DOH',name:'Doha',country:'QA'},
   {code:'IST',name:'Istambul',country:'TR'},
+  {code:'TLV',name:'Tel Aviv',country:'IL'},
+  {code:'RUH',name:'Riade',country:'SA'},
+  {code:'JED',name:'Jeddah',country:'SA'},
+  {code:'AMM',name:'Amã',country:'JO'},
+  {code:'CAI',name:'Cairo',country:'EG'},
+  {code:'CMN',name:'Casablanca',country:'MA'},
+  // África
+  {code:'ADD',name:'Adis Abeba',country:'ET'},
+  {code:'JNB',name:'Joanesburgo',country:'ZA'},
+  {code:'CPT',name:'Cidade do Cabo',country:'ZA'},
+  {code:'NBO',name:'Nairóbi',country:'KE'},
+  {code:'LOS',name:'Lagos',country:'NG'},
+  {code:'ACC',name:'Acra',country:'GH'},
+  {code:'DAR',name:'Dar es Salaam',country:'TZ'},
+  {code:'MPM',name:'Maputo',country:'MZ'},
+  {code:'LAD',name:'Luanda',country:'AO'},
+  // Ásia e Oceania
   {code:'SIN',name:'Singapura',country:'SG'},
   {code:'NRT',name:'Tóquio — Narita',country:'JP'},
-  {code:'ADD',name:'Adis Abeba',country:'ET'},
-  {code:'PTY',name:'Cidade do Panamá',country:'PA'},
-  {code:'BOG',name:'Bogotá',country:'CO'},
-  {code:'EZE',name:'Buenos Aires',country:'AR'},
-  {code:'SCL',name:'Santiago',country:'CL'},
-  {code:'LIM',name:'Lima',country:'PE'}
+  {code:'HND',name:'Tóquio — Haneda',country:'JP'},
+  {code:'KIX',name:'Osaka',country:'JP'},
+  {code:'ICN',name:'Seul — Incheon',country:'KR'},
+  {code:'PEK',name:'Pequim',country:'CN'},
+  {code:'PVG',name:'Xangai — Pudong',country:'CN'},
+  {code:'HKG',name:'Hong Kong',country:'HK'},
+  {code:'TPE',name:'Taipei',country:'TW'},
+  {code:'BKK',name:'Bangkok',country:'TH'},
+  {code:'KUL',name:'Kuala Lumpur',country:'MY'},
+  {code:'CGK',name:'Jacarta',country:'ID'},
+  {code:'DPS',name:'Bali — Denpasar',country:'ID'},
+  {code:'MNL',name:'Manila',country:'PH'},
+  {code:'HAN',name:'Hanói',country:'VN'},
+  {code:'SGN',name:'Ho Chi Minh',country:'VN'},
+  {code:'DEL',name:'Nova Déli',country:'IN'},
+  {code:'BOM',name:'Mumbai',country:'IN'},
+  {code:'SYD',name:'Sydney',country:'AU'},
+  {code:'MEL',name:'Melbourne',country:'AU'},
+  {code:'AKL',name:'Auckland',country:'NZ'}
 ];
-
-var BR  = ['GRU','CGH','BSB','GIG','SDU','SSA','FOR','REC','MCZ','BEL','MAO','CWB','POA','FLN','NAT','THE','AJU'];
-var SA  = ['EZE','SCL','LIM','BOG','PTY'];
-var LONG = ['MIA','JFK','LAX','ORD','YYZ','LIS','CDG','LHR','MAD','FCO','AMS','FRA','BCN'];
-
-function getRouteType(from, to) {
-  if (BR.indexOf(from) > -1 && BR.indexOf(to) > -1) return 'domestic';
-  if (SA.indexOf(from) > -1 || SA.indexOf(to) > -1) return 'regional';
-  if (LONG.indexOf(from) > -1 || LONG.indexOf(to) > -1) return 'long';
-  return 'ultralong';
-}
-
-function estimatePrice(routeType, seed) {
-  var r  = ((seed * 1103515245 + 12345) & 0x7fffffff) / 0x7fffffff;
-  var r2 = ((seed * 214013    + 2531011) & 0x7fffffff) / 0x7fffffff;
-  if (routeType === 'domestic')  return {money: Math.round(150  + r*280),  miles: Math.round(8000  + r2*10000)};
-  if (routeType === 'regional')  return {money: Math.round(800  + r*700),  miles: Math.round(18000 + r2*14000)};
-  if (routeType === 'long')      return {money: Math.round(1800 + r*2200), miles: Math.round(30000 + r2*25000)};
-  return                                {money: Math.round(3000 + r*3500), miles: Math.round(50000 + r2*40000)};
-}
-
-function fmtMoney(n) { return 'R$ ' + n.toLocaleString('pt-BR'); }
-function fmtMiles(n) { return n.toLocaleString('pt-BR') + ' mi'; }
 
 var AIRLINES = [
   {id:'latam',   name:'LATAM Airlines',         flag:'🇧🇷', group:'br', short:'LATAM', badge:'Brasileira', badgeColor:'#e53935', program:'LATAM Pass',       color:'#e53935',
-   moneyUrl:function(f,t,d,p){return 'https://www.latamairlines.com/br/pt/oferta-voos?origin='+f+'&destination='+t+'&outbound='+d+'&adt='+p;},
-   milesUrl:function(f,t,d)  {return 'https://www.latampass.com/br/pt/passagens-com-pontos?origin='+f+'&destination='+t+'&outbound='+d;}},
+   moneyUrl:function(f,t,d,p){return 'https://www.latamairlines.com/br/pt/oferta-voos?outbound='+d+'T00%3A00%3A00.000Z&inbound=null&redemption=false&sort=PRICE%2Casc&origin='+f+'&destination='+t+'&adt='+p+'&chd=0&inf=0&trip=OW&cabin=Economy';},
+   milesUrl:function(f,t,d,p){return 'https://www.latamairlines.com/br/pt/oferta-voos?outbound='+d+'T00%3A00%3A00.000Z&inbound=null&redemption=true&sort=PRICE%2Casc&origin='+f+'&destination='+t+'&adt='+(p||1)+'&chd=0&inf=0&trip=OW&cabin=Economy';}},
   {id:'gol',     name:'Gol Linhas Aéreas',       flag:'🇧🇷', group:'br', short:'GOL',  badge:'Brasileira', badgeColor:'#e65100', program:'Smiles',            color:'#e65100',
-   moneyUrl:function(f,t,d,p){return 'https://www.voegol.com.br/pt/busca?from='+f+'&to='+t+'&departure='+d+'&adults='+p+'&type=ONE_WAY';},
-   milesUrl:function(f,t,d)  {return 'https://www.smiles.com.br/emissao-passagem-com-milhas?originAirportCode='+f+'&destinationAirportCode='+t+'&departureDate='+d+'&adults=1&tripType=ONE_WAY';}},
+   moneyUrl:function(f,t,d,p){return 'https://b2c.voegol.com.br/compra?tripType=O&from='+f+'&to='+t+'&departure='+d+'&adult='+p+'&children=0&infant=0';},
+   milesUrl:function(f,t,d)  {return 'https://www.smiles.com.br/passagens?originAirportCode='+f+'&destinationAirportCode='+t+'&departureDate='+d+'&adults=1&tripType=ONE_WAY';}},
   {id:'azul',    name:'Azul Linhas Aéreas',      flag:'🇧🇷', group:'br', short:'AZUL', badge:'Brasileira', badgeColor:'#1565c0', program:'TudoAzul',          color:'#1976d2',
-   moneyUrl:function(f,t,d)  {return 'https://www.voeazul.com.br/br/pt/home/select?origin='+f+'&destination='+t+'&departDate='+d;},
-   milesUrl:function(f,t,d)  {return 'https://www.tudoazul.com/voos?from='+f+'&to='+t+'&departure='+d+'&adults=1';}},
+   moneyUrl:function(){return 'https://www.voeazul.com.br/br/pt/home';},
+   milesUrl:function(){return 'https://www.voeazul.com.br/br/pt/home';}},
   {id:'avianca', name:'Avianca',                 flag:'🇧🇷', group:'br', short:'AVN',  badge:'Brasileira', badgeColor:'#6a1b9a', program:'LifeMiles',         color:'#6a1b9a',
-   moneyUrl:function(f,t)    {return 'https://www.avianca.com/br/pt/voos/'+f+'/'+t+'/';},
-   milesUrl:function()        {return 'https://www.lifemiles.com/pt';}},
+   moneyUrl:function(){return 'https://www.avianca.com/br/pt/';},
+   milesUrl:function()        {return 'https://www.lifemiles.com/booking/flights';}},
   {id:'aa',      name:'American Airlines',       flag:'🇺🇸', group:'na', short:'AA',   badge:'EUA',        badgeColor:'#0d47a1', program:'AAdvantage',        color:'#0d47a1',
-   moneyUrl:function(f,t,d,p){return 'https://www.aa.com/booking/find-flights?org0='+f+'&dst0='+t+'&dateSelector0='+d+'&passengerCount='+p+'&tripType=OneWay';},
-   milesUrl:function(f,t,d)  {return 'https://www.aa.com/booking/find-flights?org0='+f+'&dst0='+t+'&dateSelector0='+d+'&awardTravel=true&tripType=OneWay';}},
+   moneyUrl:function(f,t,d,p){return 'https://www.aa.com/booking/find-flights?tripType=OneWay&searchType=Revenue&locale=pt_BR&pax='+p+'&adult='+p+'&type=OneWay&searchFrom='+f+'&searchTo='+t+'&departDate='+d;},
+   milesUrl:function(f,t,d)  {return 'https://www.aa.com/booking/find-flights?tripType=OneWay&searchType=Award&locale=pt_BR&pax=1&adult=1&type=OneWay&searchFrom='+f+'&searchTo='+t+'&departDate='+d;}},
   {id:'delta',   name:'Delta Air Lines',         flag:'🇺🇸', group:'na', short:'DL',   badge:'EUA',        badgeColor:'#b71c1c', program:'SkyMiles',          color:'#b71c1c',
-   moneyUrl:function(f,t,d,p){return 'https://www.delta.com/flight-search/book-a-flight#/results/outbound/'+f+'/'+t+'/'+d+'/1/0/0/coach';},
-   milesUrl:function()        {return 'https://www.delta.com/us/en/skymiles/overview';}},
+   moneyUrl:function(f,t,d,p){return 'https://www.delta.com/flight-search/search-outbound?tripType=ONE_WAY&originCity='+f+'&destinationCity='+t+'&departureDate='+d+'&paxCount='+p+'&cabinFareClass=BE';},
+   milesUrl:function(f,t,d)  {return 'https://www.delta.com/flight-search/search-outbound?tripType=ONE_WAY&originCity='+f+'&destinationCity='+t+'&departureDate='+d+'&paxCount=1&awardTravel=true';}},
   {id:'united',  name:'United Airlines',         flag:'🇺🇸', group:'na', short:'UA',   badge:'EUA',        badgeColor:'#0a1931', program:'MileagePlus',       color:'#37474f',
    moneyUrl:function(f,t,d,p){return 'https://www.united.com/en/us/fsr/choose-flights?f='+f+'&t='+t+'&d='+d+'&tt=1&at='+p+'&sc=7&px=1&taxng=1&newHP=True';},
-   milesUrl:function()        {return 'https://www.united.com/en/us/mileageplus';}},
+   milesUrl:function(f,t,d)  {return 'https://www.united.com/en/us/fsr/choose-flights?f='+f+'&t='+t+'&d='+d+'&tt=1&at=1&sc=7&px=1&taxng=1&newHP=True&clm=7';}},
   {id:'aircanada',name:'Air Canada',             flag:'🇨🇦', group:'na', short:'AC',   badge:'Canadá',     badgeColor:'#c62828', program:'Aeroplan',          color:'#c62828',
-   moneyUrl:function()        {return 'https://www.aircanada.com/br/pt/aco/flights/';},
-   milesUrl:function()        {return 'https://www.aircanada.com/br/pt/aco/flights/';}},
+   moneyUrl:function(f,t,d,p){return 'https://www.aircanada.com/booking/flights?tripType=O&org0='+f+'&dest0='+t+'&departDate0='+d+'&ADT='+p+'&marketCode=BR&lang=pt';},
+   milesUrl:function(f,t,d)  {return 'https://www.aircanada.com/aeroplan/redeem/availability/outbound?org0='+f+'&dest0='+t+'&departDate0='+d+'&ADT=1&tripType=O&marketCode=BR&lang=pt';}},
   {id:'airfrance',name:'Air France',             flag:'🇫🇷', group:'eu', short:'AF',   badge:'França',     badgeColor:'#1a237e', program:'Flying Blue',       color:'#1a237e',
-   moneyUrl:function(f,t,d)  {return 'https://wwws.airfrance.com/search/offers?origin='+f+'&destination='+t+'&outwardDate='+d+'&cabinClass=ECONOMY';},
-   milesUrl:function()        {return 'https://wwws.airfrance.com/flying-blue';}},
+   moneyUrl:function(f,t,d,p){return 'https://wwws.airfrance.com.br/search/offers?pax='+p+'ADT&cabinClass=ECONOMY&activeConnection=0&connections='+f+'>'+t+'@'+d;},
+   milesUrl:function(f,t,d)  {return 'https://www.flyingblue.com/en/spend/flights?origin='+f+'&destination='+t+'&outboundDate='+d+'&passengers=1ADT&cabinClass=ECONOMY';}},
   {id:'klm',     name:'KLM',                     flag:'🇳🇱', group:'eu', short:'KLM',  badge:'Holanda',    badgeColor:'#1565c0', program:'Flying Blue',       color:'#0277bd',
-   moneyUrl:function(f,t,d)  {return 'https://www.klm.com/search/offers?origin='+f+'&destination='+t+'&outwardDate='+d+'&cabinClass=ECONOMY';},
-   milesUrl:function()        {return 'https://www.klm.com/flying-blue';}},
+   moneyUrl:function(f,t,d,p){return 'https://www.klm.com.br/search/offers?pax='+p+'ADT&cabinClass=ECONOMY&activeConnection=0&connections='+f+'>'+t+'@'+d;},
+   milesUrl:function(f,t,d)  {return 'https://www.flyingblue.com/en/spend/flights?origin='+f+'&destination='+t+'&outboundDate='+d+'&passengers=1ADT&cabinClass=ECONOMY';}},
   {id:'lufthansa',name:'Lufthansa',              flag:'🇩🇪', group:'eu', short:'LH',   badge:'Alemanha',   badgeColor:'#1565c0', program:'Miles & More',      color:'#fdd835',
-   moneyUrl:function(f,t,d,p){return 'https://www.lufthansa.com/br/pt/fly/book/flight?origin='+f+'&destination='+t+'&outwardDate='+d+'&adults='+p;},
-   milesUrl:function()        {return 'https://www.miles-and-more.com/br/pt.html';}},
+   moneyUrl:function(){return 'https://www.lufthansa.com/br/pt/flight-search';},
+   milesUrl:function()        {return 'https://www.miles-and-more.com/br/pt/spend/flights.html';}},
   {id:'ba',      name:'British Airways',         flag:'🇬🇧', group:'eu', short:'BA',   badge:'Reino Unido',badgeColor:'#1a237e', program:'Avios',             color:'#0d47a1',
-   moneyUrl:function(f,t,d,p){return 'https://www.britishairways.com/travel/book/public/pt_br?eId=106905&lang=en_gb&cabin_class=M&Adt='+p+'&Inf=0&ChM=0&depart_date='+d+'&origin='+f+'&destination='+t+'&outbound_flighttype=J';},
-   milesUrl:function()        {return 'https://www.britishairways.com/travel/home/public/pt_br';}},
+   moneyUrl:function(f,t,d,p){return 'https://www.britishairways.com/travel/book/public/pt_br?onds='+f+'-'+t+'&departureDate='+d+'&cabin=M&ADT='+p+'&YNG=0&CHD=0&INF=0&type=single';},
+   milesUrl:function(f,t,d)  {return 'https://www.britishairways.com/travel/redeem/execclub/avios?onds='+f+'-'+t+'&departureDate='+d+'&cabin=M&ADT=1&type=single';}},
   {id:'tap',     name:'TAP Portugal',            flag:'🇵🇹', group:'eu', short:'TAP',  badge:'Portugal',   badgeColor:'#2e7d32', program:'TAP Miles&Go',      color:'#2e7d32',
-   moneyUrl:function(f,t,d,p){return 'https://www.flytap.com/pt-br/book-and-buy/?tripType=S&adult='+p+'&child=0&infant=0&fromAirport='+f+'&toAirport='+t+'&outDate='+d;},
-   milesUrl:function()        {return 'https://www.flytap.com/pt-br/miles-and-go/';}},
+   moneyUrl:function(){return 'https://www.flytap.com/pt-br';},
+   milesUrl:function(){return 'https://www.flytap.com/pt-br';}},
   {id:'iberia',  name:'Iberia',                  flag:'🇪🇸', group:'eu', short:'IB',   badge:'Espanha',    badgeColor:'#b71c1c', program:'Iberia Plus',       color:'#c62828',
-   moneyUrl:function(f,t,d,p){return 'https://www.iberia.com/br/flights/search/?adults='+p+'&children=0&infants=0&cabin=Y&origin='+f+'&destination='+t+'&outboundDate='+d+'&tripType=OW';},
-   milesUrl:function()        {return 'https://www.iberia.com/br/iberia-plus/';}},
+   moneyUrl:function(){return 'https://www.iberia.com/br/';},
+   milesUrl:function(){return 'https://www.iberia.com/br/';}},
   {id:'emirates',name:'Emirates',                flag:'🇦🇪', group:'me', short:'EK',   badge:'Dubai',      badgeColor:'#b71c1c', program:'Skywards',          color:'#b71c1c',
-   moneyUrl:function(f,t,d,p){return 'https://www.emirates.com/br/portuguese/book/select-flights/?origin='+f+'&destination='+t+'&classoftravel=Economy&adults='+p+'&infants=0&children=0&depDate='+d+'&return=false';},
-   milesUrl:function()        {return 'https://www.emirates.com/br/portuguese/skywards/';}},
+   moneyUrl:function(){return 'https://www.emirates.com/br/portuguese/book/';},
+   milesUrl:function(){return 'https://www.emirates.com/br/portuguese/book/';}},
   {id:'qatar',   name:'Qatar Airways',           flag:'🇶🇦', group:'me', short:'QR',   badge:'Qatar',      badgeColor:'#6a1b9a', program:'Privilege Club',    color:'#6a1b9a',
-   moneyUrl:function(f,t,d,p){return 'https://www.qatarairways.com/pt-br/flights.html?widget=QR&searchType=F&addTaxToFare=Y&bookingClass=Economy&tripType=O&adults='+p+'&children=0&infants=0&from='+f+'&to='+t+'&departDate='+d;},
-   milesUrl:function()        {return 'https://www.qatarairways.com/pt-br/privilege-club.html';}},
+   moneyUrl:function(f,t,d,p){return 'https://booking.qatarairways.com/nsp/views/showBooking.action?widget=QR&searchType=F&bookingClass=E&tripType=O&addTaxToFare=Y&minPur498Price=Y&adults='+p+'&children=0&infants=0&from='+f+'&to='+t+'&departing='+d;},
+   milesUrl:function(f,t,d)  {return 'https://www.qatarairways.com/pt-br/privilege-club/use-qmiles.html';}},
   {id:'turkish', name:'Turkish Airlines',        flag:'🇹🇷', group:'me', short:'TK',   badge:'Turquia',    badgeColor:'#c62828', program:'Miles&Smiles',      color:'#c62828',
-   moneyUrl:function(f,t,d,p){return 'https://www.turkishairlines.com/pt-br/flights/book-a-flight/?origin='+f+'&destination='+t+'&tripType=ONE_WAY&adult='+p+'&child=0&infant=0&departureDate='+d;},
-   milesUrl:function()        {return 'https://www.turkishairlines.com/pt-br/miles-smiles/';}},
+   moneyUrl:function(){return 'https://www.turkishairlines.com/pt-br/';},
+   milesUrl:function(){return 'https://www.turkishairlines.com/pt-br/';}},
   {id:'singapore',name:'Singapore Airlines',     flag:'🇸🇬', group:'me', short:'SQ',   badge:'Singapura',  badgeColor:'#b71c1c', program:'KrisFlyer',         color:'#880e4f',
-   moneyUrl:function()        {return 'https://www.singaporeair.com/pt_BR/plan-and-book/flights/';},
-   milesUrl:function()        {return 'https://www.singaporeair.com/pt_BR/ppsclub-krisflyer/';}},
+   moneyUrl:function(){return 'https://www.singaporeair.com/en_UK/br/book-flight/flightsearch/';},
+   milesUrl:function()        {return 'https://www.singaporeair.com/en_UK/ppsclub-krisflyer/use-miles/redeem-flights/';}},
   {id:'copa',    name:'Copa Airlines',           flag:'🇵🇦', group:'ot', short:'CM',   badge:'Panamá',     badgeColor:'#1565c0', program:'ConnectMiles',      color:'#1565c0',
-   moneyUrl:function(f,t,d,p){return 'https://www.copaair.com/pt-br/web/br/flight-search?type=OW&origin='+f+'&destination='+t+'&departDate='+d+'&adults='+p+'&children=0&infants=0';},
+   moneyUrl:function(){return 'https://www.copaair.com/pt-br/';},
    milesUrl:function()        {return 'https://www.copaair.com/pt-br/web/br/connectmiles';}},
   {id:'ethiopian',name:'Ethiopian Airlines',     flag:'🇪🇹', group:'ot', short:'ET',   badge:'Etiópia',    badgeColor:'#2e7d32', program:'ShebaMiles',        color:'#2e7d32',
-   moneyUrl:function()        {return 'https://www.ethiopianairlines.com/br/book/booking/flight-selection';},
+   moneyUrl:function(){return 'https://www.ethiopianairlines.com';},
    milesUrl:function()        {return 'https://www.ethiopianairlines.com/br/sheba-miles';}},
   {id:'smiles',  name:'Smiles (Gol)',            flag:'🇧🇷', group:'mp', short:'SMI',  badge:'Milhas',     badgeColor:'#e65100', program:'Programa Smiles',   color:'#e65100',
    moneyUrl:null,
-   milesUrl:function(f,t,d)  {return 'https://www.smiles.com.br/emissao-passagem-com-milhas?originAirportCode='+f+'&destinationAirportCode='+t+'&departureDate='+d+'&adults=1&tripType=ONE_WAY';}},
+   milesUrl:function(f,t,d)  {return 'https://www.smiles.com.br/passagens?originAirportCode='+f+'&destinationAirportCode='+t+'&departureDate='+d+'&adults=1&tripType=ONE_WAY';}},
   {id:'tudoazul',name:'TudoAzul',                flag:'🇧🇷', group:'mp', short:'TA',   badge:'Milhas',     badgeColor:'#1565c0', program:'Programa TudoAzul', color:'#1976d2',
    moneyUrl:null,
-   milesUrl:function(f,t,d)  {return 'https://www.tudoazul.com/voos?from='+f+'&to='+t+'&departure='+d+'&adults=1';}},
+   milesUrl:function(){return 'https://www.voeazul.com.br/br/pt/home';}},
   {id:'latampass',name:'LATAM Pass',             flag:'🇧🇷', group:'mp', short:'LTP',  badge:'Milhas',     badgeColor:'#e53935', program:'Programa LATAM Pass',color:'#e53935',
    moneyUrl:null,
-   milesUrl:function(f,t,d)  {return 'https://www.latampass.com/br/pt/passagens-com-pontos?origin='+f+'&destination='+t+'&outbound='+d;}}
+   milesUrl:function(f,t,d)  {return 'https://www.latamairlines.com/br/pt/oferta-voos?outbound='+d+'T00%3A00%3A00.000Z&inbound=null&redemption=true&sort=PRICE%2Casc&origin='+f+'&destination='+t+'&adt=1&chd=0&inf=0&trip=OW&cabin=Economy';}}
 ];
 
-var OFFERS = [
-  {from:'GRU',to:'REC', money:'R$ 189',  miles:'12.000 milhas', airline:'Gol',          airlineId:'gol'},
-  {from:'GRU',to:'MCZ', money:'R$ 210',  miles:'14.500 milhas', airline:'Azul',         airlineId:'azul'},
-  {from:'GRU',to:'SSA', money:'R$ 234',  miles:'15.000 milhas', airline:'LATAM',        airlineId:'latam'},
-  {from:'GRU',to:'FOR', money:'R$ 267',  miles:'18.000 milhas', airline:'Gol',          airlineId:'gol'},
-  {from:'GRU',to:'BSB', money:'R$ 159',  miles:'10.000 milhas', airline:'Azul',         airlineId:'azul'},
-  {from:'GRU',to:'LIS', money:'R$ 2.340',miles:'35.000 milhas', airline:'TAP Portugal', airlineId:'tap'},
-  {from:'GRU',to:'MIA', money:'R$ 1.890',miles:'28.000 milhas', airline:'LATAM',        airlineId:'latam'},
-  {from:'GRU',to:'DXB', money:'R$ 3.200',miles:'55.000 milhas', airline:'Emirates',     airlineId:'emirates'},
-  {from:'GRU',to:'CDG', money:'R$ 2.780',miles:'48.000 milhas', airline:'Air France',   airlineId:'airfrance'},
-  {from:'GRU',to:'MAD', money:'R$ 2.490',miles:'40.000 milhas', airline:'Iberia',       airlineId:'iberia'}
-];
+
 
 var FOOTER_LINKS = [
   {name:'LATAM',url:'https://www.latamairlines.com/br/pt'},
@@ -407,16 +456,27 @@ var FOOTER_LINKS = [
   {name:'LATAM Pass',url:'https://www.latampass.com'}
 ];
 
-var MONTHS_PT = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-var DAYS_PT   = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-
 var currentMode   = 'both';
 var searchFrom    = 'GRU';
 var searchTo      = 'LHR';
 var searchDate    = '';
+var searchReturnDate = '';
 var searchPax     = 1;
-var currentPrices = null;
-var calYear, calMonth;
+var apiAvailable  = false;
+
+var CARRIER_MAP = {
+  'G3':'gol','LA':'latam','JJ':'latam','AD':'azul','O6':'avianca',
+  'AA':'aa','DL':'delta','UA':'united','AC':'aircanada',
+  'AF':'airfrance','KL':'klm','LH':'lufthansa','BA':'ba',
+  'TP':'tap','IB':'iberia','EK':'emirates','QR':'qatar',
+  'TK':'turkish','SQ':'singapore','CM':'copa','ET':'ethiopian'
+};
+function findAirlineByCarrier(code) {
+  var id = CARRIER_MAP[code];
+  if (!id) return null;
+  for (var i = 0; i < AIRLINES.length; i++) { if (AIRLINES[i].id === id) return AIRLINES[i]; }
+  return null;
+}
 
 (function init() {
   var today = new Date();
@@ -424,15 +484,32 @@ var calYear, calMonth;
   document.getElementById('date-from').min = todayStr;
   document.getElementById('date-to').min   = todayStr;
   document.getElementById('date-from').value = todayStr;
+  /* Auto-fill return date = departure + 7 days */
+  var retDate = new Date(today.getTime() + 7 * 86400000);
+  document.getElementById('date-to').value = retDate.toISOString().split('T')[0];
+  /* Update return date when departure changes */
+  document.getElementById('date-from').addEventListener('change', function() {
+    var dep = new Date(this.value + 'T12:00:00');
+    if (!isNaN(dep.getTime())) {
+      var ret = new Date(dep.getTime() + 7 * 86400000);
+      document.getElementById('date-to').value = ret.toISOString().split('T')[0];
+      document.getElementById('date-to').min = this.value;
+    }
+  });
   searchDate = todayStr;
-  calYear  = today.getFullYear();
-  calMonth = today.getMonth();
-  populateCalAirlineFilter();
-  renderCalendar();
-  renderOffers();
+  /* Init destinos date = today + 7 */
+  var destinosInitDate = new Date(today.getTime() + 7 * 86400000);
+  document.getElementById('destinos-date').min   = todayStr;
+  document.getElementById('destinos-date').value = destinosInitDate.toISOString().split('T')[0];
   renderFooterLinks();
   loadRecentSearches();
+  /* Check if real API is available */
+  fetch('/api/status').then(function(r){ return r.json(); }).then(function(d){
+    if (d.configured) { apiAvailable = true; }
+  }).catch(function(){});
 })();
+
+
 
 /* ── AUTOCOMPLETE ── */
 var _acTimers = {};
@@ -449,7 +526,7 @@ function _doAc(input, listId) {
   }).slice(0, 8);
   if (!matches.length) { list.style.display = 'none'; return; }
   list.innerHTML = matches.map(function(a, i){
-    return '<div class="autocomplete-item" data-code="' + a.code + '" data-idx="' + i + '" onclick="selectAirport(\' + a.code + '\',\' + a.name.replace(/'/g,"\\'") + '\',\'' + input.id + '\',\'' + listId + '\')">' +
+    return '<div class="autocomplete-item" data-code="' + a.code + '" data-idx="' + i + '" onclick="selectAirport(\'' + a.code + '\',\'' + a.name.replace(/'/g,"\\'") + '\',\'' + input.id + '\',\'' + listId + '\')">' +
       '<span class="iata">' + a.code + '</span>' + a.name + '</div>';
   }).join('');
   list.style.display = 'block';
@@ -457,6 +534,7 @@ function _doAc(input, listId) {
 function selectAirport(code, name, inputId, listId) {
   document.getElementById(inputId).value = code + ' — ' + name;
   document.getElementById(listId).style.display = 'none';
+  if (inputId === 'home-input') { setHomeCity(code); }
 }
 function acKeydown(e, listId) {
   var list  = document.getElementById(listId);
@@ -481,17 +559,6 @@ document.addEventListener('click', function(e){
   }
 });
 
-/* ── MODE ── */
-function setMode(mode) {
-  currentMode = mode;
-  document.querySelectorAll('.mode-btn').forEach(function(b){ b.classList.toggle('active', b.dataset.mode === mode); });
-  updateCardButtons();
-}
-function updateCardButtons() {
-  document.querySelectorAll('.btn-money').forEach(function(b){ b.classList.toggle('hide', currentMode === 'miles'); });
-  document.querySelectorAll('.btn-miles').forEach(function(b){ b.classList.toggle('hide', currentMode === 'money'); });
-}
-
 /* ── SEARCH ── */
 function extractCode(val) {
   var m = val.trim().match(/^([A-Z]{3})/i);
@@ -506,159 +573,180 @@ function doSearch() {
   var fromVal = document.getElementById('from-input').value;
   var toVal   = document.getElementById('to-input').value;
   var dateVal = document.getElementById('date-from').value;
+  var dateRetVal = document.getElementById('date-to').value;
   var paxVal  = parseInt(document.getElementById('pax').value) || 1;
   if (!fromVal || !toVal) { alert('Por favor, preencha origem e destino.'); return; }
   searchFrom = extractCode(fromVal);
   searchTo   = extractCode(toVal);
   searchDate = dateVal || new Date().toISOString().split('T')[0];
+  /* Return date: use form value or default departure + 7 */
+  if (!dateRetVal) {
+    var dep = new Date(searchDate + 'T12:00:00');
+    var ret = new Date(dep.getTime() + 7 * 86400000);
+    dateRetVal = ret.toISOString().split('T')[0];
+  }
+  searchReturnDate = dateRetVal;
   searchPax  = paxVal;
-  var rt   = getRouteType(searchFrom, searchTo);
-  var seed = searchFrom.charCodeAt(0) + searchTo.charCodeAt(0);
-  var est  = estimatePrice(rt, seed);
-  currentPrices = {money: fmtMoney(est.money), miles: fmtMiles(est.miles)};
   saveRecentSearch(searchFrom, searchTo);
-  renderCards();
+
+  /* Try real API */
   var rs = document.getElementById('results-section');
   rs.style.display = 'block';
   document.getElementById('results-subtitle').textContent =
-    'Rota: ' + searchFrom + ' → ' + searchTo + ' | ' + formatDate(searchDate) + ' | ' + paxVal + ' passageiro' + (paxVal > 1 ? 's' : '');
+    'Rota: ' + searchFrom + ' → ' + searchTo + ' | ' + formatDate(searchDate) + ' | ' + paxVal + ' passageiro' + (paxVal > 1 ? 's' : '') + ' | Preço por trecho';
   rs.scrollIntoView({behavior:'smooth'});
-  var parts = searchDate.split('-');
-  calYear  = parseInt(parts[0]);
-  calMonth = parseInt(parts[1]) - 1;
-  renderCalendar();
+
+  document.getElementById('real-results-grid').innerHTML =
+    '<div class="search-loading"><span class="spinner"></span>Buscando preços reais…</div>';
+
+  if (apiAvailable) {
+    fetch('/api/search?origin=' + searchFrom + '&destination=' + searchTo + '&date=' + searchDate + '&adults=' + searchPax)
+      .then(function(r) { return r.json(); })
+      .then(function(results) {
+        if (results.error || !results.length) {
+          document.getElementById('real-results-grid').innerHTML =
+            '<p style="color:var(--muted);text-align:center;padding:40px">Nenhum voo encontrado para essa rota. Tente outra data.</p>';
+        } else {
+          renderRealResults(results);
+        }
+      })
+      .catch(function() {
+        document.getElementById('real-results-grid').innerHTML =
+          '<p style="color:var(--muted);text-align:center;padding:40px">Erro ao buscar voos. Tente novamente.</p>';
+      });
+  } else {
+    document.getElementById('real-results-grid').innerHTML =
+      '<p style="color:var(--muted);text-align:center;padding:40px">API indisponível. Tente novamente mais tarde.</p>';
+  }
 }
 
-/* ── RENDER CARDS ── */
-function renderCards() {
-  var groups = {br:[], na:[], eu:[], me:[], ot:[], mp:[]};
-  AIRLINES.forEach(function(a){ if (groups[a.group]) groups[a.group].push(a); });
-  Object.keys(groups).forEach(function(g){
-    var container = document.getElementById('group-' + g);
-    if (!container) return;
-    container.innerHTML = groups[g].map(buildCard).join('');
+function renderRealResults(results) {
+  var container = document.getElementById('real-results-grid');
+  /* Group by airline, keep cheapest per airline */
+  var byAirline = {};
+  results.forEach(function(r) {
+    if (!byAirline[r.airline] || r.price < byAirline[r.airline].price) {
+      byAirline[r.airline] = r;
+    }
   });
-  updateCardButtons();
-}
-function buildCard(a) {
-  var moneyHref = (a.moneyUrl) ? a.moneyUrl(searchFrom, searchTo, searchDate, searchPax) : '#';
-  var milesHref = (a.milesUrl) ? a.milesUrl(searchFrom, searchTo, searchDate, searchPax) : '#';
-  var moneyBtn = a.moneyUrl
-    ? '<a href="' + moneyHref + '" target="_blank" rel="noopener" class="btn-money">💰 Ver em Dinheiro</a>'
-    : '';
-  var milesBtn = a.milesUrl
-    ? '<a href="' + milesHref + '" target="_blank" rel="noopener" class="btn-miles">✈️ Ver em Milhas</a>'
-    : '';
-  var priceBlock = '';
-  if (currentPrices) {
-    var moneyPart = (a.moneyUrl && a.group !== 'mp') ? '<span class="card-price-money">💰 ' + currentPrices.money + '</span>' : '';
-    var sep       = (a.moneyUrl && a.milesUrl && a.group !== 'mp') ? '<span class="card-price-sep"> | </span>' : '';
-    var milesPart = a.milesUrl ? '<span class="card-price-miles">✈️ ' + currentPrices.miles + '</span>' : '';
-    priceBlock = '<div class="card-prices">' + moneyPart + sep + milesPart + '<span class="card-price-label">* Estimativa — verifique ao clicar</span></div>';
-  }
-  return '<div class="airline-card">' +
-    '<div class="card-header">' +
-      '<div class="airline-name">' + a.flag + ' ' + a.name + '</div>' +
-      '<span class="badge" style="background:' + a.badgeColor + '22;color:' + a.badgeColor + ';border:1px solid ' + a.badgeColor + '44">' + a.badge + '</span>' +
-    '</div>' +
-    '<div class="miles-program">🎫 ' + a.program + '</div>' +
-    '<div class="route-display"><span class="code">' + searchFrom + '</span> → <span class="code">' + searchTo + '</span></div>' +
-    priceBlock +
-    '<div class="card-btns">' + moneyBtn + milesBtn + '</div>' +
+  var sorted = Object.values(byAirline).sort(function(a, b) { return a.price - b.price; });
+  container.innerHTML = sorted.map(function(r) {
+    var airline = findAirlineByCarrier(r.airline);
+    var stopsText = r.stops === 0 ? 'Direto' : r.stops + ' parada' + (r.stops > 1 ? 's' : '');
+    var name = airline ? airline.name : r.airline;
+    var flag = airline ? airline.flag : '✈️';
+    var badgeColor = airline ? airline.badgeColor : '#4caf50';
+    var moneyUrl = airline && airline.moneyUrl ? airline.moneyUrl(searchFrom, searchTo, searchDate, searchPax) : '#';
+    var milesUrl = airline && airline.milesUrl ? airline.milesUrl(searchFrom, searchTo, searchDate, searchPax) : '';
+    var program = airline ? airline.program : '';
+    var moneyBtn = '<a href="' + moneyUrl + '" target="_blank" rel="noopener" class="btn-money">💰 Comprar</a>';
+    var milesBtn = milesUrl ? '<a href="' + milesUrl + '" target="_blank" rel="noopener" class="btn-miles">✈️ Ver em Milhas</a>' : '';
+    return '<div class="airline-card real-result">' +
+      '<div class="card-header">' +
+        '<div class="airline-name">' + flag + ' ' + name + '</div>' +
+        '<span class="real-badge">Preço Real</span>' +
+      '</div>' +
+      (program ? '<div class="miles-program">🎫 ' + program + '</div>' : '') +
+      '<div class="route-display"><span class="code">' + searchFrom + '</span> → <span class="code">' + searchTo + '</span></div>' +
+      '<div class="card-prices">' +
+        '<span class="card-price-money" style="font-size:1.25em;font-weight:700">💰 R$ ' + r.price.toLocaleString('pt-BR', {minimumFractionDigits:2}) + '</span>' +
+        '<span class="card-price-label">' + stopsText + ' · por trecho</span>' +
+      '</div>' +
+      '<div class="card-btns">' + moneyBtn + milesBtn + '</div>' +
     '</div>';
+  }).join('');
 }
 
 /* ── CALENDAR ── */
-function populateCalAirlineFilter() {
-  var sel = document.getElementById('cal-airline-filter');
-  sel.innerHTML = '<option value="all">Todas</option>';
-  AIRLINES.filter(function(a){ return a.group !== 'mp'; }).forEach(function(a){
-    var opt = document.createElement('option');
-    opt.value = a.id;
-    opt.textContent = a.flag + ' ' + a.name;
-    sel.appendChild(opt);
-  });
-}
-function calPrev() { calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; } renderCalendar(); }
-function calNext() { calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } renderCalendar(); }
+/* ── DESTINOS POPULARES ── */
+var POPULAR_DESTINOS = [
+  {code:'BSB', name:'Brasília',           flag:'🇧🇷'},
+  {code:'GIG', name:'Rio de Janeiro',     flag:'🇧🇷'},
+  {code:'GRU', name:'São Paulo',          flag:'🇧🇷'},
+  {code:'SSA', name:'Salvador',           flag:'🇧🇷'},
+  {code:'FOR', name:'Fortaleza',          flag:'🇧🇷'},
+  {code:'REC', name:'Recife',             flag:'🇧🇷'},
+  {code:'CWB', name:'Curitiba',           flag:'🇧🇷'},
+  {code:'POA', name:'Porto Alegre',       flag:'🇧🇷'},
+  {code:'MIA', name:'Miami',              flag:'🇺🇸'},
+  {code:'MCO', name:'Orlando',            flag:'🇺🇸'},
+  {code:'LIS', name:'Lisboa',             flag:'🇵🇹'},
+  {code:'CDG', name:'Paris',              flag:'🇫🇷'},
+  {code:'EZE', name:'Buenos Aires',       flag:'🇦🇷'},
+  {code:'SCL', name:'Santiago',           flag:'🇨🇱'},
+  {code:'PTY', name:'Panamá',             flag:'🇵🇦'},
+  {code:'LIM', name:'Lima',               flag:'🇵🇪'}
+];
 
-function renderCalendar() {
-  var filterAirline = document.getElementById('cal-airline-filter').value;
-  var priceType     = document.getElementById('cal-price-type').value;
-  document.getElementById('cal-month-title').textContent = MONTHS_PT[calMonth] + ' ' + calYear;
-  var grid       = document.getElementById('cal-grid');
-  var today      = new Date();
-  var firstDay   = new Date(calYear, calMonth, 1).getDay();
-  var daysInMonth= new Date(calYear, calMonth + 1, 0).getDate();
-  var airlinePool = (filterAirline === 'all')
-    ? AIRLINES.filter(function(a){ return a.group !== 'mp'; })
-    : AIRLINES.filter(function(a){ return a.id === filterAirline; });
-  var routeType = getRouteType(searchFrom, searchTo);
-  var html = DAYS_PT.map(function(d){ return '<div class="cal-day-header">' + d + '</div>'; }).join('');
-  for (var i = 0; i < firstDay; i++) html += '<div class="cal-day empty"></div>';
-  var legendSet = {};
-  for (var day = 1; day <= daysInMonth; day++) {
-    var dateObj  = new Date(calYear, calMonth, day);
-    var isPast   = dateObj < new Date(today.getFullYear(), today.getMonth(), today.getDate());
-    var isToday  = dateObj.toDateString() === today.toDateString();
-    var mm       = String(calMonth + 1).padStart(2,'0');
-    var dd       = String(day).padStart(2,'0');
-    var dateStr  = calYear + '-' + mm + '-' + dd;
-    var bestAirline = null, bestMoney = Infinity, bestMiles = Infinity;
-    airlinePool.forEach(function(a){
-      var seed = day * 31 + (a.id.charCodeAt(0) || 65) + calMonth * 7;
-      var p = estimatePrice(routeType, seed);
-      if (p.money < bestMoney) { bestMoney = p.money; bestMiles = p.miles; bestAirline = a; }
-    });
-    if (bestAirline) legendSet[bestAirline.id] = bestAirline;
-    var url = '#';
-    if (bestAirline) {
-      url = (bestAirline.moneyUrl) ? bestAirline.moneyUrl(searchFrom, searchTo, dateStr, searchPax)
-          : (bestAirline.milesUrl ? bestAirline.milesUrl(searchFrom, searchTo, dateStr) : '#');
-    }
-    var cls  = 'cal-day' + (isToday ? ' today' : '') + (dateStr === searchDate ? ' selected' : '');
-    var opac = isPast ? 'opacity:.4;' : '';
-    var priceHtml = '';
-    if (priceType === 'money' || priceType === 'both') priceHtml += '<div class="cal-day-price-money">' + fmtMoney(bestMoney) + '</div>';
-    if (priceType === 'miles' || priceType === 'both') priceHtml += '<div class="cal-day-price-miles">' + fmtMiles(bestMiles) + '</div>';
-    var safeUrl = url.replace(/'/g, "\\'");
-    html += '<div class="' + cls + '" style="' + opac + '" onclick="calDayClick(\' + dateStr + '\',\'' + safeUrl + '\')">' +
-      '<div class="cal-day-num">' + day + '</div>' +
-      (bestAirline ? '<div class="cal-airline-badge" style="background:' + bestAirline.color + '">' + bestAirline.short + '</div>' : '') +
-      priceHtml + '</div>';
+function loadDestinos() {
+  if (!apiAvailable) {
+    document.getElementById('destinos-grid').innerHTML =
+      '<p style="color:var(--muted);text-align:center;padding:40px">API indisponível. Verifique se o servidor está rodando.</p>';
+    return;
   }
-  grid.innerHTML = html;
-  var legendAirlines = Object.values(legendSet);
-  document.getElementById('cal-legend').innerHTML = legendAirlines.map(function(a){
-    return '<div class="cal-legend-item"><div class="cal-legend-dot" style="background:' + a.color + '"></div>' + a.short + ' — ' + a.name + '</div>';
-  }).join('');
-}
-function calDayClick(dateStr, url) {
-  document.getElementById('date-from').value = dateStr;
-  searchDate = dateStr;
-  var parts = dateStr.split('-');
-  calYear  = parseInt(parts[0]);
-  calMonth = parseInt(parts[1]) - 1;
-  renderCalendar();
-  if (url && url !== '#') window.open(url, '_blank', 'noopener');
-}
+  var originInput = document.getElementById('destinos-origin-input').value;
+  var dateVal = document.getElementById('destinos-date').value;
+  var origin = originInput ? extractCode(originInput) : 'GRU';
+  var date = dateVal || new Date().toISOString().split('T')[0];
 
-/* ── OFFERS ── */
-function renderOffers() {
-  var container = document.getElementById('offers-grid');
-  if (!container) return;
-  var today = new Date().toISOString().split('T')[0];
-  container.innerHTML = OFFERS.map(function(o){
-    var airline = null;
-    for (var i = 0; i < AIRLINES.length; i++) { if (AIRLINES[i].id === o.airlineId) { airline = AIRLINES[i]; break; } }
-    var url = (airline && airline.moneyUrl) ? airline.moneyUrl(o.from, o.to, today, 1) : '#';
-    return '<div class="offer-card">' +
-      '<div class="offer-route">' + o.from + ' → ' + o.to + '</div>' +
-      '<div class="offer-airline">✈️ ' + o.airline + '</div>' +
-      '<div class="offer-prices"><span class="price-money">💰 ' + o.money + '</span><span class="price-sep"> | </span><span class="price-miles">🎫 ' + o.miles + '</span></div>' +
-      '<a href="' + url + '" target="_blank" rel="noopener" class="offer-btn">Ver oferta →</a>' +
-      '</div>';
+  var dests = POPULAR_DESTINOS.filter(function(d) { return d.code !== origin; });
+  var grid = document.getElementById('destinos-grid');
+
+  /* Render skeleton loading cards */
+  grid.innerHTML = dests.map(function(d) {
+    return '<div class="airline-card" id="destino-card-' + d.code + '">' +
+      '<div class="card-header">' +
+        '<div class="airline-name">' + d.flag + ' ' + d.name + '</div>' +
+        '<span class="route-display" style="font-size:.78rem;color:var(--muted)">' + origin + ' → ' + d.code + '</span>' +
+      '</div>' +
+      '<div style="text-align:center;padding:24px;color:var(--muted)"><span class="spinner"></span> Buscando…</div>' +
+    '</div>';
   }).join('');
+
+  /* Fetch each destination with staggered delay to avoid rate limiting */
+  dests.forEach(function(d, i) {
+    setTimeout(function() {
+      fetch('/api/search?origin=' + origin + '&destination=' + d.code + '&date=' + date + '&adults=1')
+        .then(function(r) { return r.json(); })
+        .then(function(results) {
+          var card = document.getElementById('destino-card-' + d.code);
+          if (!card) return;
+          if (!results || results.error || !results.length) {
+            card.innerHTML =
+              '<div class="card-header">' +
+                '<div class="airline-name">' + d.flag + ' ' + d.name + '</div>' +
+              '</div>' +
+              '<div style="text-align:center;padding:20px;color:var(--muted);font-size:.85rem">Sem voos encontrados</div>';
+            return;
+          }
+          var best = results.reduce(function(a, b) { return a.price < b.price ? a : b; });
+          var airline = findAirlineByCarrier(best.airline);
+          var stopsText = best.stops === 0 ? 'Direto' : best.stops + ' parada' + (best.stops > 1 ? 's' : '');
+          var airlineName = airline ? (airline.flag + ' ' + airline.name) : best.airline;
+          var moneyUrl = airline && airline.moneyUrl ? airline.moneyUrl(origin, d.code, date, 1) : '#';
+          card.innerHTML =
+            '<div class="card-header">' +
+              '<div class="airline-name">' + d.flag + ' ' + d.name + '</div>' +
+              '<span class="real-badge">Preço Real</span>' +
+            '</div>' +
+            '<div class="route-display"><span class="code">' + origin + '</span> → <span class="code">' + d.code + '</span></div>' +
+            '<div class="card-prices">' +
+              '<span class="destino-airline-name">' + airlineName + '</span>' +
+              '<span class="card-price-money" style="font-size:1.2em;font-weight:700">💰 R$ ' + best.price.toLocaleString('pt-BR', {minimumFractionDigits:2}) + '</span>' +
+              '<span class="card-price-label">' + stopsText + ' · por trecho</span>' +
+            '</div>' +
+            '<div class="card-btns">' +
+              '<a href="' + moneyUrl + '" target="_blank" rel="noopener" class="btn-money">💰 Comprar</a>' +
+            '</div>';
+        })
+        .catch(function() {
+          var card = document.getElementById('destino-card-' + d.code);
+          if (card) card.innerHTML =
+            '<div class="card-header"><div class="airline-name">' + d.flag + ' ' + d.name + '</div></div>' +
+            '<div style="text-align:center;padding:20px;color:var(--muted);font-size:.85rem">Erro ao buscar</div>';
+        });
+    }, i * 600); /* 600ms entre cada chamada para não sobrecarregar a API */
+  });
 }
 
 /* ── FOOTER ── */
