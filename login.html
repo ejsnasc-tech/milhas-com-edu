@@ -137,8 +137,14 @@
     <p class="login-title">Acesso exclusivo — faça login para continuar</p>
 
     <script>
-      if (location.search.includes('error=1')) {
+      var p = new URLSearchParams(location.search);
+      var e = p.get('error');
+      if (e === '1') {
         document.write('<div class="error-msg">❌ Usuário ou senha incorretos. Tente novamente.</div>');
+      } else if (e === 'blocked') {
+        document.write('<div class="error-msg">🚫 Sua conta foi bloqueada. Contate o administrador.</div>');
+      } else if (e === 'expired') {
+        document.write('<div class="error-msg">⏰ Seu acesso expirou. Contate o administrador para renovar.</div>');
       }
     </script>
 
