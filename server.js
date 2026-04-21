@@ -7,6 +7,8 @@ const path = require('path');
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
+app.set('trust proxy', 1); // necessário para cookies de sessão funcionarem atrás do proxy do Render
+
 /* ── Supabase (service role — server only) ───────────────────── */
 const supabase = createClient(
   process.env.SUPABASE_URL,
