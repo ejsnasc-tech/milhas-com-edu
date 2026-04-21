@@ -59,6 +59,19 @@ function getCached(key) {
 function setCache(key, data, ttl) { cache.set(key, { data, expiry: Date.now() + ttl }); }
 setInterval(() => { const now = Date.now(); for (const [k, v] of cache) { if (now >= v.expiry) cache.delete(k); } }, 300000);
 
+/* ── Cotação USD→BRL (cache 4h) ──────────────────────────────── */
+async function getUsdToBrl() {
+  const cached = getCached('usd_brl');
+  if (cached) return cached;
+  try {
+    const r = await fetch('https://economia.awesomeapi.com.br/json/last/USD-BRL');
+    const data = await r.json();
+    const rate = parseFloat(data.USDBRL.bid);
+    if (rate > 0) { setCache('usd_brl', rate, 4 * 60 * 60 * 1000); return rate; }
+  } catch (e) { console.error('Cotação USD/BRL falhou:', e.message); }
+  return 5.75; // fallback
+}
+
 /* ══════════════════════════════════════════════════════════════
    SETUP — cria o primeiro admin (só funciona se não há usuários)
    ══════════════════════════════════════════════════════════════ */
@@ -200,11 +213,13 @@ app.get('/api/search', requireAuth, async (req, res) => {
     const r = await queryOneWay(origin.toUpperCase(), destination.toUpperCase(), date);
     if (r.error) throw new Error(r.error);
 
+    const usdToBrl = await getUsdToBrl();
+
     const byAirline = {};
     (r.itineraries || []).forEach(it => {
       const airlines = it.legs?.map(l => l.airline).filter(Boolean) || [];
       const mainAirline = airlines[0] || 'Unknown';
-      const priceBrl = Math.round(it.price);
+      const priceBrl = Math.round(it.price * usdToBrl); // converte USD → BRL
       if (!byAirline[mainAirline] || priceBrl < byAirline[mainAirline].price) {
         byAirline[mainAirline] = {
           price: priceBrl, currency: 'BRL', airline: mainAirline,
