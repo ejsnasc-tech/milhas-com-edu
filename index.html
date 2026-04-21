@@ -503,6 +503,14 @@ function findAirlineByCarrier(code) {
   return null;
 }
 
+/* Google Flights URL com busca pré-preenchida (fallback para qualquer companhia) */
+function googleFlightsUrl(origin, dest, date, airlineCode) {
+  var base = 'https://www.google.com/travel/flights?hl=pt-BR&curr=BRL#flt=';
+  var route = origin + '.' + dest + '.' + date + ';c:BRL;e:1;sd:1;t:f';
+  if (airlineCode) route += ';a:' + airlineCode;
+  return base + route;
+}
+
 (function init() {
   var today = new Date();
   var todayStr = today.toISOString().split('T')[0];
@@ -661,10 +669,10 @@ function renderRealResults(results) {
     var name = airline ? airline.name : r.airline;
     var flag = airline ? airline.flag : '✈️';
     var badgeColor = airline ? airline.badgeColor : '#4caf50';
-    var moneyUrl = airline && airline.moneyUrl ? airline.moneyUrl(searchFrom, searchTo, searchDate, searchPax) : '#';
+    var moneyUrl = (airline && airline.moneyUrl) ? airline.moneyUrl(searchFrom, searchTo, searchDate, searchPax) : googleFlightsUrl(searchFrom, searchTo, searchDate, r.airline);
     var milesUrl = airline && airline.milesUrl ? airline.milesUrl(searchFrom, searchTo, searchDate, searchPax) : '';
     var program = airline ? airline.program : '';
-    var moneyBtn = '<a href="' + moneyUrl + '" target="_blank" rel="noopener" class="btn-money">💰 Comprar</a>';
+    var moneyBtn = '<a href="' + moneyUrl + '" target="_blank" rel="noopener" class="btn-money">🔍 Ver e Comprar</a>';
     var milesBtn = milesUrl ? '<a href="' + milesUrl + '" target="_blank" rel="noopener" class="btn-miles">✈️ Ver em Milhas</a>' : '';
     return '<div class="airline-card real-result">' +
       '<div class="card-header">' +
@@ -747,8 +755,8 @@ function loadDestinos() {
           var best = results.reduce(function(a, b) { return a.price < b.price ? a : b; });
           var airline = findAirlineByCarrier(best.airline);
           var stopsText = best.stops === 0 ? 'Direto' : best.stops + ' parada' + (best.stops > 1 ? 's' : '');
-          var airlineName = airline ? (airline.flag + ' ' + airline.name) : best.airline;
-          var moneyUrl = airline && airline.moneyUrl ? airline.moneyUrl(origin, d.code, date, 1) : '#';
+          var airlineName = airline ? (airline.flag + ' ' + airline.name) : ('✈️ ' + best.airline);
+          var moneyUrl = (airline && airline.moneyUrl) ? airline.moneyUrl(origin, d.code, date, 1) : googleFlightsUrl(origin, d.code, date, best.airline);
           card.innerHTML =
             '<div class="card-header">' +
               '<div class="airline-name">' + d.flag + ' ' + d.name + '</div>' +
@@ -761,7 +769,7 @@ function loadDestinos() {
               '<span class="card-price-label">' + stopsText + ' · por trecho</span>' +
             '</div>' +
             '<div class="card-btns">' +
-              '<a href="' + moneyUrl + '" target="_blank" rel="noopener" class="btn-money">💰 Comprar</a>' +
+              '<a href="' + moneyUrl + '" target="_blank" rel="noopener" class="btn-money">� Ver e Comprar</a>' +
             '</div>';
         })
         .catch(function() {
