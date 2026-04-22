@@ -1,6 +1,8 @@
 import { verifyJWT, getCookie } from './_lib/jwt.js'
 
 const ASSET_EXTS = ['.css', '.js', '.svg', '.png', '.jpg', '.ico', '.woff', '.woff2', '.webp', '.map']
+// Páginas de login (com e sem .html — Cloudflare Pages usa pretty URLs)
+const LOGIN_PATHS = ['/login', '/login.html']
 const PUBLIC_PATHS = ['/api/login', '/api/logout', '/setup']
 
 export async function onRequest(context) {
@@ -8,14 +10,16 @@ export async function onRequest(context) {
   const url = new URL(request.url)
   const path = url.pathname
 
-  // Sempre público: login.html + assets estáticos
-  if (path === '/login.html' || ASSET_EXTS.some(ext => path.endsWith(ext))) {
-    // Se já logado e tentando acessar login.html → redireciona para home
-    if (path === '/login.html') {
-      const token = getCookie(request, 'session')
-      const user = token && env.JWT_SECRET ? await verifyJWT(token, env.JWT_SECRET) : null
-      if (user) return Response.redirect(new URL('/', request.url), 302)
-    }
+  // Assets estáticos — sempre público
+  if (ASSET_EXTS.some(ext => path.endsWith(ext))) {
+    return next()
+  }
+
+  // Página de login — pública, mas redireciona para home se já logado
+  if (LOGIN_PATHS.includes(path)) {
+    const token = getCookie(request, 'session')
+    const user = token && env.JWT_SECRET ? await verifyJWT(token, env.JWT_SECRET) : null
+    if (user) return Response.redirect(new URL('/', request.url), 302)
     return next()
   }
 
@@ -45,11 +49,11 @@ export async function onRequest(context) {
 
   // Páginas HTML protegidas
   if (!user) {
-    return Response.redirect(new URL('/login.html', request.url), 302)
+    return Response.redirect(new URL('/login', request.url), 302)
   }
 
-  // /admin.html → exige admin
-  if (path === '/admin.html' && !user.isAdmin) {
+  // /admin e /admin.html → exige admin
+  if ((path === '/admin' || path === '/admin.html') && !user.isAdmin) {
     return Response.redirect(new URL('/', request.url), 302)
   }
 
