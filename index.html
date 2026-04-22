@@ -381,6 +381,14 @@ var AIRPORTS = [
   {code:'AKL',name:'Auckland',country:'NZ'}
 ];
 
+/* Google Flights URL com busca pré-preenchida (usado em todo o array AIRLINES abaixo) */
+function googleFlightsUrl(origin, dest, date, airlineCode) {
+  var base = 'https://www.google.com/travel/flights?hl=pt-BR&curr=BRL#flt=';
+  var route = origin + '.' + dest + '.' + date + ';c:BRL;e:1;sd:1;t:f';
+  if (airlineCode) route += ';a:' + airlineCode;
+  return base + route;
+}
+
 var AIRLINES = [
   {id:'latam',   name:'LATAM Airlines',         flag:'🇧🇷', group:'br', short:'LATAM', badge:'Brasileira', badgeColor:'#e53935', program:'LATAM Pass',       color:'#e53935',
    moneyUrl:function(f,t,d,p){return 'https://www.latamairlines.com/br/pt/oferta-voos?outbound='+d+'T00%3A00%3A00.000Z&inbound=null&redemption=false&sort=PRICE%2Casc&origin='+f+'&destination='+t+'&adt='+p+'&chd=0&inf=0&trip=OW&cabin=Economy';},
@@ -501,14 +509,6 @@ function findAirlineByCarrier(code) {
   if (!id) return null;
   for (var i = 0; i < AIRLINES.length; i++) { if (AIRLINES[i].id === id) return AIRLINES[i]; }
   return null;
-}
-
-/* Google Flights URL com busca pré-preenchida (fallback para qualquer companhia) */
-function googleFlightsUrl(origin, dest, date, airlineCode) {
-  var base = 'https://www.google.com/travel/flights?hl=pt-BR&curr=BRL#flt=';
-  var route = origin + '.' + dest + '.' + date + ';c:BRL;e:1;sd:1;t:f';
-  if (airlineCode) route += ';a:' + airlineCode;
-  return base + route;
 }
 
 (function init() {
