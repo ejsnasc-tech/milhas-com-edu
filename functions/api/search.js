@@ -1,30 +1,36 @@
-// Cache em memória por instância do Worker (reinicia entre deployments)
-let _queryOneWay = null
-let _loadError = null
+// Usa gflights payload/parser mas faz a request com locale pt-BR
+// para o Google retornar preços em BRL (não USD)
+let _gflightsBuilders = null
 
 async function loadGflights() {
-  if (_queryOneWay) return _queryOneWay
-  if (_loadError) throw _loadError
-  try {
-    const mod = await import('gflights')
-    _queryOneWay = mod.queryOneWay
-    return _queryOneWay
-  } catch (e) {
-    _loadError = e
-    throw e
-  }
+  if (_gflightsBuilders) return _gflightsBuilders
+  const mod = await import('gflights')
+  _gflightsBuilders = { buildOneWayPayload: mod.buildOneWayPayload, parseResponse: mod.parseResponse }
+  return _gflightsBuilders
 }
 
-async function getUsdToBrl() {
-  try {
-    const r = await fetch('https://economia.awesomeapi.com.br/json/last/USD-BRL', {
-      signal: AbortSignal.timeout(5000)
-    })
-    const data = await r.json()
-    const rate = parseFloat(data.USDBRL.bid)
-    if (rate > 0) return rate
-  } catch {}
-  return 5.75 // fallback
+const ENDPOINT = 'https://www.google.com/_/FlightsFrontendUi/data/' +
+  'travel.frontend.flights.FlightsFrontendService/GetShoppingResults' +
+  '?hl=pt-BR&gl=BR'
+
+async function searchFlightsBRL(origin, destination, date, options = {}) {
+  const { buildOneWayPayload, parseResponse } = await loadGflights()
+  const payload = buildOneWayPayload(origin, destination, date, options)
+  const resp = await fetch(ENDPOINT, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36',
+      'Accept': '*/*',
+      'Accept-Language': 'pt-BR,pt;q=0.9',
+      'Origin': 'https://www.google.com',
+      'Referer': 'https://www.google.com/travel/flights?hl=pt-BR&gl=BR',
+    },
+    signal: AbortSignal.timeout(15000)
+  })
+  if (!resp.ok) throw new Error(`HTTP ${resp.status}`)
+  const text = await resp.text()
+  return parseResponse(text) // retorna Itinerary[] com price em BRL
 }
 
 function jsonError(msg, status = 500) {
@@ -57,17 +63,14 @@ export async function onRequestGet(context) {
   if (cached) return cached
 
   try {
-    const queryOneWay = await loadGflights()
-    const r = await queryOneWay(origin, destination, date)
-    if (r.error) throw new Error(r.error)
-
-    const usdToBrl = await getUsdToBrl()
+    // Preços já em BRL (locale pt-BR/GL=BR)
+    const itineraries = await searchFlightsBRL(origin, destination, date)
 
     const byAirline = {}
-    for (const it of r.itineraries || []) {
+    for (const it of itineraries) {
       const airlines = (it.legs || []).map(l => l.airline).filter(Boolean)
       const mainAirline = airlines[0] || 'Unknown'
-      const priceBrl = Math.round(it.price * usdToBrl)
+      const priceBrl = Math.round(it.price) // já em BRL
       if (!byAirline[mainAirline] || priceBrl < byAirline[mainAirline].price) {
         byAirline[mainAirline] = {
           price: priceBrl,
