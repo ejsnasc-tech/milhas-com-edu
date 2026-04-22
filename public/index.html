@@ -729,7 +729,7 @@ function makeAirlineCard(airline, price, stops, extra) {
   var gflUrl = googleFlightsUrl(searchFrom, searchTo, searchDate, airline.carrierCode);
   var priceHtml = price != null
     ? '<div class="card-prices"><span class="card-price-money" style="font-size:1.25em;font-weight:700">💰 R$ ' + price.toLocaleString('pt-BR', {minimumFractionDigits:2}) + '</span>' + (stopsText ? '<span class="card-price-label">' + stopsText + ' · por trecho</span>' : '') + '</div>'
-    : '<div class="card-prices" style="border-color:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:space-between"><span style="color:var(--muted);font-size:.82rem">📊 Preço não disponivel diretamente</span><a href="' + moneyUrl + '" target="_blank" rel="noopener" style="font-size:.78rem;color:#64b5f6;white-space:nowrap;margin-left:8px">Ver no site ↗</a></div>';
+    : '';
   var badge = price != null ? '<span class="real-badge">Preço Real</span>' : '<span style="font-size:.7rem;color:var(--muted);font-weight:600;padding:3px 8px;border:1px solid var(--border);border-radius:20px">Ver disponibilidade</span>';
   var moneyBtn = (airline.moneyUrl || true) ? '<a href="' + moneyUrl + '" target="_blank" rel="noopener" class="btn-money">🔍 Ver e Comprar</a>' : '';
   var milesBtn = milesUrl ? '<a href="' + milesUrl + '" target="_blank" rel="noopener" class="btn-miles">✈️ Ver em Milhas</a>' : '';
