@@ -397,8 +397,8 @@ function googleFlightsUrl(origin, dest, date, airlineCode) {
 
 var AIRLINES = [
   {id:'latam',   name:'LATAM Airlines',         flag:'🇧🇷', group:'br', short:'LATAM', badge:'Brasileira', badgeColor:'#e53935', program:'LATAM Pass',       color:'#e53935',
-   moneyUrl:function(f,t,d,p){return 'https://www.latamairlines.com/br/pt/oferta-voos?outbound='+d+'T00%3A00%3A00.000Z&inbound=null&redemption=false&sort=PRICE%2Casc&origin='+f+'&destination='+t+'&adt='+p+'&chd=0&inf=0&trip=OW&cabin=Economy';},
-   milesUrl:function(f,t,d,p){return 'https://www.latamairlines.com/br/pt/oferta-voos?outbound='+d+'T00%3A00%3A00.000Z&inbound=null&redemption=true&sort=PRICE%2Casc&origin='+f+'&destination='+t+'&adt='+(p||1)+'&chd=0&inf=0&trip=OW&cabin=Economy';}},
+   moneyUrl:function(f,t,d,p){return 'https://www.latamairlines.com/br/pt/oferta-voos?origin='+f+'&destination='+t+'&outbound='+d+'&adt='+p+'&chd=0&inf=0&trip=OW&cabin=Economy&redemption=false';},
+   milesUrl:function(f,t,d,p){return 'https://www.latamairlines.com/br/pt/oferta-voos?origin='+f+'&destination='+t+'&outbound='+d+'&adt='+(p||1)+'&chd=0&inf=0&trip=OW&cabin=Economy&redemption=true';}},
   {id:'gol',     name:'Gol Linhas Aéreas',       flag:'🇧🇷', group:'br', short:'GOL',  badge:'Brasileira', badgeColor:'#e65100', program:'Smiles',            color:'#e65100',
    moneyUrl:function(f,t,d,p){return googleFlightsUrl(f,t,d,'G3');},
    milesUrl:function(f,t,d)  {return 'https://www.smiles.com.br/passagens?originAirportCode='+f+'&destinationAirportCode='+t+'&departureDate='+d+'&adults=1&tripType=ONE_WAY';}},
@@ -464,7 +464,7 @@ var AIRLINES = [
    milesUrl:function(){return 'https://www.voeazul.com.br/br/pt/home';}},
   {id:'latampass',name:'LATAM Pass',             flag:'🇧🇷', group:'mp', short:'LTP',  badge:'Milhas',     badgeColor:'#e53935', program:'Programa LATAM Pass',color:'#e53935',
    moneyUrl:null,
-   milesUrl:function(f,t,d)  {return 'https://www.latamairlines.com/br/pt/oferta-voos?outbound='+d+'T00%3A00%3A00.000Z&inbound=null&redemption=true&sort=PRICE%2Casc&origin='+f+'&destination='+t+'&adt=1&chd=0&inf=0&trip=OW&cabin=Economy';}}
+   milesUrl:function(f,t,d)  {return 'https://www.latamairlines.com/br/pt/oferta-voos?origin='+f+'&destination='+t+'&outbound='+d+'&adt=1&chd=0&inf=0&trip=OW&cabin=Economy&redemption=true';}}
 ];
 
 
