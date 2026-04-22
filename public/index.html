@@ -81,7 +81,7 @@
     .btn-miles { background:rgba(124,77,255,.15); color:var(--purple); border:1px solid rgba(124,77,255,.3); }
     .btn-miles:hover { background:rgba(124,77,255,.25); }
     .btn-miles.hide,.btn-money.hide { display:none; }
-    .group-header { font-size:1rem; font-weight:700; color:#64b5f6; margin:32px 0 14px; display:flex; align-items:center; gap:8px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+    .group-header { font-size:1rem; font-weight:700; color:#64b5f6; margin:32px 0 14px; display:flex; align-items:center; gap:8px; padding-bottom:8px; border-bottom:1px solid var(--border); grid-column: 1 / -1; }
 
     /* CALENDAR */
     .destinos-section { max-width:1100px; margin:60px auto; padding:0 20px; }
@@ -719,6 +719,9 @@ function doSearch() {
   }
 }
 
+/* Mapa: programa de milhas → companhia-mãe */
+var MILES_PARENT = { 'smiles':'gol', 'tudoazul':'azul', 'latampass':'latam' };
+
 function makeAirlineCard(airline, price, stops, extra) {
   var stopsText = stops === 0 ? 'Direto' : (stops > 0 ? stops + ' parada' + (stops > 1 ? 's' : '') : '');
   var moneyUrl = (airline.moneyUrl) ? airline.moneyUrl(searchFrom, searchTo, searchDate, searchPax) : googleFlightsUrl(searchFrom, searchTo, searchDate);
@@ -797,6 +800,9 @@ function renderRealResults(results) {
   var extraCards = [];
   extraIds.forEach(function(id) {
     if (shownIds.has(id)) return;
+    /* Pula programa de milhas se a companhia-mãe já apareceu com preço */
+    var parent = MILES_PARENT[id];
+    if (parent && shownIds.has(parent)) return;
     var airline = AIRLINES.find(function(a){ return a.id === id; });
     if (!airline) return;
     if (!airline.moneyUrl && !airline.milesUrl) return;
@@ -804,9 +810,29 @@ function renderRealResults(results) {
     shownIds.add(id);
   });
 
-  container.innerHTML =
-    (realCards.length ? '<div class="group-header">✅ Preços Encontrados</div>' + realCards.join('') : '') +
-    (extraCards.length ? '<div class="group-header">🔍 Outras Opções</div>' + extraCards.join('') : '');
+  container.innerHTML = '';
+  if (realCards.length) {
+    var hdr1 = document.createElement('div');
+    hdr1.className = 'group-header';
+    hdr1.textContent = '✅ Preços Encontrados';
+    container.appendChild(hdr1);
+    realCards.forEach(function(html) {
+      var d = document.createElement('div');
+      d.innerHTML = html;
+      container.appendChild(d.firstChild);
+    });
+  }
+  if (extraCards.length) {
+    var hdr2 = document.createElement('div');
+    hdr2.className = 'group-header';
+    hdr2.textContent = '🔍 Outras Opções';
+    container.appendChild(hdr2);
+    extraCards.forEach(function(html) {
+      var d = document.createElement('div');
+      d.innerHTML = html;
+      container.appendChild(d.firstChild);
+    });
+  }
 }
 
 /* ── CALENDAR ── */
