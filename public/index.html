@@ -636,6 +636,7 @@ function doSearch() {
   var toVal   = document.getElementById('to-input').value;
   var dateVal = document.getElementById('date-from').value;
   var dateRetVal = document.getElementById('date-to').value;
+  var paxVal  = parseInt(document.getElementById('pax').value) || 1;
   searchFrom = extractCode(fromVal);
   searchTo   = extractCode(toVal);
   searchDate = dateVal || new Date().toISOString().split('T')[0];
