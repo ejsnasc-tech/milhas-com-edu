@@ -44,22 +44,6 @@ function requireAdmin(req, res, next) {
 /* ── gflights ────────────────────────────────────────────────── */
 let queryOneWay = null;
 async function loadGflights() {
-  // Intercepta o fetch global para forçar locale pt-BR e moeda BRL no Google Flights
-  const originalFetch = globalThis.fetch;
-  globalThis.fetch = function(url, opts = {}) {
-    if (typeof url === 'string' && url.includes('FlightsFrontendUi')) {
-      opts = { ...opts, headers: { ...(opts.headers || {}),
-        'Accept-Language': 'pt-BR,pt;q=0.9',
-        'Origin': 'https://www.google.com.br',
-        'Referer': 'https://www.google.com.br/travel/flights',
-      }};
-      // Adiciona parâmetros de moeda/locale na URL
-      if (!url.includes('hl=')) {
-        url += (url.includes('?') ? '&' : '?') + 'hl=pt-BR&gl=BR&curr=BRL';
-      }
-    }
-    return originalFetch(url, opts);
-  };
   const mod = await import('gflights');
   queryOneWay = mod.queryOneWay;
 }
@@ -229,11 +213,13 @@ app.get('/api/search', requireAuth, async (req, res) => {
     const r = await queryOneWay(origin.toUpperCase(), destination.toUpperCase(), date);
     if (r.error) throw new Error(r.error);
 
+    const usdToBrl = await getUsdToBrl();
+
     const byAirline = {};
     (r.itineraries || []).forEach(it => {
       const airlines = it.legs?.map(l => l.airline).filter(Boolean) || [];
       const mainAirline = airlines[0] || 'Unknown';
-      const priceBrl = Math.round(it.price); // já vem em BRL (locale pt-BR)
+      const priceBrl = Math.round(it.price * usdToBrl); // gflights retorna em USD, converte para BRL
       if (!byAirline[mainAirline] || priceBrl < byAirline[mainAirline].price) {
         byAirline[mainAirline] = {
           price: priceBrl, currency: 'BRL', airline: mainAirline,
