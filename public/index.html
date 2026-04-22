@@ -146,16 +146,24 @@
           oninput="acSearch(this,'to-list')" onkeydown="acKeydown(event,'to-list')">
         <div class="autocomplete-list" id="to-list" style="display:none"></div>
       </div>
-      <div class="form-group">
+      <div class="form-group" style="position:relative">
         <label>Ida</label>
-        <input type="text" id="date-from-display" placeholder="DD/MM/AAAA" maxlength="10" autocomplete="off"
-          oninput="dateMask(this,'date-from')" />
+        <div style="position:relative;display:flex;align-items:center">
+          <input type="text" id="date-from-display" placeholder="DD/MM/AAAA" maxlength="10" autocomplete="off"
+            oninput="dateMask(this,'date-from')" style="padding-right:36px;cursor:pointer" readonly onclick="document.getElementById('date-from-picker').showPicker?document.getElementById('date-from-picker').showPicker():document.getElementById('date-from-picker').click()" />
+          <input type="date" id="date-from-picker" style="position:absolute;opacity:0;right:0;top:0;width:36px;height:100%;cursor:pointer;border:none;background:transparent" oninput="pickerToDisplay(this,'date-from-display','date-from','date-to-display','date-to')" />
+          <span style="position:absolute;right:10px;color:#64b5f6;pointer-events:none;font-size:1.1rem">📅</span>
+        </div>
         <input type="hidden" id="date-from" />
       </div>
-      <div class="form-group">
+      <div class="form-group" style="position:relative">
         <label>Volta</label>
-        <input type="text" id="date-to-display" placeholder="DD/MM/AAAA" maxlength="10" autocomplete="off"
-          oninput="dateMask(this,'date-to')" />
+        <div style="position:relative;display:flex;align-items:center">
+          <input type="text" id="date-to-display" placeholder="DD/MM/AAAA" maxlength="10" autocomplete="off"
+            oninput="dateMask(this,'date-to')" style="padding-right:36px;cursor:pointer" readonly onclick="document.getElementById('date-to-picker').showPicker?document.getElementById('date-to-picker').showPicker():document.getElementById('date-to-picker').click()" />
+          <input type="date" id="date-to-picker" style="position:absolute;opacity:0;right:0;top:0;width:36px;height:100%;cursor:pointer;border:none;background:transparent" oninput="pickerToDisplay(this,'date-to-display','date-to',null,null)" />
+          <span style="position:absolute;right:10px;color:#64b5f6;pointer-events:none;font-size:1.1rem">📅</span>
+        </div>
         <input type="hidden" id="date-to" />
       </div>
     </div>
@@ -189,10 +197,15 @@
         oninput="acSearch(this,'destinos-origin-list')" onkeydown="acKeydown(event,'destinos-origin-list')">
       <div class="autocomplete-list" id="destinos-origin-list" style="display:none"></div>
     </div>
-    <div class="form-group" style="min-width:160px;max-width:200px">
+    <div class="form-group" style="min-width:160px;max-width:200px;position:relative">
       <label>Data de ida</label>
-      <input type="text" id="destinos-date" lang="pt-BR" placeholder="DD/MM/AAAA" maxlength="10" autocomplete="off"
-        oninput="dateMask(this,'destinos-date-val')"><input type="hidden" id="destinos-date-val">
+      <div style="position:relative;display:flex;align-items:center">
+        <input type="text" id="destinos-date" placeholder="DD/MM/AAAA" maxlength="10" autocomplete="off"
+          oninput="dateMask(this,'destinos-date-val')" style="padding-right:36px;cursor:pointer" readonly onclick="document.getElementById('destinos-date-picker').showPicker?document.getElementById('destinos-date-picker').showPicker():document.getElementById('destinos-date-picker').click()" />
+        <input type="date" id="destinos-date-picker" style="position:absolute;opacity:0;right:0;top:0;width:36px;height:100%;cursor:pointer;border:none;background:transparent" oninput="pickerToDisplay(this,'destinos-date','destinos-date-val',null,null)" />
+        <span style="position:absolute;right:10px;color:#64b5f6;pointer-events:none;font-size:1.1rem">📅</span>
+      </div>
+      <input type="hidden" id="destinos-date-val">
     </div>
     <button class="btn-destinos" onclick="loadDestinos()">🔄 Atualizar Preços</button>
   </div>
@@ -518,6 +531,27 @@ function findAirlineByCarrier(code) {
 }
 
 /* Máscara de data DD/MM/AAAA → converte para YYYY-MM-DD no hidden */
+function pickerToDisplay(pickerEl, displayId, hiddenId, retDisplayId, retHiddenId) {
+  var iso = pickerEl.value; // YYYY-MM-DD
+  if (!iso) return;
+  var p = iso.split('-');
+  var br = p[2]+'/'+p[1]+'/'+p[0];
+  document.getElementById(displayId).value = br;
+  document.getElementById(hiddenId).value = iso;
+  // se for campo de ida, auto-preenche volta +7 dias
+  if (retDisplayId && retHiddenId) {
+    var dep = new Date(iso + 'T12:00:00');
+    var ret = new Date(dep.getTime() + 7*86400000);
+    var retIso = ret.toISOString().split('T')[0];
+    var rp = retIso.split('-');
+    document.getElementById(retDisplayId).value = rp[2]+'/'+rp[1]+'/'+rp[0];
+    document.getElementById(retHiddenId).value = retIso;
+    var retPicker = document.getElementById('date-to-picker');
+    if (retPicker) retPicker.value = retIso;
+  }
+  // sincroniza o picker com o valor selecionado
+  pickerEl.value = iso;
+}
 function dateMask(input, hiddenId) {
   var v = input.value.replace(/\D/g, '').slice(0, 8);
   if (v.length >= 5) v = v.slice(0,2) + '/' + v.slice(2,4) + '/' + v.slice(4);
@@ -544,6 +578,10 @@ function setDateBR(displayId, hiddenId, isoStr) {
   var p = isoStr.split('-');
   document.getElementById(displayId).value = p[2]+'/'+p[1]+'/'+p[0];
   document.getElementById(hiddenId).value = isoStr;
+  // sincroniza o picker nativo correspondente
+  var pickerMap = {'date-from-display':'date-from-picker','date-to-display':'date-to-picker','destinos-date':'destinos-date-picker'};
+  var pickerId = pickerMap[displayId];
+  if (pickerId) { var el = document.getElementById(pickerId); if (el) el.value = isoStr; }
 }
 
 (function init() {
