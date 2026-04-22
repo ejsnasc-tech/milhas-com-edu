@@ -404,7 +404,7 @@ var AIRLINES = [
    milesUrl:function(f,t,d)  {return 'https://www.smiles.com.br/passagens?originAirportCode='+f+'&destinationAirportCode='+t+'&departureDate='+d+'&adults=1&tripType=ONE_WAY';}},
   {id:'azul',    name:'Azul Linhas Aéreas',      flag:'🇧🇷', group:'br', short:'AZUL', badge:'Brasileira', badgeColor:'#1565c0', program:'TudoAzul',          color:'#1976d2',
    moneyUrl:function(f,t,d,p){return 'https://www.voeazul.com.br/br/pt/home/select-flight?OD='+f+'-'+t+'-'+d.replace(/-/g,'')+'&C=Economy&TD=OW&PAX=A:'+p;},
-   milesUrl:function(f,t,d)  {return 'https://www.tudoazul.com.br/voos?originCity='+f+'&destinationCity='+t+'&departureDate='+d+'&adults='+1+'&tripType=OW';}}
+   milesUrl:function(f,t,d)  {return 'https://www.tudoazul.com.br/voos?originCity='+f+'&destinationCity='+t+'&departureDate='+d+'&adults='+1+'&tripType=OW';}},
   {id:'avianca', name:'Avianca',                 flag:'🇧🇷', group:'br', short:'AVN',  badge:'Brasileira', badgeColor:'#6a1b9a', program:'LifeMiles',         color:'#6a1b9a',
    moneyUrl:function(f,t,d,p){return googleFlightsUrl(f,t,d,'O6');},
    milesUrl:function()        {return 'https://www.lifemiles.com/booking/flights';}},
