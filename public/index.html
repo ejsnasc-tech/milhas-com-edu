@@ -470,13 +470,13 @@ var AIRLINES = [
    moneyUrl:function(f,t,d,p){return googleFlightsUrl(f,t,d,'ET');},
    milesUrl:function()        {return 'https://www.ethiopianairlines.com/br/sheba-miles';}},
   {id:'smiles',  name:'Smiles',                 flag:'🇧🇷', group:'mp', short:'SMI',  badge:'Milhas',     badgeColor:'#e65100', program:'Programa Smiles',   color:'#e65100', carrierCode:'G3',
-   moneyUrl:function(f,t,d,p){return googleFlightsUrl(f,t,d,'G3');},
+   moneyUrl:function(f,t,d,p){return 'https://www.smiles.com.br/passagens?originAirportCode='+f+'&destinationAirportCode='+t+'&departureDate='+d+'&adults=1&tripType=ONE_WAY&openFlightSearch=true';},
    milesUrl:function(f,t,d)  {return 'https://www.smiles.com.br/passagens?originAirportCode='+f+'&destinationAirportCode='+t+'&departureDate='+d+'&adults=1&tripType=ONE_WAY&openFlightSearch=true';}},
   {id:'tudoazul',name:'TudoAzul',                flag:'🇧🇷', group:'mp', short:'TA',   badge:'Milhas',     badgeColor:'#1565c0', program:'Programa TudoAzul', color:'#1976d2', carrierCode:'AD',
-   moneyUrl:function(f,t,d,p){return googleFlightsUrl(f,t,d,'AD');},
+   moneyUrl:function(f,t,d,p){return 'https://www.tudoazul.com.br/voos?from='+f+'&to='+t+'&departure='+d+'&adults=1&type=one-way';},
    milesUrl:function(f,t,d){return 'https://www.tudoazul.com.br/voos?from='+f+'&to='+t+'&departure='+d+'&adults=1&type=one-way';}},
   {id:'latampass',name:'LATAM Pass',             flag:'🇧🇷', group:'mp', short:'LTP',  badge:'Milhas',     badgeColor:'#e53935', program:'Programa LATAM Pass',color:'#e53935',
-   moneyUrl:null,
+   moneyUrl:function(f,t,d,p){return 'https://www.latamairlines.com/br/pt/oferta-voos?origin='+f+'&destination='+t+'&outbound='+d+'&adt=1&chd=0&inf=0&trip=OW&cabin=Economy&redemption=true';},
    milesUrl:function(f,t,d)  {return 'https://www.latamairlines.com/br/pt/oferta-voos?origin='+f+'&destination='+t+'&outbound='+d+'&adt=1&chd=0&inf=0&trip=OW&cabin=Economy&redemption=true';}}
 ];
 
@@ -729,7 +729,7 @@ function makeAirlineCard(airline, price, stops, extra) {
   var gflUrl = googleFlightsUrl(searchFrom, searchTo, searchDate, airline.carrierCode);
   var priceHtml = price != null
     ? '<div class="card-prices"><span class="card-price-money" style="font-size:1.25em;font-weight:700">💰 R$ ' + price.toLocaleString('pt-BR', {minimumFractionDigits:2}) + '</span>' + (stopsText ? '<span class="card-price-label">' + stopsText + ' · por trecho</span>' : '') + '</div>'
-    : '<div class="card-prices" style="border-color:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:space-between"><span style="color:var(--muted);font-size:.82rem">📊 Preço não disponivel diretamente</span><a href="' + gflUrl + '" target="_blank" rel="noopener" style="font-size:.78rem;color:#64b5f6;white-space:nowrap;margin-left:8px">Ver no Google Flights ↗</a></div>';
+    : '<div class="card-prices" style="border-color:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:space-between"><span style="color:var(--muted);font-size:.82rem">📊 Preço não disponivel diretamente</span><a href="' + moneyUrl + '" target="_blank" rel="noopener" style="font-size:.78rem;color:#64b5f6;white-space:nowrap;margin-left:8px">Ver no site ↗</a></div>';
   var badge = price != null ? '<span class="real-badge">Preço Real</span>' : '<span style="font-size:.7rem;color:var(--muted);font-weight:600;padding:3px 8px;border:1px solid var(--border);border-radius:20px">Ver disponibilidade</span>';
   var moneyBtn = (airline.moneyUrl || true) ? '<a href="' + moneyUrl + '" target="_blank" rel="noopener" class="btn-money">🔍 Ver e Comprar</a>' : '';
   var milesBtn = milesUrl ? '<a href="' + milesUrl + '" target="_blank" rel="noopener" class="btn-miles">✈️ Ver em Milhas</a>' : '';
