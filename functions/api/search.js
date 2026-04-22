@@ -54,13 +54,11 @@ export async function onRequestGet(context) {
     const r = await queryOneWay(origin, destination, date)
     if (r.error) throw new Error(r.error)
 
-    const usdToBrl = await getUsdToBrl()
-
     const byAirline = {}
     for (const it of r.itineraries || []) {
       const airlines = (it.legs || []).map(l => l.airline).filter(Boolean)
       const mainAirline = airlines[0] || 'Unknown'
-      const priceBrl = Math.round(it.price * usdToBrl)
+      const priceBrl = Math.round(it.price) // gflights já retorna BRL (Google BR)
       if (!byAirline[mainAirline] || priceBrl < byAirline[mainAirline].price) {
         byAirline[mainAirline] = {
           price: priceBrl,
