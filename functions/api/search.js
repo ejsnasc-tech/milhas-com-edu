@@ -57,14 +57,29 @@ export async function onRequestGet(context) {
     const byAirline = {}
     for (const it of r.itineraries || []) {
       const airlines = (it.legs || []).map(l => l.airline).filter(Boolean)
+      const uniqueAirlines = [...new Set(airlines)]
       const mainAirline = airlines[0] || 'Unknown'
       const priceBrl = Math.round(it.price) // gflights já retorna BRL (Google BR)
-      if (!byAirline[mainAirline] || priceBrl < byAirline[mainAirline].price) {
+      // Registra o itinerário para TODAS as companhias envolvidas nos trechos
+      for (const carrier of uniqueAirlines) {
+        if (!byAirline[carrier] || priceBrl < byAirline[carrier].price) {
+          byAirline[carrier] = {
+            price: priceBrl,
+            currency: 'BRL',
+            airline: carrier,
+            carriers: uniqueAirlines,
+            stops: it.stops || 0,
+            duration: it.totalDuration || 0
+          }
+        }
+      }
+      // Garante que o mainAirline (primeiro trecho) sempre aparece
+      if (!byAirline[mainAirline]) {
         byAirline[mainAirline] = {
           price: priceBrl,
           currency: 'BRL',
           airline: mainAirline,
-          carriers: [...new Set(airlines)],
+          carriers: uniqueAirlines,
           stops: it.stops || 0,
           duration: it.totalDuration || 0
         }
