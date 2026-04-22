@@ -1,5 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
-import bcrypt from 'bcryptjs'
+import { hashPassword } from '../../../_lib/password.js'
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -16,23 +15,29 @@ export async function onRequestPatch(context) {
   const body = await request.json().catch(() => ({}))
   const { ativo, validade, plano, password } = body
 
-  const updates = {}
-  if (ativo !== undefined) updates.ativo = ativo
-  if (validade !== undefined) updates.validade = validade || null
-  if (plano !== undefined) updates.plano = plano
-  if (password) updates.password_hash = await bcrypt.hash(password, 10)
+  const uname = await env.USERS.get(`uid:${id}`)
+  if (!uname) return jsonError('Usuário não encontrado', 404)
 
-  const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SECRET_KEY)
-  const { error } = await supabase.from('usuarios').update(updates).eq('id', id)
-  if (error) return jsonError(error.message)
+  const user = await env.USERS.get(`u:${uname}`, { type: 'json' })
+  if (!user) return jsonError('Usuário não encontrado', 404)
+
+  if (ativo !== undefined) user.ativo = ativo
+  if (validade !== undefined) user.validade = validade || null
+  if (plano !== undefined) user.plano = plano
+  if (password) user.password_hash = await hashPassword(password)
+
+  await env.USERS.put(`u:${uname}`, JSON.stringify(user))
   return json({ success: true })
 }
 
 export async function onRequestDelete(context) {
   const { env, params } = context
   const { id } = params
-  const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SECRET_KEY)
-  const { error } = await supabase.from('usuarios').delete().eq('id', id)
-  if (error) return jsonError(error.message)
+
+  const uname = await env.USERS.get(`uid:${id}`)
+  if (!uname) return jsonError('Usuário não encontrado', 404)
+
+  await env.USERS.delete(`u:${uname}`)
+  await env.USERS.delete(`uid:${id}`)
   return json({ success: true })
 }

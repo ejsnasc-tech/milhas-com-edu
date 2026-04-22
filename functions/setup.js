@@ -1,5 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
-import bcrypt from 'bcryptjs'
+import { hashPassword } from './_lib/password.js'
 
 const html = (body) =>
   new Response(`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Setup</title>
@@ -11,41 +10,42 @@ const html = (body) =>
 
 export async function onRequestGet(context) {
   const { env } = context
-  const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SECRET_KEY)
 
-  const { count, error: ce } = await supabase
-    .from('usuarios')
-    .select('*', { count: 'exact', head: true })
-
-  if (ce) return html(`<h2>❌ Erro</h2><p>Erro ao verificar banco: ${ce.message}</p>`)
-  if (count > 0) {
+  const existing = await env.USERS.get('u:admin')
+  if (existing) {
     return new Response(
       `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Setup</title></head><body>
-      <p>Setup já realizado. <a href="/login.html">Ir para login</a></p></body></html>`,
+      <p>Setup já realizado. <a href="/login">Ir para login</a></p></body></html>`,
       { status: 403, headers: { 'Content-Type': 'text/html' } }
     )
   }
 
-  const user = env.ADMIN_USER || 'admin'
+  const username = 'admin'
   const pass = env.ADMIN_PASS || 'milhas2026'
-  const hash = await bcrypt.hash(pass, 10)
+  const hash = await hashPassword(pass)
 
-  const { error } = await supabase.from('usuarios').insert({
-    username: user,
+  const user = {
+    id: 1,
+    username,
     password_hash: hash,
     nome: 'Administrador',
+    email: '',
     plano: 'admin',
     ativo: true,
-    is_admin: true
-  })
+    is_admin: true,
+    validade: null,
+    created_at: new Date().toISOString()
+  }
 
-  if (error) return html(`<h2>❌ Erro</h2><p>${error.message}</p>`)
+  await env.USERS.put(`u:${username}`, JSON.stringify(user))
+  await env.USERS.put('uid:1', username)
+  await env.USERS.put('nid', '2')
 
   return html(`
     <h2>✅ Admin criado com sucesso!</h2>
-    <p>Usuário: <b>${user}</b></p>
+    <p>Usuário: <b>${username}</b></p>
     <p>Senha: <b>${pass}</b></p>
-    <p><a href="/login.html">→ Fazer login</a></p>
+    <p><a href="/login">→ Fazer login</a></p>
     <p class="warn">⚠️ Altere a senha no painel admin após entrar!</p>
   `)
 }

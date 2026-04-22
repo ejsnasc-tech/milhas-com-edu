@@ -1,5 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
-import bcrypt from 'bcryptjs'
+import { hashPassword } from '../../_lib/password.js'
 
 function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -12,13 +11,15 @@ function jsonError(msg, status = 500) {
 
 export async function onRequestGet(context) {
   const { env } = context
-  const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SECRET_KEY)
-  const { data, error } = await supabase
-    .from('usuarios')
-    .select('id, username, nome, email, plano, ativo, validade, is_admin, created_at')
-    .order('created_at', { ascending: false })
-  if (error) return jsonError(error.message)
-  return json(data)
+  const listed = await env.USERS.list({ prefix: 'u:' })
+  const users = await Promise.all(
+    listed.keys.map(k => env.USERS.get(k.name, { type: 'json' }))
+  )
+  const safe = users
+    .filter(Boolean)
+    .map(({ password_hash, ...u }) => u)
+    .sort((a, b) => (a.created_at > b.created_at ? -1 : 1))
+  return json(safe)
 }
 
 export async function onRequestPost(context) {
@@ -30,23 +31,31 @@ export async function onRequestPost(context) {
     return jsonError('Usuário e senha são obrigatórios', 400)
   }
 
-  const hash = await bcrypt.hash(password, 10)
-  const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_SECRET_KEY)
-  const { data, error } = await supabase
-    .from('usuarios')
-    .insert({
-      username: username.trim().toLowerCase(),
-      password_hash: hash,
-      nome: nome || '',
-      email: email || '',
-      plano: plano || 'basico',
-      validade: validade || null,
-      ativo: true,
-      is_admin: false
-    })
-    .select('id, username, nome, email, plano, ativo, validade, created_at')
-    .single()
+  const uname = username.trim().toLowerCase()
+  const existing = await env.USERS.get(`u:${uname}`)
+  if (existing) return jsonError('Usuário já existe', 409)
 
-  if (error) return jsonError(error.message)
-  return json({ success: true, user: data })
+  const nidRaw = await env.USERS.get('nid')
+  const id = parseInt(nidRaw || '2')
+
+  const hash = await hashPassword(password)
+  const user = {
+    id,
+    username: uname,
+    password_hash: hash,
+    nome: nome || '',
+    email: email || '',
+    plano: plano || 'basico',
+    ativo: true,
+    is_admin: false,
+    validade: validade || null,
+    created_at: new Date().toISOString()
+  }
+
+  await env.USERS.put(`u:${uname}`, JSON.stringify(user))
+  await env.USERS.put(`uid:${id}`, uname)
+  await env.USERS.put('nid', String(id + 1))
+
+  const { password_hash, ...safe } = user
+  return json({ success: true, user: safe })
 }
