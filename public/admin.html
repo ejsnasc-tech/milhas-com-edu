@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin — Milhas com Edu</title>
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --bg:#0a0e1a; --card:#0d1b2e; --accent:#1565c0; --accent2:#1976d2;
+      --green:#00c853; --red:#ef5350; --yellow:#ffd600;
+      --text:#e8eaf6; --muted:#90a4ae; --border:#1a2744;
+    }
+    body { background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,sans-serif; min-height:100vh; }
+
+    /* NAVBAR */
+    .navbar { position:sticky; top:0; z-index:200; background:rgba(10,14,26,.95); backdrop-filter:blur(16px); border-bottom:1px solid var(--border); padding:0 28px; height:64px; display:flex; align-items:center; justify-content:space-between; }
+    .navbar-brand { display:flex; align-items:center; gap:12px; }
+    .navbar-brand img { height:36px; }
+    .navbar-brand span { font-size:1rem; font-weight:700; color:var(--muted); }
+    .navbar-actions { display:flex; gap:12px; align-items:center; }
+    .btn-nav { padding:7px 16px; border-radius:8px; font-size:.85rem; font-weight:600; cursor:pointer; text-decoration:none; border:none; transition:all .2s; }
+    .btn-site { background:var(--accent); color:#fff; }
+    .btn-site:hover { background:var(--accent2); }
+    .btn-logout { background:rgba(239,83,80,.15); border:1px solid rgba(239,83,80,.3); color:#ef9a9a; }
+    .btn-logout:hover { background:rgba(239,83,80,.3); color:#fff; }
+
+    /* LAYOUT */
+    .container { max-width:1100px; margin:0 auto; padding:40px 20px; }
+    .page-title { font-size:1.6rem; font-weight:800; margin-bottom:8px; }
+    .page-sub { color:var(--muted); font-size:.9rem; margin-bottom:32px; }
+
+    /* STATS */
+    .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; margin-bottom:36px; }
+    .stat-card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:20px 24px; }
+    .stat-label { font-size:.78rem; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:8px; }
+    .stat-value { font-size:2rem; font-weight:800; }
+    .stat-value.green { color:var(--green); }
+    .stat-value.red   { color:var(--red); }
+    .stat-value.yellow{ color:var(--yellow); }
+    .stat-value.blue  { color:#64b5f6; }
+
+    /* TOOLBAR */
+    .toolbar { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px; }
+    .toolbar h2 { font-size:1.1rem; font-weight:700; }
+    .btn-primary { background:linear-gradient(90deg,#1565c0,#7c4dff); color:#fff; border:none; border-radius:10px; padding:10px 22px; font-size:.9rem; font-weight:700; cursor:pointer; transition:opacity .2s,transform .15s; }
+    .btn-primary:hover { opacity:.9; transform:translateY(-1px); }
+
+    /* TABLE */
+    .table-wrap { background:var(--card); border:1px solid var(--border); border-radius:16px; overflow:hidden; }
+    table { width:100%; border-collapse:collapse; }
+    th { background:#060d1a; padding:12px 16px; text-align:left; font-size:.75rem; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); font-weight:700; }
+    td { padding:14px 16px; border-top:1px solid var(--border); font-size:.88rem; vertical-align:middle; }
+    tr:hover td { background:rgba(21,101,192,.06); }
+    .badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:.72rem; font-weight:700; }
+    .badge-ativo   { background:rgba(0,200,83,.15);  color:#00c853; border:1px solid rgba(0,200,83,.3); }
+    .badge-inativo { background:rgba(239,83,80,.15); color:#ef5350; border:1px solid rgba(239,83,80,.3); }
+    .badge-expirado{ background:rgba(255,214,0,.15); color:#ffd600; border:1px solid rgba(255,214,0,.3); }
+    .badge-admin   { background:rgba(124,77,255,.2); color:#ce93d8; border:1px solid rgba(124,77,255,.3); }
+    .plano-badge   { background:var(--accent); color:#fff; padding:2px 8px; border-radius:6px; font-size:.72rem; font-weight:700; }
+
+    /* ACTION BTNS */
+    .action-btns { display:flex; gap:8px; flex-wrap:wrap; }
+    .btn-sm { padding:5px 12px; border-radius:7px; font-size:.78rem; font-weight:600; cursor:pointer; border:1px solid; transition:all .2s; }
+    .btn-toggle-off { background:rgba(0,200,83,.1); border-color:rgba(0,200,83,.3); color:#00c853; }
+    .btn-toggle-off:hover { background:rgba(0,200,83,.25); }
+    .btn-toggle-on  { background:rgba(239,83,80,.1); border-color:rgba(239,83,80,.3); color:#ef5350; }
+    .btn-toggle-on:hover  { background:rgba(239,83,80,.25); }
+    .btn-edit  { background:rgba(21,101,192,.15); border-color:rgba(21,101,192,.4); color:#64b5f6; }
+    .btn-edit:hover  { background:rgba(21,101,192,.3); }
+    .btn-delete{ background:rgba(239,83,80,.1); border-color:rgba(239,83,80,.3); color:#ef5350; }
+    .btn-delete:hover{ background:rgba(239,83,80,.25); }
+
+    /* MODAL */
+    .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:500; display:flex; align-items:center; justify-content:center; padding:20px; }
+    .modal-overlay.hidden { display:none; }
+    .modal { background:var(--card); border:1px solid var(--border); border-radius:20px; padding:36px; width:100%; max-width:480px; box-shadow:0 24px 80px rgba(0,0,0,.6); }
+    .modal h3 { font-size:1.2rem; font-weight:700; margin-bottom:24px; }
+    .form-group { display:flex; flex-direction:column; gap:6px; margin-bottom:16px; }
+    .form-group label { font-size:.75rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); }
+    .form-group input, .form-group select { background:#060d1a; border:1px solid var(--border); border-radius:10px; padding:11px 14px; color:var(--text); font-size:.95rem; outline:none; transition:border-color .2s; width:100%; }
+    .form-group input:focus, .form-group select:focus { border-color:var(--accent2); }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .modal-btns { display:flex; gap:12px; margin-top:24px; justify-content:flex-end; }
+    .btn-cancel { background:transparent; border:1px solid var(--border); color:var(--muted); border-radius:10px; padding:10px 22px; font-size:.9rem; font-weight:600; cursor:pointer; transition:all .2s; }
+    .btn-cancel:hover { border-color:var(--muted); color:var(--text); }
+    .btn-save { background:linear-gradient(90deg,#1565c0,#7c4dff); color:#fff; border:none; border-radius:10px; padding:10px 28px; font-size:.9rem; font-weight:700; cursor:pointer; transition:opacity .2s; }
+    .btn-save:hover { opacity:.9; }
+
+    /* TOAST */
+    .toast { position:fixed; bottom:28px; right:28px; background:#1e2d47; border:1px solid var(--accent); border-radius:12px; padding:14px 22px; font-size:.9rem; font-weight:600; z-index:999; transform:translateY(80px); opacity:0; transition:all .3s; }
+    .toast.show { transform:translateY(0); opacity:1; }
+    .toast.error { border-color:var(--red); }
+
+    .empty-msg { text-align:center; padding:60px; color:var(--muted); }
+    @media(max-width:700px){ th:nth-child(3), td:nth-child(3), th:nth-child(4), td:nth-child(4) { display:none; } }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="navbar-brand">
+    <img src="/logo.svg" alt="Milhas com Edu"/>
+    <span>Painel Admin</span>
+  </div>
+  <div class="navbar-actions">
+    <a href="/" class="btn-nav btn-site">← Ir para o site</a>
+    <a href="/api/logout" class="btn-nav btn-logout">Sair</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-title">⚙️ Gerenciar Usuários</div>
+  <div class="page-sub">Crie e gerencie os acessos dos seus clientes.</div>
+
+  <div class="stats-grid" id="stats-grid">
+    <div class="stat-card"><div class="stat-label">Total de usuários</div><div class="stat-value blue" id="stat-total">—</div></div>
+    <div class="stat-card"><div class="stat-label">Ativos</div><div class="stat-value green" id="stat-ativos">—</div></div>
+    <div class="stat-card"><div class="stat-label">Bloqueados</div><div class="stat-value red" id="stat-bloqueados">—</div></div>
+    <div class="stat-card"><div class="stat-label">Expirados</div><div class="stat-value yellow" id="stat-expirados">—</div></div>
+  </div>
+
+  <div class="toolbar">
+    <h2>👥 Clientes</h2>
+    <button class="btn-primary" onclick="openCreateModal()">+ Novo Usuário</button>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Usuário</th>
+          <th>Nome / Email</th>
+          <th>Plano</th>
+          <th>Validade</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="users-tbody">
+        <tr><td colspan="6" class="empty-msg">Carregando...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal Criar / Editar -->
+<div class="modal-overlay hidden" id="modal-overlay">
+  <div class="modal">
+    <h3 id="modal-title">+ Novo Usuário</h3>
+    <input type="hidden" id="edit-id"/>
+    <div class="form-group">
+      <label>Usuário (login)</label>
+      <input type="text" id="f-username" placeholder="ex: joao123" autocomplete="off"/>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Nome</label>
+        <input type="text" id="f-nome" placeholder="Nome completo"/>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="f-email" placeholder="email@exemplo.com"/>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Senha</label>
+        <input type="password" id="f-password" placeholder="Deixe em branco para manter"/>
+      </div>
+      <div class="form-group">
+        <label>Plano</label>
+        <select id="f-plano">
+          <option value="basico">Básico</option>
+          <option value="premium">Premium</option>
+          <option value="vip">VIP</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Validade do acesso</label>
+      <input type="date" id="f-validade"/>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-save" onclick="saveUser()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var users = [];
+
+function isExpired(validade) {
+  if (!validade) return false;
+  return new Date(validade) < new Date();
+}
+
+function statusBadge(u) {
+  if (u.is_admin) return '<span class="badge badge-admin">Admin</span>';
+  if (!u.ativo)   return '<span class="badge badge-inativo">Bloqueado</span>';
+  if (isExpired(u.validade)) return '<span class="badge badge-expirado">Expirado</span>';
+  return '<span class="badge badge-ativo">Ativo</span>';
+}
+
+function fmtDate(d) {
+  if (!d) return '<span style="color:var(--muted)">Sem limite</span>';
+  var dt = new Date(d);
+  return dt.toLocaleDateString('pt-BR');
+}
+
+function updateStats() {
+  var nonAdmin = users.filter(function(u){ return !u.is_admin; });
+  var ativos    = nonAdmin.filter(function(u){ return u.ativo && !isExpired(u.validade); }).length;
+  var bloqueados= nonAdmin.filter(function(u){ return !u.ativo; }).length;
+  var expirados = nonAdmin.filter(function(u){ return u.ativo && isExpired(u.validade); }).length;
+  document.getElementById('stat-total').textContent      = nonAdmin.length;
+  document.getElementById('stat-ativos').textContent     = ativos;
+  document.getElementById('stat-bloqueados').textContent = bloqueados;
+  document.getElementById('stat-expirados').textContent  = expirados;
+}
+
+function renderTable() {
+  var tbody = document.getElementById('users-tbody');
+  if (!users.length) {
+    tbody.innerHTML = '<tr><td colspan="6" class="empty-msg">Nenhum usuário cadastrado ainda.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = users.map(function(u) {
+    var isActive = u.ativo && !isExpired(u.validade);
+    var toggleBtn = u.is_admin ? '' :
+      (u.ativo
+        ? '<button class="btn-sm btn-toggle-on" onclick="toggleUser(\'' + u.id + '\',false)">🔒 Bloquear</button>'
+        : '<button class="btn-sm btn-toggle-off" onclick="toggleUser(\'' + u.id + '\',true)">✅ Ativar</button>');
+    return '<tr>' +
+      '<td><strong>' + u.username + '</strong></td>' +
+      '<td>' + (u.nome || '<i style="color:var(--muted)">—</i>') + (u.email ? '<br><small style="color:var(--muted)">' + u.email + '</small>' : '') + '</td>' +
+      '<td><span class="plano-badge">' + (u.plano || 'básico') + '</span></td>' +
+      '<td>' + fmtDate(u.validade) + '</td>' +
+      '<td>' + statusBadge(u) + '</td>' +
+      '<td><div class="action-btns">' +
+        toggleBtn +
+        '<button class="btn-sm btn-edit" onclick="openEditModal(\'' + u.id + '\')">✏️ Editar</button>' +
+        (!u.is_admin ? '<button class="btn-sm btn-delete" onclick="deleteUser(\'' + u.id + '\',\'' + u.username + '\')">🗑️</button>' : '') +
+      '</div></td>' +
+    '</tr>';
+  }).join('');
+}
+
+function loadUsers() {
+  fetch('/api/admin/users')
+    .then(function(r){ return r.json(); })
+    .then(function(data) {
+      users = data;
+      updateStats();
+      renderTable();
+    })
+    .catch(function(){ showToast('Erro ao carregar usuários', true); });
+}
+
+function openCreateModal() {
+  document.getElementById('modal-title').textContent = '+ Novo Usuário';
+  document.getElementById('edit-id').value = '';
+  document.getElementById('f-username').value  = '';
+  document.getElementById('f-username').disabled = false;
+  document.getElementById('f-nome').value     = '';
+  document.getElementById('f-email').value    = '';
+  document.getElementById('f-password').value = '';
+  document.getElementById('f-password').placeholder = 'Obrigatório';
+  document.getElementById('f-plano').value    = 'basico';
+  document.getElementById('f-validade').value = '';
+  document.getElementById('modal-overlay').classList.remove('hidden');
+}
+
+function openEditModal(id) {
+  var u = users.find(function(x){ return x.id === id; });
+  if (!u) return;
+  document.getElementById('modal-title').textContent = '✏️ Editar Usuário';
+  document.getElementById('edit-id').value = u.id;
+  document.getElementById('f-username').value   = u.username;
+  document.getElementById('f-username').disabled = true;
+  document.getElementById('f-nome').value      = u.nome  || '';
+  document.getElementById('f-email').value     = u.email || '';
+  document.getElementById('f-password').value  = '';
+  document.getElementById('f-password').placeholder = 'Deixe em branco para manter';
+  document.getElementById('f-plano').value     = u.plano || 'basico';
+  document.getElementById('f-validade').value  = u.validade ? u.validade.split('T')[0] : '';
+  document.getElementById('modal-overlay').classList.remove('hidden');
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.add('hidden');
+}
+
+function saveUser() {
+  var editId   = document.getElementById('edit-id').value;
+  var username = document.getElementById('f-username').value.trim();
+  var password = document.getElementById('f-password').value;
+  var nome     = document.getElementById('f-nome').value.trim();
+  var email    = document.getElementById('f-email').value.trim();
+  var plano    = document.getElementById('f-plano').value;
+  var validade = document.getElementById('f-validade').value;
+
+  if (!editId && (!username || !password)) {
+    showToast('Usuário e senha são obrigatórios', true); return;
+  }
+
+  var body = { nome: nome, email: email, plano: plano, validade: validade };
+  if (!editId) { body.username = username; body.password = password; }
+  else if (password) { body.password = password; }
+
+  var url    = editId ? '/api/admin/users/' + editId : '/api/admin/users';
+  var method = editId ? 'PATCH' : 'POST';
+
+  fetch(url, { method: method, headers:{'Content-Type':'application/json'}, body: JSON.stringify(body) })
+    .then(function(r){ return r.json(); })
+    .then(function(d) {
+      if (d.error) { showToast('Erro: ' + d.error, true); return; }
+      closeModal();
+      showToast(editId ? 'Usuário atualizado!' : 'Usuário criado!');
+      loadUsers();
+    })
+    .catch(function(){ showToast('Erro ao salvar', true); });
+}
+
+function toggleUser(id, ativo) {
+  fetch('/api/admin/users/' + id, {
+    method: 'PATCH', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ ativo: ativo })
+  }).then(function(r){ return r.json(); })
+    .then(function(d) {
+      if (d.error) { showToast('Erro: ' + d.error, true); return; }
+      showToast(ativo ? 'Usuário ativado!' : 'Usuário bloqueado!');
+      loadUsers();
+    });
+}
+
+function deleteUser(id, username) {
+  if (!confirm('Deletar o usuário "' + username + '"? Esta ação não pode ser desfeita.')) return;
+  fetch('/api/admin/users/' + id, { method: 'DELETE' })
+    .then(function(r){ return r.json(); })
+    .then(function(d) {
+      if (d.error) { showToast('Erro: ' + d.error, true); return; }
+      showToast('Usuário deletado!');
+      loadUsers();
+    });
+}
+
+function showToast(msg, isError) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast' + (isError ? ' error' : '') + ' show';
+  setTimeout(function(){ t.classList.remove('show'); }, 3000);
+}
+
+document.getElementById('modal-overlay').addEventListener('click', function(e){
+  if (e.target === this) closeModal();
+});
+
+loadUsers();
+</script>
+</body>
+</html>
