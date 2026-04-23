@@ -802,26 +802,6 @@ function renderRealResults(results) {
     return makeAirlineCard(airline, r.price, r.stops);
   });
 
-  /* IDs já exibidos com preço */
-  var shownIds = new Set(sorted.map(function(r) {
-    var a = findAirlineByCarrier(r.airline); return a ? a.id : null;
-  }).filter(Boolean));
-
-  /* Cards extras (sem preço, para companhias relevantes não retornadas) */
-  var extraIds = getExtraAirlines(searchFrom, searchTo);
-  var extraCards = [];
-  extraIds.forEach(function(id) {
-    if (shownIds.has(id)) return;
-    /* Pula programa de milhas se a companhia-mãe já apareceu com preço */
-    var parent = MILES_PARENT[id];
-    if (parent && shownIds.has(parent)) return;
-    var airline = AIRLINES.find(function(a){ return a.id === id; });
-    if (!airline) return;
-    if (!airline.moneyUrl && !airline.milesUrl) return;
-    extraCards.push(makeAirlineCard(airline, null, null));
-    shownIds.add(id);
-  });
-
   container.innerHTML = '';
   if (realCards.length) {
     var hdr1 = document.createElement('div');
@@ -829,17 +809,6 @@ function renderRealResults(results) {
     hdr1.textContent = '✅ Preços Encontrados';
     container.appendChild(hdr1);
     realCards.forEach(function(html) {
-      var d = document.createElement('div');
-      d.innerHTML = html;
-      container.appendChild(d.firstChild);
-    });
-  }
-  if (extraCards.length) {
-    var hdr2 = document.createElement('div');
-    hdr2.className = 'group-header';
-    hdr2.textContent = '🔍 Outras Opções';
-    container.appendChild(hdr2);
-    extraCards.forEach(function(html) {
       var d = document.createElement('div');
       d.innerHTML = html;
       container.appendChild(d.firstChild);
