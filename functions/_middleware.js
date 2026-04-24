@@ -1,9 +1,9 @@
 import { verifyJWT, getCookie } from './_lib/jwt.js'
 
 const ASSET_EXTS = ['.css', '.js', '.svg', '.png', '.jpg', '.ico', '.woff', '.woff2', '.webp', '.map']
-// Páginas de login (com e sem .html — Cloudflare Pages usa pretty URLs)
-const LOGIN_PATHS = ['/login', '/login.html']
-const PUBLIC_PATHS = ['/api/login', '/api/logout', '/setup']
+// Páginas públicas (com e sem .html — Cloudflare Pages usa pretty URLs)
+const LOGIN_PATHS = ['/login', '/login.html', '/register', '/register.html']
+const PUBLIC_PATHS = ['/api/login', '/api/logout', '/api/register', '/setup']
 
 export async function onRequest(context) {
   const { request, env, next } = context

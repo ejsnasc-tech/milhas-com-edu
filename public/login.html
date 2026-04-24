@@ -124,9 +124,12 @@
     .login-footer {
       text-align: center;
       margin-top: 28px;
-      font-size: .78rem;
+      font-size: .85rem;
       color: var(--muted);
     }
+    .login-footer a { color:#64b5f6; text-decoration:none; font-weight:600; }
+    .login-footer a:hover { text-decoration:underline; }
+    .login-footer .small { display:block; margin-top:10px; font-size:.75rem; }
   </style>
 </head>
 <body>
@@ -160,7 +163,10 @@
       <button type="submit" class="btn-login">✈️ Entrar</button>
     </form>
 
-    <div class="login-footer">Milhas com Edu — Buscador de Passagens</div>
+    <div class="login-footer">
+      Ainda não tem conta? <a href="/register">Criar conta grátis</a>
+      <span class="small">Milhas com Edu — Buscador de Passagens</span>
+    </div>
   </div>
 </body>
 </html>

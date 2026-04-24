@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Planos — Milhas com Edu ✈️</title>
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --bg:#0a0e1a; --card:#0d1b2e; --accent:#1565c0; --accent2:#1976d2;
+      --green:#00c853; --purple:#7c4dff; --text:#e8eaf6; --muted:#90a4ae; --border:#1a2744; --red:#ef5350;
+    }
+    body { background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,sans-serif; min-height:100vh; }
+    .navbar { position:sticky; top:0; z-index:200; background:rgba(10,14,26,.92); backdrop-filter:blur(16px); border-bottom:1px solid var(--border); padding:0 28px; height:64px; display:flex; align-items:center; justify-content:space-between; }
+    .navbar-logo { display:flex; align-items:center; }
+    .navbar-logo img { height:38px; }
+    .navbar-actions { display:flex; gap:12px; align-items:center; }
+    .btn-nav { padding:7px 16px; border-radius:8px; font-size:.85rem; font-weight:600; cursor:pointer; text-decoration:none; border:none; }
+    .btn-back { background:transparent; color:#90caf9; border:1px solid var(--border); }
+    .btn-back:hover { border-color:var(--accent); }
+    .btn-logout { background:rgba(239,83,80,.15); border:1px solid rgba(239,83,80,.3); color:#ef9a9a; }
+
+    .container { max-width:1100px; margin:0 auto; padding:48px 20px; }
+    .page-title { font-size:2rem; font-weight:800; text-align:center; margin-bottom:8px; }
+    .page-sub { text-align:center; color:var(--muted); margin-bottom:48px; }
+
+    .plans-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:20px; margin-bottom:48px; }
+    .plan-card { background:var(--card); border:2px solid var(--border); border-radius:20px; padding:32px 24px; cursor:pointer; transition:all .25s; position:relative; }
+    .plan-card:hover { border-color:var(--accent2); transform:translateY(-4px); box-shadow:0 16px 50px rgba(21,101,192,.25); }
+    .plan-card.selected { border-color:var(--purple); background:linear-gradient(160deg,#0d1b2e 0%,#1a1335 100%); }
+    .plan-card .ribbon { position:absolute; top:-10px; right:18px; background:linear-gradient(90deg,#7c4dff,#1565c0); color:#fff; font-size:.7rem; font-weight:700; padding:4px 12px; border-radius:12px; text-transform:uppercase; letter-spacing:.05em; }
+    .plan-name { font-size:1.3rem; font-weight:800; margin-bottom:6px; }
+    .plan-desc { color:var(--muted); font-size:.85rem; margin-bottom:18px; min-height:36px; }
+    .plan-price { display:flex; align-items:baseline; gap:6px; margin-bottom:14px; }
+    .plan-price .currency { font-size:1rem; color:var(--muted); }
+    .plan-price .amount { font-size:2.4rem; font-weight:800; color:#90caf9; }
+    .plan-price .period { color:var(--muted); font-size:.85rem; }
+    .plan-monthly { font-size:.78rem; color:var(--green); font-weight:600; }
+
+    .checkout { background:var(--card); border:1px solid var(--border); border-radius:20px; padding:32px; max-width:560px; margin:0 auto; }
+    .checkout h2 { font-size:1.2rem; margin-bottom:20px; }
+    .form-row { display:flex; gap:10px; margin-bottom:14px; }
+    .form-row input { flex:1; background:#060d1a; border:1px solid var(--border); border-radius:10px; padding:12px 14px; color:var(--text); font-size:.95rem; outline:none; text-transform:uppercase; }
+    .form-row input:focus { border-color:var(--accent2); }
+    .btn-apply { background:rgba(124,77,255,.15); border:1px solid rgba(124,77,255,.4); color:#ce93d8; border-radius:10px; padding:0 18px; font-size:.85rem; font-weight:600; cursor:pointer; }
+    .btn-apply:hover { background:rgba(124,77,255,.3); }
+
+    .summary { background:#060d1a; border:1px solid var(--border); border-radius:12px; padding:18px; margin-bottom:18px; }
+    .summary-row { display:flex; justify-content:space-between; padding:6px 0; font-size:.9rem; }
+    .summary-row.total { border-top:1px solid var(--border); margin-top:8px; padding-top:14px; font-size:1.1rem; font-weight:800; color:var(--green); }
+    .summary-row .desconto { color:var(--green); font-weight:600; }
+
+    .btn-pay { width:100%; padding:15px; background:linear-gradient(90deg,#1565c0,#7c4dff); border:none; border-radius:12px; color:#fff; font-size:1rem; font-weight:700; cursor:pointer; transition:all .2s; }
+    .btn-pay:hover { opacity:.9; transform:translateY(-1px); }
+    .btn-pay:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+
+    .pix-box { background:#060d1a; border:1px solid var(--green); border-radius:14px; padding:24px; margin-top:18px; }
+    .pix-box h3 { color:var(--green); margin-bottom:14px; font-size:1rem; }
+    .pix-row { display:flex; justify-content:space-between; gap:12px; padding:8px 0; font-size:.9rem; border-bottom:1px solid rgba(255,255,255,.05); }
+    .pix-row:last-child { border-bottom:none; }
+    .pix-row strong { color:var(--muted); font-weight:600; }
+    .pix-key { display:flex; gap:8px; align-items:center; background:#0d1b2e; padding:10px 14px; border-radius:10px; margin-top:6px; font-family:monospace; font-size:.95rem; word-break:break-all; }
+    .btn-copy { background:var(--accent); color:#fff; border:none; border-radius:8px; padding:6px 14px; font-size:.78rem; font-weight:700; cursor:pointer; flex-shrink:0; }
+    .pix-instructions { margin-top:14px; padding:12px; background:rgba(255,214,0,.08); border:1px solid rgba(255,214,0,.3); border-radius:10px; color:#ffe082; font-size:.85rem; line-height:1.5; }
+
+    .alert { border-radius:10px; padding:11px 14px; font-size:.88rem; margin-bottom:14px; }
+    .alert.error { background:rgba(239,83,80,.12); border:1px solid rgba(239,83,80,.35); color:#ef9a9a; }
+    .alert.success { background:rgba(0,200,83,.12); border:1px solid rgba(0,200,83,.35); color:#b9f6ca; }
+    .alert.info { background:rgba(21,101,192,.12); border:1px solid rgba(21,101,192,.35); color:#90caf9; }
+
+    .my-payments { margin-top:48px; }
+    .my-payments h2 { font-size:1.1rem; margin-bottom:14px; }
+    .pay-item { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px 18px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; }
+    .pay-status { padding:3px 12px; border-radius:20px; font-size:.72rem; font-weight:700; text-transform:uppercase; }
+    .pay-status.pendente  { background:rgba(255,214,0,.15); color:#ffd600; }
+    .pay-status.aprovado  { background:rgba(0,200,83,.15); color:#00c853; }
+    .pay-status.rejeitado { background:rgba(239,83,80,.15); color:#ef5350; }
+  </style>
+</head>
+<body>
+<nav class="navbar">
+  <a href="/" class="navbar-logo"><img src="/logo.svg" alt="Milhas com Edu"/></a>
+  <div class="navbar-actions">
+    <a href="/" class="btn-nav btn-back">← Voltar</a>
+    <a href="/api/logout" class="btn-nav btn-logout">Sair</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="page-title">💎 Planos de acesso</div>
+  <div class="page-sub">Escolha o plano que melhor se encaixa pra você</div>
+
+  <div class="plans-grid" id="plans-grid"></div>
+
+  <div class="checkout" id="checkout" style="display:none;">
+    <h2 id="checkout-title">📋 Resumo do pedido</h2>
+
+    <div id="alert"></div>
+
+    <div class="form-row">
+      <input type="text" id="promo-code" placeholder="CUPOM DE DESCONTO (opcional)" maxlength="30"/>
+      <button class="btn-apply" onclick="applyPromo()">Aplicar</button>
+    </div>
+
+    <div class="summary" id="summary"></div>
+
+    <button class="btn-pay" id="btn-pay" onclick="generatePayment()">💳 Gerar Pix</button>
+
+    <div id="pix-area"></div>
+  </div>
+
+  <div class="my-payments" id="my-payments-area" style="display:none;">
+    <h2>📜 Meus pagamentos</h2>
+    <div id="my-payments-list"></div>
+  </div>
+</div>
+
+<script>
+var STATE = {
+  planos: [],
+  pix: null,
+  selected: null,
+  promo: null,   // { tipo, valor, code, desconto, precoFinal }
+};
+
+function fmt(v) { return 'R$ ' + Number(v).toFixed(2).replace('.', ','); }
+function escapeHtml(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function loadData() {
+  fetch('/api/plans').then(r => r.json()).then(d => {
+    STATE.planos = d.planos || [];
+    STATE.pix = d.pix;
+    renderPlans();
+  });
+  loadMyPayments();
+}
+
+function renderPlans() {
+  var grid = document.getElementById('plans-grid');
+  grid.innerHTML = STATE.planos.map(p => {
+    var monthly = (p.preco / (p.dias / 30)).toFixed(2).replace('.', ',');
+    var ribbon = p.id === 'anual' ? '<div class="ribbon">⭐ Mais vantajoso</div>' : '';
+    return `<div class="plan-card" data-id="${p.id}" onclick="selectPlan('${p.id}')">
+      ${ribbon}
+      <div class="plan-name">${escapeHtml(p.nome)}</div>
+      <div class="plan-desc">${escapeHtml(p.descricao)}</div>
+      <div class="plan-price">
+        <span class="currency">R$</span>
+        <span class="amount">${Number(p.preco).toFixed(0)}</span>
+        <span class="period">/${p.dias} dias</span>
+      </div>
+      <div class="plan-monthly">≈ R$ ${monthly}/mês</div>
+    </div>`;
+  }).join('');
+}
+
+function selectPlan(id) {
+  STATE.selected = STATE.planos.find(p => p.id === id);
+  STATE.promo = null;
+  document.getElementById('promo-code').value = '';
+  document.getElementById('alert').innerHTML = '';
+  document.getElementById('pix-area').innerHTML = '';
+  document.querySelectorAll('.plan-card').forEach(el => {
+    el.classList.toggle('selected', el.dataset.id === id);
+  });
+  document.getElementById('checkout').style.display = 'block';
+  document.getElementById('checkout-title').textContent = '📋 ' + STATE.selected.nome + ' — Resumo';
+  renderSummary();
+  document.getElementById('checkout').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function renderSummary() {
+  var p = STATE.selected;
+  var rows = `<div class="summary-row"><span>Plano ${escapeHtml(p.nome)}</span><span>${fmt(p.preco)}</span></div>`;
+  var total = p.preco;
+  if (STATE.promo) {
+    rows += `<div class="summary-row desconto"><span>Cupom ${escapeHtml(STATE.promo.code)}</span><span>− ${fmt(STATE.promo.desconto)}</span></div>`;
+    total = STATE.promo.precoFinal;
+  }
+  rows += `<div class="summary-row total"><span>Total</span><span>${fmt(total)}</span></div>`;
+  document.getElementById('summary').innerHTML = rows;
+}
+
+function showAlert(msg, type) {
+  document.getElementById('alert').innerHTML = `<div class="alert ${type}">${msg}</div>`;
+}
+
+function applyPromo() {
+  var code = document.getElementById('promo-code').value.trim().toUpperCase();
+  if (!code) { STATE.promo = null; renderSummary(); return; }
+  if (!STATE.selected) { showAlert('Selecione um plano antes', 'error'); return; }
+  fetch('/api/promo/validate', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ code, plano: STATE.selected.id })
+  }).then(r => r.json()).then(d => {
+    if (!d.valid) {
+      STATE.promo = null;
+      renderSummary();
+      showAlert('❌ ' + (d.error || 'Cupom inválido'), 'error');
+      return;
+    }
+    STATE.promo = { code: d.code, tipo: d.tipo, valor: d.valor, desconto: d.desconto, precoFinal: d.precoFinal };
+    renderSummary();
+    showAlert('✅ Cupom aplicado! Você economizou ' + fmt(d.desconto), 'success');
+  });
+}
+
+function generatePayment() {
+  if (!STATE.selected) return;
+  var btn = document.getElementById('btn-pay');
+  btn.disabled = true; btn.textContent = 'Gerando...';
+
+  var body = { plano: STATE.selected.id };
+  if (STATE.promo) body.code = STATE.promo.code;
+
+  fetch('/api/payment/request', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  }).then(r => r.json()).then(d => {
+    btn.disabled = false; btn.textContent = '💳 Gerar Pix';
+    if (d.error) { showAlert('❌ ' + d.error, 'error'); return; }
+    renderPix(d.payment, d.pix);
+    loadMyPayments();
+  });
+}
+
+function renderPix(payment, pix) {
+  if (!pix || !pix.chave) {
+    document.getElementById('pix-area').innerHTML =
+      `<div class="alert info" style="margin-top:18px;">⏳ Pedido registrado (#${payment.id.slice(-6)}). O administrador ainda não configurou a chave Pix. Entre em contato.</div>`;
+    return;
+  }
+  document.getElementById('pix-area').innerHTML = `
+    <div class="pix-box">
+      <h3>💚 Pague via Pix — ${fmt(payment.valor)}</h3>
+      <div class="pix-row"><strong>Banco</strong><span>${escapeHtml(pix.banco || '—')}</span></div>
+      <div class="pix-row"><strong>Titular</strong><span>${escapeHtml(pix.titular || '—')}</span></div>
+      <div class="pix-row"><strong>Tipo de chave</strong><span>${escapeHtml(pix.tipoChave || '—')}</span></div>
+      <div style="margin-top:6px;"><strong style="color:var(--muted);font-size:.85rem;">Chave Pix:</strong></div>
+      <div class="pix-key">
+        <span style="flex:1;">${escapeHtml(pix.chave)}</span>
+        <button class="btn-copy" onclick="copyKey('${escapeHtml(pix.chave)}', this)">COPIAR</button>
+      </div>
+      ${pix.instrucoes ? `<div class="pix-instructions">📌 ${escapeHtml(pix.instrucoes)}</div>` : ''}
+      <div class="pix-instructions" style="background:rgba(0,200,83,.08);border-color:rgba(0,200,83,.3);color:#b9f6ca;">
+        ✅ Após realizar o Pix, envie o comprovante para o administrador. Seu acesso será liberado assim que o pagamento for confirmado.
+      </div>
+    </div>
+  `;
+}
+
+function copyKey(key, btn) {
+  navigator.clipboard.writeText(key).then(() => {
+    var orig = btn.textContent;
+    btn.textContent = '✅ COPIADO';
+    setTimeout(() => { btn.textContent = orig; }, 1800);
+  });
+}
+
+function loadMyPayments() {
+  fetch('/api/payment/me').then(r => r.json()).then(d => {
+    if (!Array.isArray(d) || !d.length) {
+      document.getElementById('my-payments-area').style.display = 'none';
+      return;
+    }
+    document.getElementById('my-payments-area').style.display = 'block';
+    document.getElementById('my-payments-list').innerHTML = d.map(p => {
+      var dt = new Date(p.createdAt).toLocaleDateString('pt-BR');
+      return `<div class="pay-item">
+        <div>
+          <strong>${escapeHtml(p.planoNome || p.plano)}</strong> — ${fmt(p.valor)}
+          <div style="font-size:.78rem;color:var(--muted);">${dt} · #${p.id.slice(-6)}${p.codigo ? ' · cupom: ' + escapeHtml(p.codigo) : ''}</div>
+        </div>
+        <span class="pay-status ${p.status}">${p.status}</span>
+      </div>`;
+    }).join('');
+  });
+}
+
+loadData();
+</script>
+</body>
+</html>

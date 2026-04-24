@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Milhas com Edu ✈️ — Criar conta</title>
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    :root { --bg:#0a0e1a; --card:#0d1b2e; --accent:#1565c0; --accent2:#1976d2; --text:#e8eaf6; --muted:#90a4ae; --border:#1a2744; --red:#ef5350; --green:#00c853; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow-x: hidden;
+      padding: 24px 16px;
+    }
+    body::before {
+      content:'';
+      position:fixed; inset:0; pointer-events:none;
+      background:
+        radial-gradient(1px 1px at 15% 25%, rgba(255,255,255,.7) 0%, transparent 100%),
+        radial-gradient(1px 1px at 75% 15%, rgba(255,255,255,.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 50% 60%, rgba(255,255,255,.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 85% 70%, rgba(255,255,255,.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 30% 80%, rgba(255,255,255,.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 60% 35%, rgba(255,255,255,.7) 0%, transparent 100%),
+        radial-gradient(1px 1px at 10% 55%, rgba(255,255,255,.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,.6) 0%, transparent 100%);
+      background-color: var(--bg);
+    }
+    body::after {
+      content:'';
+      position:fixed;
+      top:50%; left:50%;
+      transform:translate(-50%,-50%);
+      width:600px; height:400px;
+      background: radial-gradient(ellipse, rgba(21,101,192,.18) 0%, transparent 70%);
+      pointer-events:none;
+    }
+    .register-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 40px 36px;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 24px 80px rgba(0,0,0,.6);
+      position: relative;
+      z-index: 1;
+    }
+    .register-logo { text-align: center; margin-bottom: 24px; }
+    .register-logo img { height: 56px; width: auto; filter: drop-shadow(0 4px 16px rgba(100,181,246,.3)); }
+    .register-title { text-align: center; font-size: 1rem; color: var(--muted); margin-bottom: 24px; line-height: 1.5; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    .form-group label { font-size: .76rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+    .form-group input {
+      background: #060d1a;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: var(--text);
+      font-size: 1rem;
+      outline: none;
+      transition: border-color .2s;
+      width: 100%;
+    }
+    .form-group input:focus { border-color: var(--accent2); }
+    .form-hint { font-size: .72rem; color: var(--muted); margin-top: 2px; }
+    .btn-register {
+      width: 100%;
+      margin-top: 12px;
+      padding: 14px;
+      background: linear-gradient(90deg, #1565c0, #7c4dff);
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: .03em;
+      transition: opacity .2s, transform .15s;
+    }
+    .btn-register:hover { opacity: .9; transform: translateY(-1px); }
+    .btn-register:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+    .alert {
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: .88rem;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .alert.error { background: rgba(239,83,80,.12); border: 1px solid rgba(239,83,80,.35); color: #ef9a9a; }
+    .alert.success { background: rgba(0,200,83,.12); border: 1px solid rgba(0,200,83,.35); color: #b9f6ca; }
+    .register-footer {
+      text-align: center;
+      margin-top: 22px;
+      font-size: .85rem;
+      color: var(--muted);
+    }
+    .register-footer a { color: #64b5f6; text-decoration: none; font-weight: 600; }
+    .register-footer a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="register-box">
+    <div class="register-logo">
+      <img src="/logo.svg" alt="Milhas com Edu" />
+    </div>
+    <p class="register-title">Crie sua conta gratuita e comece a buscar passagens</p>
+
+    <div id="alert"></div>
+
+    <form id="registerForm" novalidate>
+      <div class="form-group">
+        <label>Nome completo</label>
+        <input type="text" name="nome" placeholder="Seu nome" required minlength="2" autocomplete="name" />
+      </div>
+      <div class="form-group">
+        <label>E-mail</label>
+        <input type="email" name="email" placeholder="voce@exemplo.com" required autocomplete="email" />
+      </div>
+      <div class="form-group">
+        <label>Usuário</label>
+        <input type="text" name="username" placeholder="seu_usuario" required autocomplete="username" pattern="[a-z0-9_.\-]{3,30}" />
+        <span class="form-hint">3-30 caracteres: letras minúsculas, números, _ . -</span>
+      </div>
+      <div class="form-group">
+        <label>Senha</label>
+        <input type="password" name="password" placeholder="Mínimo 6 caracteres" required minlength="6" autocomplete="new-password" />
+      </div>
+      <button type="submit" class="btn-register" id="submitBtn">✈️ Criar conta</button>
+    </form>
+
+    <div class="register-footer">
+      Já tem uma conta? <a href="/login">Entrar</a>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('registerForm');
+    const alertBox = document.getElementById('alert');
+    const submitBtn = document.getElementById('submitBtn');
+
+    function showAlert(msg, type) {
+      alertBox.innerHTML = '<div class="alert ' + type + '">' + msg + '</div>';
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      alertBox.innerHTML = '';
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Criando conta...';
+
+      const data = {
+        nome: form.nome.value.trim(),
+        email: form.email.value.trim(),
+        username: form.username.value.trim().toLowerCase(),
+        password: form.password.value
+      };
+
+      try {
+        const res = await fetch('/api/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        const result = await res.json();
+
+        if (!res.ok) {
+          showAlert('❌ ' + (result.error || 'Erro ao criar conta'), 'error');
+          submitBtn.disabled = false;
+          submitBtn.textContent = '✈️ Criar conta';
+          return;
+        }
+
+        showAlert('✅ Conta criada com sucesso! Redirecionando...', 'success');
+        setTimeout(() => {
+          window.location.href = result.autoLogin ? '/' : '/login';
+        }, 900);
+      } catch (err) {
+        showAlert('❌ Falha de conexão. Tente novamente.', 'error');
+        submitBtn.disabled = false;
+        submitBtn.textContent = '✈️ Criar conta';
+      }
+    });
+  </script>
+</body>
+</html>
