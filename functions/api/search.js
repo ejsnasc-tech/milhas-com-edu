@@ -30,9 +30,9 @@ export async function onRequestGet(context) {
   const marker = env.TP_MARKER || ''
   if (!token) return jsonError('TP_TOKEN não configurado', 500)
 
-  // Cache entre requests (30 min)
+  // Cache entre requests (30 min) - v2 (com bookingLink afiliado)
   const cache = caches.default
-  const cacheKey = new Request(`https://cache.internal/search/${origin}/${destination}/${date}`)
+  const cacheKey = new Request(`https://cache.internal/search/v2/${origin}/${destination}/${date}`)
   const cached = await cache.match(cacheKey)
   if (cached) return cached
 
