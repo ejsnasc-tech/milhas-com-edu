@@ -1,8 +1,8 @@
 import { verifyJWT, getCookie } from './_lib/jwt.js'
 
 const ASSET_EXTS = ['.css', '.js', '.svg', '.png', '.jpg', '.ico', '.woff', '.woff2', '.webp', '.map']
-const LOGIN_PATHS = ['/login', '/login.html', '/register', '/register.html']
-const PUBLIC_PATHS = ['/api/login', '/api/logout', '/api/register', '/setup']
+const LOGIN_PATHS = ['/login', '/login.html', '/register', '/register.html', '/forgot', '/forgot.html', '/reset', '/reset.html']
+const PUBLIC_PATHS = ['/api/login', '/api/logout', '/api/register', '/api/forgot', '/api/reset', '/setup']
 
 // Páginas e APIs liberadas mesmo para usuário com validade vencida
 // (precisam funcionar para que o cliente possa renovar)

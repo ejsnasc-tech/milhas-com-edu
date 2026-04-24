@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Recuperar senha — Milhas com Edu</title>
+  <style>
+    *,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+    body { background:linear-gradient(135deg,#0a0e1a 0%,#0d1b2e 100%); color:#e8eaf6; font-family:'Segoe UI',system-ui,sans-serif; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; }
+    .card { background:#0d1b2e; border:1px solid #1a2744; border-radius:18px; padding:36px 32px; width:100%; max-width:420px; box-shadow:0 20px 60px rgba(0,0,0,.4); }
+    .logo { text-align:center; margin-bottom:18px; }
+    .logo img { height:46px; }
+    h1 { font-size:1.35rem; font-weight:800; margin-bottom:6px; text-align:center; }
+    .sub { text-align:center; color:#90a4ae; font-size:.88rem; margin-bottom:24px; }
+    .form-group { display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
+    label { font-size:.74rem; font-weight:600; text-transform:uppercase; letter-spacing:.05em; color:#90a4ae; }
+    input { background:#060d1a; border:1px solid #1a2744; border-radius:10px; padding:12px 14px; color:#e8eaf6; font-size:.95rem; outline:none; }
+    input:focus { border-color:#1976d2; }
+    .btn { width:100%; background:linear-gradient(90deg,#1565c0,#7c4dff); color:#fff; border:none; border-radius:10px; padding:13px; font-size:.95rem; font-weight:700; cursor:pointer; margin-top:8px; transition:transform .15s,opacity .2s; }
+    .btn:hover { transform:translateY(-1px); }
+    .btn:disabled { opacity:.6; cursor:not-allowed; transform:none; }
+    .alert { padding:12px 14px; border-radius:10px; font-size:.88rem; margin-bottom:14px; }
+    .alert.error { background:rgba(239,83,80,.12); border:1px solid rgba(239,83,80,.4); color:#ef9a9a; }
+    .alert.success { background:rgba(0,200,83,.12); border:1px solid rgba(0,200,83,.4); color:#b9f6ca; }
+    .footer-link { text-align:center; margin-top:18px; font-size:.85rem; }
+    .footer-link a { color:#90caf9; text-decoration:none; font-weight:600; }
+    .footer-link a:hover { text-decoration:underline; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo"><img src="/logo.svg" alt="Milhas com Edu"/></div>
+    <h1>🔐 Recuperar senha</h1>
+    <p class="sub">Informe seu email cadastrado e enviaremos um link para redefinir sua senha.</p>
+
+    <div id="alert"></div>
+
+    <form id="form-forgot">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" required placeholder="seu@email.com" autofocus/>
+      </div>
+      <button type="submit" class="btn" id="btn-submit">📧 Enviar link de recuperação</button>
+    </form>
+
+    <div class="footer-link">
+      <a href="/login">← Voltar para o login</a>
+    </div>
+  </div>
+
+  <script>
+    var form = document.getElementById('form-forgot');
+    var alertEl = document.getElementById('alert');
+    var btn = document.getElementById('btn-submit');
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      alertEl.innerHTML = '';
+      btn.disabled = true; btn.textContent = 'Enviando...';
+      fetch('/api/forgot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: document.getElementById('email').value.trim() })
+      }).then(function(r){ return r.json(); }).then(function(d){
+        btn.disabled = false; btn.textContent = '📧 Enviar link de recuperação';
+        if (d.error) {
+          alertEl.innerHTML = '<div class="alert error">❌ ' + d.error + '</div>';
+        } else {
+          alertEl.innerHTML = '<div class="alert success">✅ ' + (d.message || 'Email enviado!') + '</div>';
+          form.reset();
+        }
+      }).catch(function(){
+        btn.disabled = false; btn.textContent = '📧 Enviar link de recuperação';
+        alertEl.innerHTML = '<div class="alert error">❌ Erro de conexão. Tente novamente.</div>';
+      });
+    });
+  </script>
+</body>
+</html>
