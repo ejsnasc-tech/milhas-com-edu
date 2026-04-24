@@ -32,7 +32,7 @@ export async function onRequestGet(context) {
 
   // Cache entre requests (30 min) - v4 (com preços do mês como fallback)
   const cache = caches.default
-  const cacheKey = new Request(`https://cache.internal/search/v5/${origin}/${destination}/${date}`)
+  const cacheKey = new Request(`https://cache.internal/search/v6/${origin}/${destination}/${date}`)
   const cached = await cache.match(cacheKey)
   if (cached) return cached
 
@@ -50,11 +50,12 @@ export async function onRequestGet(context) {
     return u.toString()
   }
 
-  // Busca paralela: data exata + ano inteiro (pra cobrir o máximo de companhias)
+  // Busca paralela: data exata + mês inteiro (para ter mais carriers cobrindo datas próximas)
+  const month = date.slice(0, 7)
   try {
     const [r1, r2] = await Promise.all([
-      fetch(buildUrl(date), { headers: { 'Accept': 'application/json' }, signal: AbortSignal.timeout(15000) }),
-      fetch(buildUrl(''),    { headers: { 'Accept': 'application/json' }, signal: AbortSignal.timeout(15000) })
+      fetch(buildUrl(date),  { headers: { 'Accept': 'application/json' }, signal: AbortSignal.timeout(15000) }),
+      fetch(buildUrl(month), { headers: { 'Accept': 'application/json' }, signal: AbortSignal.timeout(15000) })
     ])
     if (!r1.ok && !r2.ok) {
       return jsonError('Travelpayouts HTTP ' + r1.status + '/' + r2.status, 502)
@@ -95,13 +96,20 @@ export async function onRequestGet(context) {
       const o = buildOffer(it, false)
       if (o) exactOffers.push(o)
     }
-    // Preços APROXIMADOS (mês) — só carriers que ainda não apareceram nos exatos
+    // Preços APROXIMADOS (mês) — só carriers que ainda não apareceram nos exatos,
+    // e apenas se a data do voo encontrado estiver a ±7 dias da data pesquisada
     const exactCarriers = new Set(exactOffers.map(o => o.airline))
+    const target = new Date(date + 'T00:00:00Z').getTime()
+    const SEVEN_DAYS = 7 * 24 * 3600 * 1000
     const monthByCarrier = {}
     for (const it of monthList) {
       const o = buildOffer(it, true)
       if (!o) continue
       if (exactCarriers.has(o.airline)) continue
+      if (!o.departure_at) continue
+      const t = Date.parse(o.departure_at)
+      if (!Number.isFinite(t)) continue
+      if (Math.abs(t - target) > SEVEN_DAYS) continue
       if (!monthByCarrier[o.airline] || o.price < monthByCarrier[o.airline].price) {
         monthByCarrier[o.airline] = o
       }

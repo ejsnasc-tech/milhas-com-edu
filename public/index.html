@@ -739,7 +739,7 @@ function makeAirlineCard(airline, price, stops, extra) {
   var milesUrl = airline.milesUrl ? airline.milesUrl(searchFrom, searchTo, searchDate, searchPax) : '';
   var gflUrl = googleFlightsUrl(searchFrom, searchTo, searchDate, airline.carrierCode);
   var priceLabel = approximate ? '💰 a partir de R$ ' : '💰 R$ ';
-  var stopsLabel = approximate ? (stopsText ? stopsText + ' · datas próximas' : 'datas próximas') : (stopsText ? stopsText + ' · por trecho' : '');
+  var stopsLabel = approximate ? (stopsText ? stopsText + ' · datas próximas (±7 dias)' : 'datas próximas (±7 dias)') : (stopsText ? stopsText + ' · por trecho' : '');
   var priceHtml = price != null
     ? '<div class="card-prices"><span class="card-price-money" style="font-size:1.25em;font-weight:700">' + priceLabel + price.toLocaleString('pt-BR', {minimumFractionDigits:2}) + '</span>' + (stopsLabel ? '<span class="card-price-label">' + stopsLabel + '</span>' : '') + '</div>'
     : '';
