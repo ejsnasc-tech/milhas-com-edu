@@ -711,7 +711,7 @@ function doSearch() {
     '<div class="search-loading"><span class="spinner"></span>Buscando preços reais…</div>';
 
   if (apiAvailable) {
-    fetch('/api/search?origin=' + searchFrom + '&destination=' + searchTo + '&date=' + searchDate + '&adults=' + searchPax)
+    fetch('/api/search?origin=' + searchFrom + '&destination=' + searchTo + '&date=' + searchDate + '&adults=' + searchPax, { cache: 'no-store' })
       .then(function(r) { return r.json(); })
       .then(function(results) {
         if (results && results.error) {
