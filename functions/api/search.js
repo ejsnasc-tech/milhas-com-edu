@@ -32,7 +32,7 @@ export async function onRequestGet(context) {
 
   // Cache entre requests (30 min) - v2 (com bookingLink afiliado)
   const cache = caches.default
-  const cacheKey = new Request(`https://cache.internal/search/v2/${origin}/${destination}/${date}`)
+  const cacheKey = new Request(`https://cache.internal/search/v3/${origin}/${destination}/${date}`)
   const cached = await cache.match(cacheKey)
   if (cached) return cached
 
@@ -59,34 +59,42 @@ export async function onRequestGet(context) {
     const data = await r.json()
     const list = Array.isArray(data?.data) ? data.data : []
 
-    // Agrupa por airline (IATA) — menor preço por companhia
-    const byAirline = {}
+    // Devolve várias ofertas (até 20), sem agrupar por companhia,
+    // pra o cliente ver opções diferentes de preço/paradas/rotas.
+    const offers = []
     for (const it of list) {
       const carrier = (it.airline || '').toUpperCase()
       const price = Math.round(Number(it.price))
       if (!carrier || !Number.isFinite(price) || price <= 0) continue
       const stops = Number.isFinite(it.transfers) ? it.transfers : 0
       const duration = Number.isFinite(it.duration) ? it.duration : 0
-      // Link de afiliado (Aviasales) — quando cliente clica/compra, voce ganha comissao
       let bookingLink = ''
       if (it.link) {
         const sep = it.link.includes('?') ? '&' : '?'
         bookingLink = 'https://www.aviasales.com' + it.link + (marker ? sep + 'marker=' + encodeURIComponent(marker) : '')
       }
-      if (!byAirline[carrier] || price < byAirline[carrier].price) {
-        byAirline[carrier] = {
-          price,
-          currency: 'BRL',
-          airline: carrier,
-          carriers: [carrier],
-          stops,
-          duration,
-          bookingLink
-        }
-      }
+      offers.push({
+        price,
+        currency: 'BRL',
+        airline: carrier,
+        carriers: [carrier],
+        stops,
+        duration,
+        departure_at: it.departure_at || '',
+        flight_number: it.flight_number || '',
+        bookingLink
+      })
     }
-
-    const results = Object.values(byAirline).sort((a, b) => a.price - b.price)
+    // Dedup exato (mesma companhia + preço + paradas + horário)
+    const seen = new Set()
+    const dedup = []
+    for (const o of offers) {
+      const k = o.airline + '|' + o.price + '|' + o.stops + '|' + o.departure_at
+      if (seen.has(k)) continue
+      seen.add(k)
+      dedup.push(o)
+    }
+    const results = dedup.sort((a, b) => a.price - b.price).slice(0, 20)
     const response = new Response(JSON.stringify(results), {
       headers: {
         'Content-Type': 'application/json',
