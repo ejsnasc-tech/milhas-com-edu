@@ -28,9 +28,8 @@ export async function onRequestPost(context) {
   if (!user.ativo) {
     return Response.redirect(new URL('/login?error=blocked', request.url), 302)
   }
-  if (user.validade && new Date(user.validade) < new Date()) {
-    return Response.redirect(new URL('/login?error=expired', request.url), 302)
-  }
+  // Nota: usuários com validade vencida PODEM entrar (para renovar via /planos).
+  // O middleware/search redireciona quem está vencido para /planos.
 
   const match = await verifyPassword(password, user.password_hash)
   if (!match) {

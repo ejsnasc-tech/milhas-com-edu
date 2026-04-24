@@ -1,9 +1,20 @@
 import { verifyJWT, getCookie } from './_lib/jwt.js'
 
 const ASSET_EXTS = ['.css', '.js', '.svg', '.png', '.jpg', '.ico', '.woff', '.woff2', '.webp', '.map']
-// Páginas públicas (com e sem .html — Cloudflare Pages usa pretty URLs)
 const LOGIN_PATHS = ['/login', '/login.html', '/register', '/register.html']
 const PUBLIC_PATHS = ['/api/login', '/api/logout', '/api/register', '/setup']
+
+// Páginas e APIs liberadas mesmo para usuário com validade vencida
+// (precisam funcionar para que o cliente possa renovar)
+const EXPIRED_OK_PAGES = ['/planos', '/planos.html']
+const EXPIRED_OK_API_PREFIXES = [
+  '/api/logout', '/api/me', '/api/plans',
+  '/api/promo/', '/api/payment/'
+]
+
+function isExpired(validade) {
+  return validade && new Date(validade) < new Date()
+}
 
 export async function onRequest(context) {
   const { request, env, next } = context
@@ -23,7 +34,7 @@ export async function onRequest(context) {
     return next()
   }
 
-  // Rotas API públicas (login/logout/setup)
+  // Rotas API públicas (login/logout/setup/register)
   if (PUBLIC_PATHS.some(p => path === p || path.startsWith(p + '/'))) {
     return next()
   }
@@ -44,6 +55,30 @@ export async function onRequest(context) {
         status: 403, headers: { 'Content-Type': 'application/json' }
       })
     }
+
+    // Bloqueio por validade vencida (admin sempre passa)
+    if (!user.isAdmin) {
+      const isExpiredOkApi = EXPIRED_OK_API_PREFIXES.some(p => path === p || path.startsWith(p))
+      if (!isExpiredOkApi) {
+        const dbUser = await env.USERS.get(`u:${user.username}`, { type: 'json' })
+        if (!dbUser || !dbUser.ativo) {
+          return new Response(JSON.stringify({ error: 'Conta bloqueada' }), {
+            status: 403, headers: { 'Content-Type': 'application/json' }
+          })
+        }
+        if (isExpired(dbUser.validade)) {
+          return new Response(JSON.stringify({
+            error: 'Plano expirado',
+            expirado: true,
+            validade: dbUser.validade,
+            redirect: '/planos'
+          }), {
+            status: 402, headers: { 'Content-Type': 'application/json' }
+          })
+        }
+      }
+    }
+
     return next()
   }
 
@@ -52,9 +87,26 @@ export async function onRequest(context) {
     return Response.redirect(new URL('/login', request.url), 302)
   }
 
-  // /admin e /admin.html → exige admin
+  // /admin → exige admin
   if ((path === '/admin' || path === '/admin.html') && !user.isAdmin) {
     return Response.redirect(new URL('/', request.url), 302)
+  }
+
+  // Bloqueio por validade vencida em páginas HTML (exceto /planos e /admin)
+  if (!user.isAdmin && !EXPIRED_OK_PAGES.includes(path)) {
+    const dbUser = await env.USERS.get(`u:${user.username}`, { type: 'json' })
+    if (!dbUser || !dbUser.ativo) {
+      return new Response(null, {
+        status: 302,
+        headers: {
+          Location: '/login?error=blocked',
+          'Set-Cookie': 'session=; HttpOnly; Path=/; SameSite=Lax; Max-Age=0; Secure'
+        }
+      })
+    }
+    if (isExpired(dbUser.validade)) {
+      return Response.redirect(new URL('/planos?expirado=1', request.url), 302)
+    }
   }
 
   return next()
