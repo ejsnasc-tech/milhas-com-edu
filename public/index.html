@@ -857,33 +857,6 @@ function renderRealResults(results) {
   }
 }
 
-  container.innerHTML = '';
-
-  if (withPrice.length) {
-    var hdr1 = document.createElement('div');
-    hdr1.className = 'group-header';
-    hdr1.textContent = '✅ Preços Reais Encontrados';
-    container.appendChild(hdr1);
-    withPrice.forEach(function(item) {
-      var d = document.createElement('div');
-      d.innerHTML = makeAirlineCard(item.airline, item.price, item.stops);
-      container.appendChild(d.firstChild);
-    });
-  }
-
-  if (withoutPrice.length) {
-    var hdr2 = document.createElement('div');
-    hdr2.className = 'group-header';
-    hdr2.textContent = '✈️ Outras Companhias e Programas de Milhas';
-    container.appendChild(hdr2);
-    withoutPrice.forEach(function(airline) {
-      var d = document.createElement('div');
-      d.innerHTML = makeAirlineCard(airline, null, null);
-      container.appendChild(d.firstChild);
-    });
-  }
-}
-
 /* ── CALENDAR ── */
 /* ── DESTINOS POPULARES ── */
 var POPULAR_DESTINOS = [
