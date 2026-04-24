@@ -736,14 +736,16 @@ var MILES_PARENT = { 'smiles':'gol', 'tudoazul':'azul', 'latampass':'latam' };
 
 function makeAirlineCard(airline, price, stops, extra) {
   var stopsText = stops === 0 ? 'Direto' : (stops > 0 ? stops + ' parada' + (stops > 1 ? 's' : '') : '');
-  var moneyUrl = (airline.moneyUrl) ? airline.moneyUrl(searchFrom, searchTo, searchDate, searchPax) : googleFlightsUrl(searchFrom, searchTo, searchDate, airline.carrierCode);
+  var bookingLink = extra && extra.bookingLink ? extra.bookingLink : '';
+  var moneyUrl = bookingLink || ((airline.moneyUrl) ? airline.moneyUrl(searchFrom, searchTo, searchDate, searchPax) : googleFlightsUrl(searchFrom, searchTo, searchDate, airline.carrierCode));
   var milesUrl = airline.milesUrl ? airline.milesUrl(searchFrom, searchTo, searchDate, searchPax) : '';
   var gflUrl = googleFlightsUrl(searchFrom, searchTo, searchDate, airline.carrierCode);
   var priceHtml = price != null
     ? '<div class="card-prices"><span class="card-price-money" style="font-size:1.25em;font-weight:700">💰 R$ ' + price.toLocaleString('pt-BR', {minimumFractionDigits:2}) + '</span>' + (stopsText ? '<span class="card-price-label">' + stopsText + ' · por trecho</span>' : '') + '</div>'
     : '';
   var badge = price != null ? '<span class="real-badge">Preço Real</span>' : '<span style="font-size:.7rem;color:var(--muted);font-weight:600;padding:3px 8px;border:1px solid var(--border);border-radius:20px">Ver disponibilidade</span>';
-  var moneyBtn = (airline.moneyUrl || true) ? '<a href="' + moneyUrl + '" target="_blank" rel="noopener" class="btn-money">🔍 Ver e Comprar</a>' : '';
+  var buyLabel = bookingLink ? '🔍 Comprar agora' : '🔍 Ver e Comprar';
+  var moneyBtn = (airline.moneyUrl || true) ? '<a href="' + moneyUrl + '" target="_blank" rel="noopener" class="btn-money">' + buyLabel + '</a>' : '';
   var milesBtn = milesUrl ? '<a href="' + milesUrl + '" target="_blank" rel="noopener" class="btn-miles">✈️ Ver em Milhas</a>' : '';
   return '<div class="airline-card' + (price != null ? ' real-result' : '') + '">' +
     '<div class="card-header"><div class="airline-name">' + airline.flag + ' ' + airline.name + '</div>' + badge + '</div>' +
@@ -794,13 +796,14 @@ function renderRealResults(results) {
   var realCards = sorted.map(function(r) {
     var airline = findAirlineByCarrier(r.airline);
     if (!airline) {
-      var moneyUrl = googleFlightsUrl(searchFrom, searchTo, searchDate, r.airline);
+      var moneyUrl = r.bookingLink || googleFlightsUrl(searchFrom, searchTo, searchDate, r.airline);
+      var btnLabel = r.bookingLink ? '🔍 Comprar agora' : '🔍 Ver e Comprar';
       return '<div class="airline-card real-result"><div class="card-header"><div class="airline-name">✈️ ' + r.airline + '</div><span class="real-badge">Preço Real</span></div>' +
         '<div class="route-display"><span class="code">' + searchFrom + '</span> → <span class="code">' + searchTo + '</span></div>' +
         '<div class="card-prices"><span class="card-price-money" style="font-size:1.25em;font-weight:700">💰 R$ ' + r.price.toLocaleString('pt-BR', {minimumFractionDigits:2}) + '</span><span class="card-price-label">' + (r.stops===0?'Direto':r.stops+' parada(s)') + ' · por trecho</span></div>' +
-        '<div class="card-btns"><a href="' + moneyUrl + '" target="_blank" rel="noopener" class="btn-money">🔍 Ver e Comprar</a></div></div>';
+        '<div class="card-btns"><a href="' + moneyUrl + '" target="_blank" rel="noopener" class="btn-money">' + btnLabel + '</a></div></div>';
     }
-    return makeAirlineCard(airline, r.price, r.stops);
+    return makeAirlineCard(airline, r.price, r.stops, { bookingLink: r.bookingLink });
   });
 
   container.innerHTML = '';

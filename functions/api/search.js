@@ -27,6 +27,7 @@ export async function onRequestGet(context) {
   }
 
   const token = env.TP_TOKEN
+  const marker = env.TP_MARKER || ''
   if (!token) return jsonError('TP_TOKEN não configurado', 500)
 
   // Cache entre requests (30 min)
@@ -66,6 +67,12 @@ export async function onRequestGet(context) {
       if (!carrier || !Number.isFinite(price) || price <= 0) continue
       const stops = Number.isFinite(it.transfers) ? it.transfers : 0
       const duration = Number.isFinite(it.duration) ? it.duration : 0
+      // Link de afiliado (Aviasales) — quando cliente clica/compra, voce ganha comissao
+      let bookingLink = ''
+      if (it.link) {
+        const sep = it.link.includes('?') ? '&' : '?'
+        bookingLink = 'https://www.aviasales.com' + it.link + (marker ? sep + 'marker=' + encodeURIComponent(marker) : '')
+      }
       if (!byAirline[carrier] || price < byAirline[carrier].price) {
         byAirline[carrier] = {
           price,
@@ -73,7 +80,8 @@ export async function onRequestGet(context) {
           airline: carrier,
           carriers: [carrier],
           stops,
-          duration
+          duration,
+          bookingLink
         }
       }
     }
