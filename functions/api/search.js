@@ -32,7 +32,7 @@ export async function onRequestGet(context) {
 
   // Cache entre requests (30 min) - v4 (com preços do mês como fallback)
   const cache = caches.default
-  const cacheKey = new Request(`https://cache.internal/search/v4/${origin}/${destination}/${date}`)
+  const cacheKey = new Request(`https://cache.internal/search/v5/${origin}/${destination}/${date}`)
   const cached = await cache.match(cacheKey)
   if (cached) return cached
 
@@ -40,22 +40,21 @@ export async function onRequestGet(context) {
     const u = new URL('https://api.travelpayouts.com/aviasales/v3/prices_for_dates')
     u.searchParams.set('origin', origin)
     u.searchParams.set('destination', destination)
-    u.searchParams.set('departure_at', departure_at)
+    if (departure_at) u.searchParams.set('departure_at', departure_at)
     u.searchParams.set('currency', 'brl')
     u.searchParams.set('sorting', 'price')
     u.searchParams.set('direct', 'false')
-    u.searchParams.set('limit', '100')
+    u.searchParams.set('limit', '500')
     u.searchParams.set('one_way', 'true')
     u.searchParams.set('token', token)
     return u.toString()
   }
 
-  // Busca paralela: data exata + mês inteiro (pra cobrir mais companhias)
-  const month = date.slice(0, 7) // YYYY-MM
+  // Busca paralela: data exata + ano inteiro (pra cobrir o máximo de companhias)
   try {
     const [r1, r2] = await Promise.all([
       fetch(buildUrl(date), { headers: { 'Accept': 'application/json' }, signal: AbortSignal.timeout(15000) }),
-      fetch(buildUrl(month), { headers: { 'Accept': 'application/json' }, signal: AbortSignal.timeout(15000) })
+      fetch(buildUrl(''),    { headers: { 'Accept': 'application/json' }, signal: AbortSignal.timeout(15000) })
     ])
     if (!r1.ok && !r2.ok) {
       return jsonError('Travelpayouts HTTP ' + r1.status + '/' + r2.status, 502)
