@@ -30,42 +30,45 @@ export async function onRequestGet(context) {
   const marker = env.TP_MARKER || ''
   if (!token) return jsonError('TP_TOKEN não configurado', 500)
 
-  // Cache entre requests (30 min) - v2 (com bookingLink afiliado)
+  // Cache entre requests (30 min) - v4 (com preços do mês como fallback)
   const cache = caches.default
-  const cacheKey = new Request(`https://cache.internal/search/v3/${origin}/${destination}/${date}`)
+  const cacheKey = new Request(`https://cache.internal/search/v4/${origin}/${destination}/${date}`)
   const cached = await cache.match(cacheKey)
   if (cached) return cached
 
-  // Travelpayouts API: prices_for_dates
-  const api = new URL('https://api.travelpayouts.com/aviasales/v3/prices_for_dates')
-  api.searchParams.set('origin', origin)
-  api.searchParams.set('destination', destination)
-  api.searchParams.set('departure_at', date)
-  api.searchParams.set('currency', 'brl')
-  api.searchParams.set('sorting', 'price')
-  api.searchParams.set('direct', 'false')
-  api.searchParams.set('limit', '50')
-  api.searchParams.set('one_way', 'true')
-  api.searchParams.set('token', token)
+  function buildUrl(departure_at) {
+    const u = new URL('https://api.travelpayouts.com/aviasales/v3/prices_for_dates')
+    u.searchParams.set('origin', origin)
+    u.searchParams.set('destination', destination)
+    u.searchParams.set('departure_at', departure_at)
+    u.searchParams.set('currency', 'brl')
+    u.searchParams.set('sorting', 'price')
+    u.searchParams.set('direct', 'false')
+    u.searchParams.set('limit', '100')
+    u.searchParams.set('one_way', 'true')
+    u.searchParams.set('token', token)
+    return u.toString()
+  }
 
+  // Busca paralela: data exata + mês inteiro (pra cobrir mais companhias)
+  const month = date.slice(0, 7) // YYYY-MM
   try {
-    const r = await fetch(api.toString(), {
-      headers: { 'Accept': 'application/json' },
-      signal: AbortSignal.timeout(15000)
-    })
-    if (!r.ok) {
-      return jsonError('Travelpayouts HTTP ' + r.status, 502)
+    const [r1, r2] = await Promise.all([
+      fetch(buildUrl(date), { headers: { 'Accept': 'application/json' }, signal: AbortSignal.timeout(15000) }),
+      fetch(buildUrl(month), { headers: { 'Accept': 'application/json' }, signal: AbortSignal.timeout(15000) })
+    ])
+    if (!r1.ok && !r2.ok) {
+      return jsonError('Travelpayouts HTTP ' + r1.status + '/' + r2.status, 502)
     }
-    const data = await r.json()
-    const list = Array.isArray(data?.data) ? data.data : []
+    const data1 = r1.ok ? await r1.json() : { data: [] }
+    const data2 = r2.ok ? await r2.json() : { data: [] }
+    const exactList = Array.isArray(data1?.data) ? data1.data : []
+    const monthList = Array.isArray(data2?.data) ? data2.data : []
 
-    // Devolve várias ofertas (até 20), sem agrupar por companhia,
-    // pra o cliente ver opções diferentes de preço/paradas/rotas.
-    const offers = []
-    for (const it of list) {
+    function buildOffer(it, approximate) {
       const carrier = (it.airline || '').toUpperCase()
       const price = Math.round(Number(it.price))
-      if (!carrier || !Number.isFinite(price) || price <= 0) continue
+      if (!carrier || !Number.isFinite(price) || price <= 0) return null
       const stops = Number.isFinite(it.transfers) ? it.transfers : 0
       const duration = Number.isFinite(it.duration) ? it.duration : 0
       let bookingLink = ''
@@ -73,7 +76,7 @@ export async function onRequestGet(context) {
         const sep = it.link.includes('?') ? '&' : '?'
         bookingLink = 'https://www.aviasales.com' + it.link + (marker ? sep + 'marker=' + encodeURIComponent(marker) : '')
       }
-      offers.push({
+      return {
         price,
         currency: 'BRL',
         airline: carrier,
@@ -82,19 +85,41 @@ export async function onRequestGet(context) {
         duration,
         departure_at: it.departure_at || '',
         flight_number: it.flight_number || '',
+        approximate: !!approximate,
         bookingLink
-      })
+      }
     }
-    // Dedup exato (mesma companhia + preço + paradas + horário)
+
+    // Preços EXATOS (data pedida) — todos
+    const exactOffers = []
+    for (const it of exactList) {
+      const o = buildOffer(it, false)
+      if (o) exactOffers.push(o)
+    }
+    // Preços APROXIMADOS (mês) — só carriers que ainda não apareceram nos exatos
+    const exactCarriers = new Set(exactOffers.map(o => o.airline))
+    const monthByCarrier = {}
+    for (const it of monthList) {
+      const o = buildOffer(it, true)
+      if (!o) continue
+      if (exactCarriers.has(o.airline)) continue
+      if (!monthByCarrier[o.airline] || o.price < monthByCarrier[o.airline].price) {
+        monthByCarrier[o.airline] = o
+      }
+    }
+    // Dedup exatos
     const seen = new Set()
     const dedup = []
-    for (const o of offers) {
+    for (const o of exactOffers) {
       const k = o.airline + '|' + o.price + '|' + o.stops + '|' + o.departure_at
       if (seen.has(k)) continue
       seen.add(k)
       dedup.push(o)
     }
-    const results = dedup.sort((a, b) => a.price - b.price).slice(0, 20)
+    const exactSorted = dedup.sort((a, b) => a.price - b.price).slice(0, 20)
+    const approxSorted = Object.values(monthByCarrier).sort((a, b) => a.price - b.price)
+    const results = exactSorted.concat(approxSorted)
+
     const response = new Response(JSON.stringify(results), {
       headers: {
         'Content-Type': 'application/json',
