@@ -90,9 +90,7 @@
   <div class="page-title">💎 Planos de acesso</div>
   <div class="page-sub">Escolha o plano que melhor se encaixa pra você</div>
 
-  <div id="expired-banner" style="display:none;margin:18px auto;max-width:720px;background:linear-gradient(135deg,rgba(255,214,0,.12),rgba(255,167,38,.08));border:1px solid rgba(255,214,0,.4);border-radius:14px;padding:18px 22px;color:#ffe082;text-align:center;">
-    ⏰ <strong>Seu plano expirou!</strong> Para continuar usando o site, escolha um plano abaixo e renove agora.
-  </div>
+  <div id="expired-banner" style="display:none;margin:18px auto;max-width:720px;background:linear-gradient(135deg,rgba(255,214,0,.12),rgba(255,167,38,.08));border:1px solid rgba(255,214,0,.4);border-radius:14px;padding:18px 22px;color:#ffe082;text-align:center;"></div>
 
   <div class="plans-grid" id="plans-grid"></div>
 
@@ -320,8 +318,15 @@ function loadMyPayments() {
 }
 
 loadData();
-if (new URLSearchParams(window.location.search).get('expirado') === '1') {
-  document.getElementById('expired-banner').style.display = 'block';
+var motivo = new URLSearchParams(window.location.search).get('motivo');
+if (motivo === 'expirado' || new URLSearchParams(window.location.search).get('expirado') === '1') {
+  var b = document.getElementById('expired-banner');
+  b.innerHTML = '⏰ <strong>Seu plano expirou!</strong> Para continuar usando o site, escolha um plano abaixo e renove agora.';
+  b.style.display = 'block';
+} else if (motivo === 'semplano') {
+  var b = document.getElementById('expired-banner');
+  b.innerHTML = '🔒 <strong>Acesso restrito.</strong> Para usar o sistema de buscas, escolha um plano abaixo.';
+  b.style.display = 'block';
 }</script>
 </body>
 </html>

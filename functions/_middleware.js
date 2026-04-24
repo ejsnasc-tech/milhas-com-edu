@@ -13,7 +13,9 @@ const EXPIRED_OK_API_PREFIXES = [
 ]
 
 function isExpired(validade) {
-  return validade && new Date(validade) < new Date()
+  // Sem validade definida = sem plano ativo = considerado expirado
+  if (!validade) return true
+  return new Date(validade) < new Date()
 }
 
 export async function onRequest(context) {
@@ -67,9 +69,11 @@ export async function onRequest(context) {
           })
         }
         if (isExpired(dbUser.validade)) {
+          const semPlano = !dbUser.validade
           return new Response(JSON.stringify({
-            error: 'Plano expirado',
+            error: semPlano ? 'Você precisa assinar um plano' : 'Plano expirado',
             expirado: true,
+            semPlano,
             validade: dbUser.validade,
             redirect: '/planos'
           }), {
@@ -105,7 +109,8 @@ export async function onRequest(context) {
       })
     }
     if (isExpired(dbUser.validade)) {
-      return Response.redirect(new URL('/planos?expirado=1', request.url), 302)
+      const motivo = dbUser.validade ? 'expirado' : 'semplano'
+      return Response.redirect(new URL('/planos?motivo=' + motivo, request.url), 302)
     }
   }
 
