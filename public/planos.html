@@ -179,6 +179,16 @@ function renderSummary() {
   }
   rows += `<div class="summary-row total"><span>Total</span><span>${fmt(total)}</span></div>`;
   document.getElementById('summary').innerHTML = rows;
+
+  // Atualiza botão: se total = 0, vira "Ativar grátis"; caso contrário, "Gerar Pix"
+  var btn = document.getElementById('btn-pay');
+  if (total <= 0) {
+    btn.textContent = '🎁 Ativar plano grátis';
+    btn.style.background = 'linear-gradient(90deg,#00c853,#00e676)';
+  } else {
+    btn.textContent = '💳 Gerar Pix';
+    btn.style.background = '';
+  }
 }
 
 function showAlert(msg, type) {
@@ -208,7 +218,8 @@ function applyPromo() {
 function generatePayment() {
   if (!STATE.selected) return;
   var btn = document.getElementById('btn-pay');
-  btn.disabled = true; btn.textContent = 'Gerando...';
+  var origText = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Processando...';
 
   var body = { plano: STATE.selected.id };
   if (STATE.promo) body.code = STATE.promo.code;
@@ -217,8 +228,32 @@ function generatePayment() {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
   }).then(r => r.json()).then(d => {
-    btn.disabled = false; btn.textContent = '💳 Gerar Pix';
+    btn.disabled = false; btn.textContent = origText;
     if (d.error) { showAlert('❌ ' + d.error, 'error'); return; }
+
+    // 🎁 Sem custo (cupom zerou) — apenas confirma e redireciona
+    if (d.semCusto) {
+      document.getElementById('pix-area').innerHTML = `
+        <div class="pix-box" style="border-color:rgba(0,200,83,.5);background:linear-gradient(135deg,rgba(0,200,83,.1),rgba(0,230,118,.05));">
+          <h3 style="color:#69f0ae;">🎉 Plano ativado com sucesso!</h3>
+          <div class="pix-row"><strong>Plano</strong><span>${escapeHtml(d.payment.planoNome)}</span></div>
+          <div class="pix-row"><strong>Cupom usado</strong><span>${escapeHtml(d.payment.codigo || '-')}</span></div>
+          <div class="pix-row"><strong>Valor pago</strong><span style="color:#69f0ae;font-weight:700;">GRÁTIS</span></div>
+          <div class="pix-instructions" style="background:rgba(0,200,83,.12);border-color:rgba(0,200,83,.4);color:#b9f6ca;">
+            ✅ Sua validade já foi estendida! Você será redirecionado em instantes...
+          </div>
+          <div style="margin-top:14px;text-align:center;">
+            <a href="/" style="display:inline-block;background:#00c853;color:#fff;padding:10px 28px;border-radius:10px;font-weight:700;text-decoration:none;">Ir para o site agora →</a>
+          </div>
+        </div>
+      `;
+      document.getElementById('pix-area').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setTimeout(function(){ window.location.href = '/'; }, 4000);
+      loadMyPayments();
+      return;
+    }
+
+    // 💳 Pagamento aprovado automaticamente — exibe Pix com aviso de pagamento
     renderPix(d.payment, d.pix);
     loadMyPayments();
   });
@@ -243,7 +278,10 @@ function renderPix(payment, pix) {
       </div>
       ${pix.instrucoes ? `<div class="pix-instructions">📌 ${escapeHtml(pix.instrucoes)}</div>` : ''}
       <div class="pix-instructions" style="background:rgba(0,200,83,.08);border-color:rgba(0,200,83,.3);color:#b9f6ca;">
-        ✅ Após realizar o Pix, envie o comprovante para o administrador. Seu acesso será liberado assim que o pagamento for confirmado.
+        ✅ Seu acesso já foi liberado! Realize o pagamento via Pix para manter sua assinatura ativa.
+      </div>
+      <div style="margin-top:14px;text-align:center;">
+        <a href="/" style="display:inline-block;background:#00c853;color:#fff;padding:10px 28px;border-radius:10px;font-weight:700;text-decoration:none;">Ir para o site →</a>
       </div>
     </div>
   `;

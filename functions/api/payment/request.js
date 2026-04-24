@@ -1,4 +1,4 @@
-import { getPlan, applyPromo, validatePromo } from '../../_lib/plans.js'
+import { getPlan, applyPromo, validatePromo, extendValidade } from '../../_lib/plans.js'
 import { getCookie, verifyJWT } from '../../_lib/jwt.js'
 
 function json(data, status = 200) {
@@ -48,11 +48,34 @@ export async function onRequestPost(context) {
     rejectedAt: null
   }
 
+  // ✅ Aprovação automática para TODOS os pagamentos
+  // (cliente confia que vai pagar; admin pode revisar depois e rejeitar se necessário)
+  const uname = await env.USERS.get(`uid:${sess.userId}`)
+  if (uname) {
+    const user = await env.USERS.get(`u:${uname}`, { type: 'json' })
+    if (user) {
+      user.validade = extendValidade(user.validade, plano.dias)
+      user.plano = planoId
+      user.ativo = true
+      await env.USERS.put(`u:${uname}`, JSON.stringify(user))
+    }
+  }
+  payment.status = 'aprovado'
+  payment.approvedAt = new Date().toISOString()
+  payment.autoAprovado = true
   await env.USERS.put(`pay:${id}`, JSON.stringify(payment))
 
+  if (code && promo) {
+    promo.usos = (promo.usos || 0) + 1
+    await env.USERS.put(`promo:${code}`, JSON.stringify(promo))
+  }
+
+  const semCusto = final <= 0
   return json({
     success: true,
+    autoAprovado: true,
+    semCusto,
     payment,
-    pix: pix || null
+    pix: semCusto ? null : (pix || null)
   })
 }
