@@ -32,15 +32,15 @@ export async function onRequestGet(context) {
 
   // Cache entre requests (30 min) - v4 (com preços do mês como fallback)
   const cache = caches.default
-  const cacheKey = new Request(`https://cache.internal/search/v6/${origin}/${destination}/${date}`)
+  const cacheKey = new Request(`https://cache.internal/search/v7/${origin}/${destination}/${date}`)
   const cached = await cache.match(cacheKey)
   if (cached) return cached
 
-  function buildUrl(departure_at) {
+  function buildUrl() {
     const u = new URL('https://api.travelpayouts.com/aviasales/v3/prices_for_dates')
     u.searchParams.set('origin', origin)
     u.searchParams.set('destination', destination)
-    if (departure_at) u.searchParams.set('departure_at', departure_at)
+    u.searchParams.set('departure_at', date)
     u.searchParams.set('currency', 'brl')
     u.searchParams.set('sorting', 'price')
     u.searchParams.set('direct', 'false')
@@ -50,22 +50,14 @@ export async function onRequestGet(context) {
     return u.toString()
   }
 
-  // Busca paralela: data exata + mês inteiro (para ter mais carriers cobrindo datas próximas)
-  const month = date.slice(0, 7)
+  // Apenas a data exata pedida — sem estimativas de outras datas
   try {
-    const [r1, r2] = await Promise.all([
-      fetch(buildUrl(date),  { headers: { 'Accept': 'application/json' }, signal: AbortSignal.timeout(15000) }),
-      fetch(buildUrl(month), { headers: { 'Accept': 'application/json' }, signal: AbortSignal.timeout(15000) })
-    ])
-    if (!r1.ok && !r2.ok) {
-      return jsonError('Travelpayouts HTTP ' + r1.status + '/' + r2.status, 502)
-    }
-    const data1 = r1.ok ? await r1.json() : { data: [] }
-    const data2 = r2.ok ? await r2.json() : { data: [] }
-    const exactList = Array.isArray(data1?.data) ? data1.data : []
-    const monthList = Array.isArray(data2?.data) ? data2.data : []
+    const r = await fetch(buildUrl(), { headers: { 'Accept': 'application/json' }, signal: AbortSignal.timeout(15000) })
+    if (!r.ok) return jsonError('Travelpayouts HTTP ' + r.status, 502)
+    const data = await r.json()
+    const list = Array.isArray(data?.data) ? data.data : []
 
-    function buildOffer(it, approximate) {
+    function buildOffer(it) {
       const carrier = (it.airline || '').toUpperCase()
       const price = Math.round(Number(it.price))
       if (!carrier || !Number.isFinite(price) || price <= 0) return null
@@ -77,55 +69,29 @@ export async function onRequestGet(context) {
         bookingLink = 'https://www.aviasales.com' + it.link + (marker ? sep + 'marker=' + encodeURIComponent(marker) : '')
       }
       return {
-        price,
-        currency: 'BRL',
-        airline: carrier,
-        carriers: [carrier],
-        stops,
-        duration,
+        price, currency: 'BRL', airline: carrier, carriers: [carrier],
+        stops, duration,
         departure_at: it.departure_at || '',
         flight_number: it.flight_number || '',
-        approximate: !!approximate,
+        approximate: false,
         bookingLink
       }
     }
 
-    // Preços EXATOS (data pedida) — todos
-    const exactOffers = []
-    for (const it of exactList) {
-      const o = buildOffer(it, false)
-      if (o) exactOffers.push(o)
+    const offers = []
+    for (const it of list) {
+      const o = buildOffer(it)
+      if (o) offers.push(o)
     }
-    // Preços APROXIMADOS (mês) — só carriers que ainda não apareceram nos exatos,
-    // e apenas se a data do voo encontrado estiver a ±7 dias da data pesquisada
-    const exactCarriers = new Set(exactOffers.map(o => o.airline))
-    const target = new Date(date + 'T00:00:00Z').getTime()
-    const SEVEN_DAYS = 7 * 24 * 3600 * 1000
-    const monthByCarrier = {}
-    for (const it of monthList) {
-      const o = buildOffer(it, true)
-      if (!o) continue
-      if (exactCarriers.has(o.airline)) continue
-      if (!o.departure_at) continue
-      const t = Date.parse(o.departure_at)
-      if (!Number.isFinite(t)) continue
-      if (Math.abs(t - target) > SEVEN_DAYS) continue
-      if (!monthByCarrier[o.airline] || o.price < monthByCarrier[o.airline].price) {
-        monthByCarrier[o.airline] = o
-      }
-    }
-    // Dedup exatos
     const seen = new Set()
     const dedup = []
-    for (const o of exactOffers) {
+    for (const o of offers) {
       const k = o.airline + '|' + o.price + '|' + o.stops + '|' + o.departure_at
       if (seen.has(k)) continue
       seen.add(k)
       dedup.push(o)
     }
-    const exactSorted = dedup.sort((a, b) => a.price - b.price).slice(0, 20)
-    const approxSorted = Object.values(monthByCarrier).sort((a, b) => a.price - b.price)
-    const results = exactSorted.concat(approxSorted)
+    const results = dedup.sort((a, b) => a.price - b.price)
 
     const response = new Response(JSON.stringify(results), {
       headers: {

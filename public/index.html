@@ -816,9 +816,8 @@ function renderRealResults(results) {
     if (id && allIds.indexOf(id) < 0) allIds.unshift(id);
   });
 
-  /* Resolve airline objects e separa: com preço real vs sem */
+  /* Resolve airline objects — apenas as que têm preço real encontrado */
   var withPrice = [];
-  var withoutPrice = [];
   var seenIds = {};
   allIds.forEach(function(id) {
     if (seenIds[id]) return;
@@ -829,14 +828,10 @@ function renderRealResults(results) {
     var carrier = airline.carrierCode || idToCarrier[id];
     var hit = carrier ? priceByAirline[carrier] : null;
     if (hit) withPrice.push({ airline: airline, price: hit.price, stops: hit.stops, approximate: hit.approximate });
-    else withoutPrice.push(airline);
   });
 
-  /* Ordena: exatos primeiro (por preço), depois aproximados (por preço) */
-  withPrice.sort(function(a, b) {
-    if (a.approximate !== b.approximate) return a.approximate ? 1 : -1;
-    return a.price - b.price;
-  });
+  /* Ordena por preço */
+  withPrice.sort(function(a, b) { return a.price - b.price; });
 
   container.innerHTML = '';
 
@@ -850,18 +845,11 @@ function renderRealResults(results) {
       d.innerHTML = makeAirlineCard(item.airline, item.price, item.stops, { approximate: item.approximate });
       container.appendChild(d.firstChild);
     });
-  }
-
-  if (withoutPrice.length) {
-    var hdr2 = document.createElement('div');
-    hdr2.className = 'group-header';
-    hdr2.textContent = '✈️ Outras Companhias e Programas de Milhas';
-    container.appendChild(hdr2);
-    withoutPrice.forEach(function(airline) {
-      var d = document.createElement('div');
-      d.innerHTML = makeAirlineCard(airline, null, null);
-      container.appendChild(d.firstChild);
-    });
+  } else {
+    var empty = document.createElement('div');
+    empty.style.cssText = 'padding:24px;text-align:center;color:var(--muted);grid-column:1/-1';
+    empty.innerHTML = '😕 Nenhum preço encontrado para esta data.<br><small>Tente outra data ou verifique os códigos IATA.</small>';
+    container.appendChild(empty);
   }
 }
 
