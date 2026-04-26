@@ -833,6 +833,18 @@ function renderRealResults(results) {
   /* Ordena por preço */
   withPrice.sort(function(a, b) { return a.price - b.price; });
 
+  /* Companhias sem preço — mostra como fallback pra usuário consultar direto no site */
+  var withoutPrice = [];
+  var seenIds2 = {};
+  withPrice.forEach(function(it){ seenIds2[it.airline.id] = true; });
+  allIds.forEach(function(id) {
+    if (seenIds2[id]) return;
+    seenIds2[id] = true;
+    var airline = null;
+    for (var i = 0; i < AIRLINES.length; i++) { if (AIRLINES[i].id === id) { airline = AIRLINES[i]; break; } }
+    if (airline) withoutPrice.push(airline);
+  });
+
   container.innerHTML = '';
 
   if (withPrice.length) {
@@ -846,10 +858,22 @@ function renderRealResults(results) {
       container.appendChild(d.firstChild);
     });
   } else {
-    var empty = document.createElement('div');
-    empty.style.cssText = 'padding:24px;text-align:center;color:var(--muted);grid-column:1/-1';
-    empty.innerHTML = '😕 Nenhum preço encontrado para esta data.<br><small>Tente outra data ou verifique os códigos IATA.</small>';
-    container.appendChild(empty);
+    var info = document.createElement('div');
+    info.style.cssText = 'padding:16px;margin-bottom:16px;background:rgba(21,101,192,.08);border:1px solid rgba(21,101,192,.3);border-radius:10px;color:var(--text);grid-column:1/-1;font-size:.92rem;line-height:1.5';
+    info.innerHTML = 'ℹ️ <strong>Sem preços em cache</strong> para esta rota/data no momento. Consulte direto no site oficial das companhias abaixo:';
+    container.appendChild(info);
+  }
+
+  if (withoutPrice.length) {
+    var hdr2 = document.createElement('div');
+    hdr2.className = 'group-header';
+    hdr2.textContent = withPrice.length ? '🔎 Outras Companhias (consultar no site)' : '✈️ Companhias e Programas de Milhas';
+    container.appendChild(hdr2);
+    withoutPrice.forEach(function(airline) {
+      var d = document.createElement('div');
+      d.innerHTML = makeAirlineCard(airline, null, -1, {});
+      container.appendChild(d.firstChild);
+    });
   }
 }
 
