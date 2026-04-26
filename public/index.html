@@ -218,7 +218,7 @@
 <footer>
   <div class="footer-inner">
     <p class="disclaimer">
-      Este site é um <strong>diretório de companhias aéreas</strong>. Clique nos cards para consultar disponibilidade e preço diretamente no site oficial de cada companhia.<br>
+      Os preços exibidos são <strong>por trecho</strong>, obtidos em <strong>tempo real</strong> via Google Flights em R$.<br>
       <strong>Milhas com Edu não vende passagens.</strong> Este site redireciona para os sites oficiais das companhias aéreas.
     </p>
     <div class="footer-links" id="footer-links"></div>
@@ -524,7 +524,7 @@ var searchTo      = 'LHR';
 var searchDate    = '';
 var searchReturnDate = '';
 var searchPax     = 1;
-
+var apiAvailable  = false;
 
 var CARRIER_MAP = {
   'G3':'gol','LA':'latam','JJ':'latam','AD':'azul','O6':'avianca',
@@ -608,6 +608,10 @@ function setDateBR(displayId, hiddenId, isoStr) {
   setDateBR('destinos-date', 'destinos-date-val', destinosInitDate.toISOString().split('T')[0]);
   renderFooterLinks();
   loadRecentSearches();
+  /* Check if real API is available */
+  fetch('/api/status').then(function(r){ return r.json(); }).then(function(d){
+    if (d.configured) { apiAvailable = true; }
+  }).catch(function(){});
   /* Mostrar link admin se for administrador */
   fetch('/api/me').then(function(r){ return r.json(); }).then(function(u){
     if (u && u.isAdmin) {
@@ -686,6 +690,7 @@ function doSearch() {
   searchFrom = extractCode(fromVal);
   searchTo   = extractCode(toVal);
   searchDate = dateVal || new Date().toISOString().split('T')[0];
+  /* Return date: use form value or default departure + 7 */
   if (!dateRetVal) {
     var dep = new Date(searchDate + 'T12:00:00');
     var ret = new Date(dep.getTime() + 7 * 86400000);
@@ -695,26 +700,60 @@ function doSearch() {
   searchPax  = paxVal;
   saveRecentSearch(searchFrom, searchTo);
 
+  /* Try real API */
   var rs = document.getElementById('results-section');
   rs.style.display = 'block';
   document.getElementById('results-subtitle').textContent =
-    'Rota: ' + searchFrom + ' → ' + searchTo + ' | ' + formatDate(searchDate) + ' | ' + paxVal + ' passageiro' + (paxVal > 1 ? 's' : '') + ' | Clique para ver no site da companhia';
+    'Rota: ' + searchFrom + ' → ' + searchTo + ' | ' + formatDate(searchDate) + ' | ' + paxVal + ' passageiro' + (paxVal > 1 ? 's' : '') + ' | Preço por trecho';
   rs.scrollIntoView({behavior:'smooth'});
-  renderRealResults();
+
+  document.getElementById('real-results-grid').innerHTML =
+    '<div class="search-loading"><span class="spinner"></span>Buscando preços reais…</div>';
+
+  if (apiAvailable) {
+    fetch('/api/search?origin=' + searchFrom + '&destination=' + searchTo + '&date=' + searchDate + '&adults=' + searchPax, { cache: 'no-store' })
+      .then(function(r) { return r.json(); })
+      .then(function(results) {
+        if (results && results.error) {
+          renderRealResults([]);
+        } else {
+          renderRealResults(results || []);
+        }
+      })
+      .catch(function() {
+        renderRealResults([]);
+      });
+  } else {
+    document.getElementById('real-results-grid').innerHTML =
+      '<p style="color:var(--muted);text-align:center;padding:40px">API indisponível. Tente novamente mais tarde.</p>';
+  }
 }
 
 /* Mapa: programa de milhas → companhia-mãe */
 var MILES_PARENT = { 'smiles':'gol', 'tudoazul':'azul', 'latampass':'latam' };
 
-function makeAirlineCard(airline) {
+function makeAirlineCard(airline, price, stops, extra) {
+  var stopsText = stops === 0 ? 'Direto' : (stops > 0 ? stops + ' parada' + (stops > 1 ? 's' : '') : '');
+  var approximate = !!(extra && extra.approximate);
   var moneyUrl = (airline.moneyUrl) ? airline.moneyUrl(searchFrom, searchTo, searchDate, searchPax) : googleFlightsUrl(searchFrom, searchTo, searchDate, airline.carrierCode);
   var milesUrl = airline.milesUrl ? airline.milesUrl(searchFrom, searchTo, searchDate, searchPax) : '';
-  var moneyBtn = '<a href="' + moneyUrl + '" target="_blank" rel="noopener" class="btn-money">✈️ Ver no site da companhia</a>';
+  var gflUrl = googleFlightsUrl(searchFrom, searchTo, searchDate, airline.carrierCode);
+  var priceLabel = approximate ? '💰 a partir de R$ ' : '💰 R$ ';
+  var stopsLabel = approximate ? (stopsText ? stopsText + ' · datas próximas (±7 dias)' : 'datas próximas (±7 dias)') : (stopsText ? stopsText + ' · por trecho' : '');
+  var priceHtml = price != null
+    ? '<div class="card-prices"><span class="card-price-money" style="font-size:1.25em;font-weight:700">' + priceLabel + price.toLocaleString('pt-BR', {minimumFractionDigits:2}) + '</span>' + (stopsLabel ? '<span class="card-price-label">' + stopsLabel + '</span>' : '') + '</div>'
+    : '';
+  var badge = price != null
+    ? (approximate ? '<span style="font-size:.7rem;color:#1565c0;font-weight:600;padding:3px 8px;border:1px solid #1565c0;border-radius:20px">Estimativa</span>' : '<span class="real-badge">Preço Real</span>')
+    : '<span style="font-size:.7rem;color:var(--muted);font-weight:600;padding:3px 8px;border:1px solid var(--border);border-radius:20px">Ver disponibilidade</span>';
+  var buyLabel = '✈️ Comprar no site da companhia';
+  var moneyBtn = (airline.moneyUrl || true) ? '<a href="' + moneyUrl + '" target="_blank" rel="noopener" class="btn-money">' + buyLabel + '</a>' : '';
   var milesBtn = milesUrl ? '<a href="' + milesUrl + '" target="_blank" rel="noopener" class="btn-miles">✈️ Ver em Milhas</a>' : '';
-  return '<div class="airline-card">' +
-    '<div class="card-header"><div class="airline-name">' + airline.flag + ' ' + airline.name + '</div></div>' +
+  return '<div class="airline-card' + (price != null ? ' real-result' : '') + '">' +
+    '<div class="card-header"><div class="airline-name">' + airline.flag + ' ' + airline.name + '</div>' + badge + '</div>' +
     (airline.program ? '<div class="miles-program">🎫 ' + airline.program + '</div>' : '') +
     '<div class="route-display"><span class="code">' + searchFrom + '</span> → <span class="code">' + searchTo + '</span></div>' +
+    priceHtml +
     '<div class="card-btns">' + moneyBtn + milesBtn + '</div>' +
   '</div>';
 }
@@ -746,31 +785,72 @@ function getExtraAirlines(from, to) {
   return extras;
 }
 
-function renderRealResults() {
+function renderRealResults(results) {
   var container = document.getElementById('real-results-grid');
+
+  /* Mapa: airline IATA -> menor preço encontrado */
+  var priceByAirline = {};
+  (results || []).forEach(function(r) {
+    if (!r || !r.airline) return;
+    if (!priceByAirline[r.airline] || r.price < priceByAirline[r.airline].price) {
+      priceByAirline[r.airline] = r;
+    }
+  });
 
   /* Lista de companhias a exibir: brasileiras + extras conforme destino + programas de milhas */
   var brIds = ['latam','gol','azul','avianca'];
-  var extras = getExtraAirlines(searchFrom, searchTo);
+  var extras = getExtraAirlines(searchFrom, searchTo); // já inclui smiles, tudoazul, latampass + extras intl
   var allIds = brIds.concat(extras.filter(function(id){ return brIds.indexOf(id) < 0; }));
 
-  var seenIds = {};
-  container.innerHTML = '';
-  var hdr = document.createElement('div');
-  hdr.className = 'group-header';
-  hdr.textContent = '✈️ Companhias e Programas de Milhas';
-  container.appendChild(hdr);
+  /* Mapa carrier IATA -> id na lista AIRLINES */
+  var idToCarrier = { latam:'LA', gol:'G3', azul:'AD', avianca:'AV', aa:'AA', delta:'DL', united:'UA',
+    aircanada:'AC', airfrance:'AF', klm:'KL', lufthansa:'LH', ba:'BA', tap:'TP', iberia:'IB',
+    emirates:'EK', qatar:'QR', turkish:'TK', singapore:'SQ', copa:'CM', ethiopian:'ET',
+    smiles:'G3', tudoazul:'AD', latampass:'LA' };
+  var carrierToId = {};
+  Object.keys(idToCarrier).forEach(function(id){ if (!carrierToId[idToCarrier[id]]) carrierToId[idToCarrier[id]] = id; });
 
+  /* Sempre incluir companhias que têm preço real, mesmo se não estiverem em allIds */
+  Object.keys(priceByAirline).forEach(function(carrier) {
+    var id = carrierToId[carrier];
+    if (id && allIds.indexOf(id) < 0) allIds.unshift(id);
+  });
+
+  /* Resolve airline objects — apenas as que têm preço real encontrado */
+  var withPrice = [];
+  var seenIds = {};
   allIds.forEach(function(id) {
     if (seenIds[id]) return;
     seenIds[id] = true;
     var airline = null;
     for (var i = 0; i < AIRLINES.length; i++) { if (AIRLINES[i].id === id) { airline = AIRLINES[i]; break; } }
     if (!airline) return;
-    var d = document.createElement('div');
-    d.innerHTML = makeAirlineCard(airline);
-    container.appendChild(d.firstChild);
+    var carrier = airline.carrierCode || idToCarrier[id];
+    var hit = carrier ? priceByAirline[carrier] : null;
+    if (hit) withPrice.push({ airline: airline, price: hit.price, stops: hit.stops, approximate: hit.approximate });
   });
+
+  /* Ordena por preço */
+  withPrice.sort(function(a, b) { return a.price - b.price; });
+
+  container.innerHTML = '';
+
+  if (withPrice.length) {
+    var hdr1 = document.createElement('div');
+    hdr1.className = 'group-header';
+    hdr1.textContent = '✅ Preços Encontrados';
+    container.appendChild(hdr1);
+    withPrice.forEach(function(item) {
+      var d = document.createElement('div');
+      d.innerHTML = makeAirlineCard(item.airline, item.price, item.stops, { approximate: item.approximate });
+      container.appendChild(d.firstChild);
+    });
+  } else {
+    var empty = document.createElement('div');
+    empty.style.cssText = 'padding:24px;text-align:center;color:var(--muted);grid-column:1/-1';
+    empty.innerHTML = '😕 Nenhum preço encontrado para esta data.<br><small>Tente outra data ou verifique os códigos IATA.</small>';
+    container.appendChild(empty);
+  }
 }
 
 /* ── CALENDAR ── */
@@ -800,6 +880,11 @@ var POPULAR_DESTINOS = [
 ];
 
 function loadDestinos() {
+  if (!apiAvailable) {
+    document.getElementById('destinos-grid').innerHTML =
+      '<p style="color:var(--muted);text-align:center;padding:40px">API indisponível. Verifique se o servidor está rodando.</p>';
+    return;
+  }
   var originInput = document.getElementById('destinos-origin-input').value;
   var dateVal = document.getElementById('destinos-date-val').value;
   var origin = originInput ? extractCode(originInput) : 'GRU';
@@ -808,18 +893,61 @@ function loadDestinos() {
   var dests = POPULAR_DESTINOS.filter(function(d) { return d.code !== origin; });
   var grid = document.getElementById('destinos-grid');
 
+  /* Render skeleton loading cards */
   grid.innerHTML = dests.map(function(d) {
-    var gflUrl = googleFlightsUrl(origin, d.code, date, '');
-    return '<div class="airline-card">' +
+    return '<div class="airline-card" id="destino-card-' + d.code + '">' +
       '<div class="card-header">' +
         '<div class="airline-name">' + d.flag + ' ' + d.name + '</div>' +
+        '<span class="route-display" style="font-size:.78rem;color:var(--muted)">' + origin + ' → ' + d.code + '</span>' +
       '</div>' +
-      '<div class="route-display"><span class="code">' + origin + '</span> → <span class="code">' + d.code + '</span></div>' +
-      '<div class="card-btns">' +
-        '<a href="' + gflUrl + '" target="_blank" rel="noopener" class="btn-money">✈️ Buscar voos</a>' +
-      '</div>' +
+      '<div style="text-align:center;padding:24px;color:var(--muted)"><span class="spinner"></span> Buscando…</div>' +
     '</div>';
   }).join('');
+
+  /* Fetch each destination with staggered delay to avoid rate limiting */
+  dests.forEach(function(d, i) {
+    setTimeout(function() {
+      fetch('/api/search?origin=' + origin + '&destination=' + d.code + '&date=' + date + '&adults=1')
+        .then(function(r) { return r.json(); })
+        .then(function(results) {
+          var card = document.getElementById('destino-card-' + d.code);
+          if (!card) return;
+          if (!results || results.error || !results.length) {
+            card.innerHTML =
+              '<div class="card-header">' +
+                '<div class="airline-name">' + d.flag + ' ' + d.name + '</div>' +
+              '</div>' +
+              '<div style="text-align:center;padding:20px;color:var(--muted);font-size:.85rem">Sem voos encontrados</div>';
+            return;
+          }
+          var best = results.reduce(function(a, b) { return a.price < b.price ? a : b; });
+          var airline = findAirlineByCarrier(best.airline);
+          var stopsText = best.stops === 0 ? 'Direto' : best.stops + ' parada' + (best.stops > 1 ? 's' : '');
+          var airlineName = airline ? (airline.flag + ' ' + airline.name) : ('✈️ ' + best.airline);
+          var moneyUrl = (airline && airline.moneyUrl) ? airline.moneyUrl(origin, d.code, date, 1) : googleFlightsUrl(origin, d.code, date, best.airline);
+          card.innerHTML =
+            '<div class="card-header">' +
+              '<div class="airline-name">' + d.flag + ' ' + d.name + '</div>' +
+              '<span class="real-badge">Preço Real</span>' +
+            '</div>' +
+            '<div class="route-display"><span class="code">' + origin + '</span> → <span class="code">' + d.code + '</span></div>' +
+            '<div class="card-prices">' +
+              '<span class="destino-airline-name">' + airlineName + '</span>' +
+              '<span class="card-price-money" style="font-size:1.2em;font-weight:700">💰 R$ ' + best.price.toLocaleString('pt-BR', {minimumFractionDigits:2}) + '</span>' +
+              '<span class="card-price-label">' + stopsText + ' · por trecho</span>' +
+            '</div>' +
+            '<div class="card-btns">' +
+              '<a href="' + moneyUrl + '" target="_blank" rel="noopener" class="btn-money">� Ver e Comprar</a>' +
+            '</div>';
+        })
+        .catch(function() {
+          var card = document.getElementById('destino-card-' + d.code);
+          if (card) card.innerHTML =
+            '<div class="card-header"><div class="airline-name">' + d.flag + ' ' + d.name + '</div></div>' +
+            '<div style="text-align:center;padding:20px;color:var(--muted);font-size:.85rem">Erro ao buscar</div>';
+        });
+    }, i * 600); /* 600ms entre cada chamada para não sobrecarregar a API */
+  });
 }
 
 /* ── FOOTER ── */
