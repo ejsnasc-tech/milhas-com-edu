@@ -37,7 +37,7 @@ export async function onRequestGet(context) {
 
   // Cache entre requests (30 min) - v9 (fallback mensal)
   const cache = caches.default
-  const cacheKey = new Request(`https://cache.internal/search/v9/${origin}/${destination}/${date}/${returnDate || 'oneway'}`)
+  const cacheKey = new Request(`https://cache.internal/search/v10/${origin}/${destination}/${date}/${returnDate || 'oneway'}`)
   const cached = await cache.match(cacheKey)
   if (cached) return cached
 
@@ -66,6 +66,46 @@ export async function onRequestGet(context) {
     return { ok: true, list: Array.isArray(j?.data) ? j.data : [] }
   }
 
+  // Fallback 3: v1/prices/cheap (sem data) - sempre retorna com airline,
+  // útil quando data exata e mês estão vazios. Formato aninhado: data[CITY][index] = {airline,price,...}
+  async function fetchCheap() {
+    const u = new URL('https://api.travelpayouts.com/v1/prices/cheap')
+    u.searchParams.set('origin', origin)
+    u.searchParams.set('destination', destination)
+    u.searchParams.set('currency', 'brl')
+    u.searchParams.set('token', token)
+    try {
+      const r = await fetch(u.toString(), {
+        headers: { 'Accept': 'application/json' },
+        signal: AbortSignal.timeout(10000)
+      })
+      if (!r.ok) return []
+      const j = await r.json()
+      const out = []
+      if (j?.data && typeof j.data === 'object') {
+        for (const city of Object.keys(j.data)) {
+          const offersByIdx = j.data[city]
+          if (offersByIdx && typeof offersByIdx === 'object') {
+            for (const idx of Object.keys(offersByIdx)) {
+              const o = offersByIdx[idx]
+              if (o && o.airline && o.price) {
+                out.push({
+                  airline: o.airline,
+                  price: o.price,
+                  transfers: 0,
+                  duration: o.duration_to || o.duration || 0,
+                  departure_at: o.departure_at || '',
+                  flight_number: o.flight_number || ''
+                })
+              }
+            }
+          }
+        }
+      }
+      return out
+    } catch (_) { return [] }
+  }
+
   try {
     const month = date.slice(0, 7) // YYYY-MM
     const returnMonth = returnDate ? returnDate.slice(0, 7) : ''
@@ -91,6 +131,12 @@ export async function onRequestGet(context) {
       fallbacks.push(fetchOffers({ departAt: month, returnAt: returnMonth }).then(r => { listRT = r.list; approxRoundtrip = true }))
     }
     if (fallbacks.length) await Promise.all(fallbacks)
+
+    // 3) Último recurso: v1/prices/cheap (sem data) — para rotas regionais sem cache
+    if (list.length === 0) {
+      list = await fetchCheap()
+      if (list.length) approxOneway = true
+    }
 
     function buildOffer(it, isApprox) {
       const carrier = (it.airline || '').toUpperCase()
