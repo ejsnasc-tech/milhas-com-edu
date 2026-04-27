@@ -732,16 +732,33 @@ function doSearch() {
 /* Mapa: programa de milhas → companhia-mãe */
 var MILES_PARENT = { 'smiles':'gol', 'tudoazul':'azul', 'latampass':'latam' };
 
-function makeAirlineCard(airline, price, stops) {
+function makeAirlineCard(airline, price, stops, opts) {
+  opts = opts || {};
   var moneyUrl = (airline.moneyUrl) ? airline.moneyUrl(searchFrom, searchTo, searchDate, searchPax) : googleFlightsUrl(searchFrom, searchTo, searchDate, airline.carrierCode);
   var milesUrl = airline.milesUrl ? airline.milesUrl(searchFrom, searchTo, searchDate, searchPax) : '';
   var hasPrice = price != null;
   var stopsText = stops === 0 ? 'Direto' : (stops > 0 ? stops + ' parada' + (stops > 1 ? 's' : '') : '');
+  var approxLabel = '';
+  if (hasPrice && opts.approximate) {
+    var dateLabel = '';
+    if (opts.departureAt) {
+      try {
+        var dd = new Date(opts.departureAt);
+        if (!isNaN(dd.getTime())) {
+          dateLabel = ' (saída ' + dd.toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit'}) + ')';
+        }
+      } catch(e){}
+    }
+    approxLabel = ' · ≈ menor preço do mês' + dateLabel;
+  }
+  var pricePrefix = hasPrice && opts.approximate ? 'a partir de ' : '';
   var priceHtml = hasPrice
-    ? '<div class="card-prices"><span class="card-price-money" style="font-size:1.25em;font-weight:700">💰 R$ ' + price.toLocaleString('pt-BR', {minimumFractionDigits:2}) + '</span>' + (stopsText ? '<span class="card-price-label">' + stopsText + ' · só ida</span>' : '<span class="card-price-label">só ida</span>') + '</div>'
+    ? '<div class="card-prices"><span class="card-price-money" style="font-size:1.25em;font-weight:700">💰 ' + pricePrefix + 'R$ ' + price.toLocaleString('pt-BR', {minimumFractionDigits:2}) + '</span><span class="card-price-label">' + (stopsText ? stopsText + ' · só ida' : 'só ida') + approxLabel + '</span></div>'
     : '';
   var badge = hasPrice
-    ? '<span class="real-badge">Preço Real</span>'
+    ? (opts.approximate
+        ? '<span class="real-badge" style="background:#fff3e0;color:#e65100;border-color:#ffb74d">≈ Aproximado</span>'
+        : '<span class="real-badge">Preço Real</span>')
     : '<span style="font-size:.7rem;color:var(--muted);font-weight:600;padding:3px 8px;border:1px solid var(--border);border-radius:20px">Ver disponibilidade</span>';
   var moneyBtn = '<a href="' + moneyUrl + '" target="_blank" rel="noopener" class="btn-money">✈️ Comprar no site da companhia</a>';
   var milesBtn = milesUrl ? '<a href="' + milesUrl + '" target="_blank" rel="noopener" class="btn-miles">✈️ Ver em Milhas</a>' : '';
@@ -824,7 +841,7 @@ function renderRealResults(results) {
     if (!airline) return;
     var carrier = airline.carrierCode || idToCarrier[id];
     var hit = carrier ? priceByAirline[carrier] : null;
-    if (hit) withPrice.push({ airline: airline, price: hit.price, stops: hit.stops });
+    if (hit) withPrice.push({ airline: airline, price: hit.price, stops: hit.stops, approximate: !!hit.approximate, departure_at: hit.departure_at });
   });
 
   /* Ordena por preço */
@@ -851,7 +868,7 @@ function renderRealResults(results) {
     container.appendChild(hdr1);
     withPrice.forEach(function(item) {
       var d = document.createElement('div');
-      d.innerHTML = makeAirlineCard(item.airline, item.price, item.stops);
+      d.innerHTML = makeAirlineCard(item.airline, item.price, item.stops, { approximate: item.approximate, departureAt: item.departure_at });
       container.appendChild(d.firstChild);
     });
   } else {

@@ -35,9 +35,9 @@ export async function onRequestGet(context) {
   const marker = env.TP_MARKER || ''
   if (!token) return jsonError('TP_TOKEN não configurado', 500)
 
-  // Cache entre requests (30 min) - v8 (com roundtrip)
+  // Cache entre requests (30 min) - v9 (fallback mensal)
   const cache = caches.default
-  const cacheKey = new Request(`https://cache.internal/search/v8/${origin}/${destination}/${date}/${returnDate || 'oneway'}`)
+  const cacheKey = new Request(`https://cache.internal/search/v9/${origin}/${destination}/${date}/${returnDate || 'oneway'}`)
   const cached = await cache.match(cacheKey)
   if (cached) return cached
 
@@ -45,7 +45,7 @@ export async function onRequestGet(context) {
     const u = new URL('https://api.travelpayouts.com/aviasales/v3/prices_for_dates')
     u.searchParams.set('origin', origin)
     u.searchParams.set('destination', destination)
-    u.searchParams.set('departure_at', date)
+    u.searchParams.set('departure_at', opts && opts.departAt ? opts.departAt : date)
     if (opts && opts.returnAt) u.searchParams.set('return_at', opts.returnAt)
     u.searchParams.set('currency', 'brl')
     u.searchParams.set('sorting', 'price')
@@ -56,21 +56,43 @@ export async function onRequestGet(context) {
     return u.toString()
   }
 
-  try {
-    // Busca ida sempre; se houver return_date, busca também ida+volta em paralelo
-    const tasks = [fetch(buildUrl({}), { headers: { 'Accept': 'application/json' }, signal: AbortSignal.timeout(15000) })]
-    if (returnDate) {
-      tasks.push(fetch(buildUrl({ returnAt: returnDate }), { headers: { 'Accept': 'application/json' }, signal: AbortSignal.timeout(15000) }))
-    }
-    const responses = await Promise.all(tasks)
-    for (const r of responses) {
-      if (!r.ok) return jsonError('Travelpayouts HTTP ' + r.status, 502)
-    }
-    const datas = await Promise.all(responses.map(r => r.json()))
-    const list = Array.isArray(datas[0]?.data) ? datas[0].data : []
-    const listRT = returnDate && Array.isArray(datas[1]?.data) ? datas[1].data : []
+  async function fetchOffers(opts) {
+    const r = await fetch(buildUrl(opts), {
+      headers: { 'Accept': 'application/json' },
+      signal: AbortSignal.timeout(15000)
+    })
+    if (!r.ok) return { ok: false, status: r.status, list: [] }
+    const j = await r.json()
+    return { ok: true, list: Array.isArray(j?.data) ? j.data : [] }
+  }
 
-    function buildOffer(it) {
+  try {
+    const month = date.slice(0, 7) // YYYY-MM
+    const returnMonth = returnDate ? returnDate.slice(0, 7) : ''
+
+    // 1) Tenta data exata (ida sempre; ida+volta se houver return_date)
+    const tasks = [fetchOffers({})]
+    if (returnDate) tasks.push(fetchOffers({ returnAt: returnDate }))
+    const exact = await Promise.all(tasks)
+    for (const r of exact) {
+      if (r.ok === false) return jsonError('Travelpayouts HTTP ' + r.status, 502)
+    }
+    let list = exact[0].list
+    let listRT = returnDate ? exact[1].list : []
+    let approxOneway = false
+    let approxRoundtrip = false
+
+    // 2) Fallback mensal: se data exata não retornou nada, busca o mês inteiro
+    const fallbacks = []
+    if (list.length === 0) {
+      fallbacks.push(fetchOffers({ departAt: month }).then(r => { list = r.list; approxOneway = true }))
+    }
+    if (returnDate && listRT.length === 0) {
+      fallbacks.push(fetchOffers({ departAt: month, returnAt: returnMonth }).then(r => { listRT = r.list; approxRoundtrip = true }))
+    }
+    if (fallbacks.length) await Promise.all(fallbacks)
+
+    function buildOffer(it, isApprox) {
       const carrier = (it.airline || '').toUpperCase()
       const price = Math.round(Number(it.price))
       if (!carrier || !Number.isFinite(price) || price <= 0) return null
@@ -86,19 +108,19 @@ export async function onRequestGet(context) {
         stops, duration,
         departure_at: it.departure_at || '',
         flight_number: it.flight_number || '',
-        approximate: false,
+        approximate: !!isApprox,
         bookingLink
       }
     }
 
     const offers = []
     for (const it of list) {
-      const o = buildOffer(it)
+      const o = buildOffer(it, approxOneway)
       if (o) offers.push(o)
     }
     const offersRT = []
     for (const it of listRT) {
-      const o = buildOffer(it)
+      const o = buildOffer(it, approxRoundtrip)
       if (o) offersRT.push(o)
     }
     function dedupSort(arr) {
