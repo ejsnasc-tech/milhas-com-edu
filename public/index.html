@@ -409,17 +409,27 @@ function googleFlightsUrl(origin, dest, date, airlineCode) {
   return base + route;
 }
 
+/* Datas no formato que cada site espera (d = YYYY-MM-DD) */
+function dmy(d)  { var p = d.split('-'); return p[2] + '-' + p[1] + '-' + p[0]; }   // 20-10-2026 (GOL)
+function mdy(d)  { var p = d.split('-'); return p[1] + '/' + p[2] + '/' + p[0]; }   // 10/20/2026 (Azul)
+function utcMs(d){ var p = d.split('-'); return Date.UTC(+p[0], +p[1] - 1, +p[2], 12); } // timestamp (Smiles)
+function azulUrl(f,t,d,p,cc) {
+  return 'https://www.voeazul.com.br/br/pt/home/selecao-voo?c[0].ds='+f+'&c[0].std='+mdy(d)+'&c[0].as='+t+
+    '&p[0].t=ADT&p[0].c='+(p||1)+'&p[0].cp=false&f.dl=3&f.dr=3&cc='+cc;
+}
+
 var AIRLINES = [
   {id:'latam',   name:'LATAM Airlines',         flag:'🇧🇷', group:'br', short:'LATAM', badge:'Brasileira', badgeColor:'#e53935', program:'LATAM Pass',       color:'#e53935',
-   moneyUrl:function(f,t,d,p){return 'https://www.latamairlines.com/br/pt/oferta-voos?origin='+f+'&destination='+t+'&outbound='+d+'&adt='+p+'&chd=0&inf=0&trip=OW&cabin=Economy&redemption=false';},
-   milesUrl:function(f,t,d,p){return 'https://www.latamairlines.com/br/pt/oferta-voos?origin='+f+'&destination='+t+'&outbound='+d+'&adt='+(p||1)+'&chd=0&inf=0&trip=OW&cabin=Economy&redemption=true';}},
+   moneyUrl:function(f,t,d,p){return 'https://www.latamairlines.com/br/pt/oferta-voos?origin='+f+'&destination='+t+'&outbound='+d+'T12%3A00%3A00.000Z&adt='+(p||1)+'&chd=0&inf=0&trip=OW&cabin=Economy&redemption=false&sort=RECOMMENDED';},
+   milesUrl:function(f,t,d,p){return 'https://www.latamairlines.com/br/pt/oferta-voos?origin='+f+'&destination='+t+'&outbound='+d+'T12%3A00%3A00.000Z&adt='+(p||1)+'&chd=0&inf=0&trip=OW&cabin=Economy&redemption=true&sort=RECOMMENDED';}},
+  /* GOL: link de busca só aceita ida e volta (tipo=DF), por isso usa a data de volta do formulário */
   {id:'gol',     name:'Gol Linhas Aéreas',          flag:'🇧🇷', group:'br', short:'GOL',  badge:'Brasileira', badgeColor:'#e65100', program:'Smiles',            color:'#e65100',
-   moneyUrl:function(f,t,d,p){return 'https://www.smiles.com.br/passagens?originAirportCode='+f+'&destinationAirportCode='+t+'&departureDate='+d+'&adults='+(p||1)+'&tripType=ONE_WAY&openFlightSearch=true';},
-   milesUrl:function(f,t,d)  {return 'https://www.smiles.com.br/passagens?originAirportCode='+f+'&destinationAirportCode='+t+'&departureDate='+d+'&adults=1&tripType=ONE_WAY&openFlightSearch=true';}},
-  {id:'azul',    name:'Azul Linhas Aéreas',      flag:'🇧🇷', group:'br', short:'AZUL', badge:'Brasileira', badgeColor:'#1565c0', program:'TudoAzul',          color:'#1976d2',
-   moneyUrl:function(f,t,d,p){return 'https://www.voeazul.com.br/';},
-   milesUrl:function(f,t,d)  {return 'https://www.tudoazul.com.br/voos?from='+f+'&to='+t+'&departure='+d+'&adults=1&type=one-way';}},
-  {id:'avianca', name:'Avianca',                 flag:'🇧🇷', group:'br', short:'AVN',  badge:'Brasileira', badgeColor:'#6a1b9a', program:'LifeMiles',         color:'#6a1b9a',
+   moneyUrl:function(f,t,d,p){return 'https://b2c.voegol.com.br/compra/busca-parceiros?pv=br&tipo=DF&de='+f+'&para='+t+'&ida='+dmy(d)+'&volta='+dmy(searchReturnDate)+'&ADT='+(p||1)+'&ADL=0&CHD=0&INF=0';},
+   milesUrl:function(f,t,d,p){return 'https://www.smiles.com.br/mfe/emissao-passagem?adults='+(p||1)+'&children=0&infants=0&departureDate='+utcMs(d)+'&originAirport='+f+'&destinationAirport='+t+'&searchType=g3&segments=1&tripType=2&cabin=ALL&isElegible=false';}},
+  {id:'azul',    name:'Azul Linhas Aéreas',      flag:'🇧🇷', group:'br', short:'AZUL', badge:'Brasileira', badgeColor:'#1565c0', program:'Azul Fidelidade',   color:'#1976d2',
+   moneyUrl:function(f,t,d,p){return azulUrl(f,t,d,p,'BRL');},
+   milesUrl:function(f,t,d,p){return azulUrl(f,t,d,p,'PTS');}},
+  {id:'avianca', name:'Avianca',                 flag:'🇨🇴', group:'ot', short:'AV',   badge:'Colômbia',   badgeColor:'#6a1b9a', program:'LifeMiles',         color:'#6a1b9a',
    moneyUrl:function(f,t,d,p){return 'https://www.avianca.com/br/pt/';},
    milesUrl:function()        {return 'https://www.lifemiles.com/booking/flights';}},
   {id:'aa',      name:'American Airlines',       flag:'🇺🇸', group:'na', short:'AA',   badge:'EUA',        badgeColor:'#0d47a1', program:'AAdvantage',        color:'#0d47a1',
@@ -505,7 +515,7 @@ var FOOTER_LINKS = [
   {name:'Copa Airlines',url:'https://www.copaair.com'},
   {name:'Ethiopian Airlines',url:'https://www.ethiopianairlines.com'},
   {name:'Smiles',url:'https://www.smiles.com.br'},
-  {name:'TudoAzul',url:'https://www.tudoazul.com'},
+  {name:'Azul Fidelidade',url:'https://www.voeazul.com.br'},
   {name:'LATAM Pass',url:'https://www.latampass.com'}
 ];
 
@@ -660,8 +670,17 @@ document.addEventListener('click', function(e){
 
 /* ── SEARCH ── */
 function extractCode(val) {
-  var m = val.trim().match(/^([A-Z]{3})/i);
-  return m ? m[1].toUpperCase() : val.trim().toUpperCase().slice(0,3);
+  var v = val.trim();
+  /* "GRU — São Paulo" (escolhido na lista) ou código digitado "gru" */
+  var m = v.match(/^([A-Z]{3})(\s|$)/i);
+  var code = m ? m[1].toUpperCase() : null;
+  if (code && AIRPORTS.some(function(a){ return a.code === code; })) return code;
+  /* Nome da cidade digitado sem escolher na lista ("Rio de Janeiro", "Belo Horizonte") */
+  var norm = function(s){ return s.normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase(); };
+  var nv = norm(v);
+  for (var i = 0; i < AIRPORTS.length; i++) { if (norm(AIRPORTS[i].name) === nv) return AIRPORTS[i].code; }
+  for (var j = 0; j < AIRPORTS.length; j++) { if (norm(AIRPORTS[j].name).indexOf(nv) === 0) return AIRPORTS[j].code; }
+  return code || v.toUpperCase().slice(0,3);
 }
 function formatDate(d) {
   if (!d) return '';
@@ -722,14 +741,13 @@ function getExtraAirlines(from, to) {
   AIRPORTS.forEach(function(a){ airportCountry[a.code] = a.country; });
   var destCountry = airportCountry[to] || 'BR';
   var isIntl = destCountry !== 'BR';
-  /* Sempre mostra programas de milhas brasileiros */
-  var extras = ['smiles','tudoazul','latampass'];
+  var extras = [];
   if (isIntl) {
     /* Adiciona companhias internacionais relevantes conforme região */
     var region = destCountry;
     if (['US','CA'].indexOf(region) >= 0) extras = extras.concat(['aa','delta','united','aircanada']);
     else if (['PT','ES','FR','GB','IT','DE','NL'].indexOf(region) >= 0) extras = extras.concat(['tap','iberia','airfrance','klm','ba','lufthansa']);
-    else if (['AR','CL','PE','CO','EC','PA','UY','PY','BO','VE'].indexOf(region) >= 0) extras = extras.concat(['copa']);
+    else if (['AR','CL','PE','CO','EC','PA','UY','PY','BO','VE'].indexOf(region) >= 0) extras = extras.concat(['copa','avianca']);
     else if (['AE','QA'].indexOf(region) >= 0) extras = extras.concat(['emirates','qatar']);
     else if (['TR'].indexOf(region) >= 0) extras = extras.concat(['turkish']);
     else extras = extras.concat(['aa','delta','united']);
@@ -741,7 +759,7 @@ function renderRealResults() {
   var container = document.getElementById('real-results-grid');
 
   /* Lista de companhias a exibir: brasileiras + extras conforme destino + programas de milhas */
-  var brIds = ['latam','gol','azul','avianca'];
+  var brIds = ['latam','gol','azul'];
   var extras = getExtraAirlines(searchFrom, searchTo);
   var allIds = brIds.concat(extras.filter(function(id){ return brIds.indexOf(id) < 0; }));
 
